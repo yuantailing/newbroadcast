@@ -64,8 +64,8 @@ DATABASES = {
     }
 }
 
-MEDIA_ROOT = "upload/"
-MEDIA_URL = "/upload/"
+MEDIA_ROOT = 'upload/'
+MEDIA_URL = '/upload/'
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.7/topics/i18n/
@@ -84,4 +84,14 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.7/howto/static-files/
 
+STATIC_ROOT = 'static/'
+STATICFILES_DIRS = (
+    ("css", os.path.join(STATIC_ROOT,'css')),
+    ("js", os.path.join(STATIC_ROOT,'js')),
+    ("images", os.path.join(STATIC_ROOT,'images')),
+)
 STATIC_URL = '/static/'
+
+TEMPLATE_DIRS = (
+    'templates/',
+)
