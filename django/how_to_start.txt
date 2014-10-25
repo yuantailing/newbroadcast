@@ -4,16 +4,17 @@ How to install
 [Install] setuptools-1.3.win-amd64-py2.7.exe
 [Environment Variable] PATH C:\Python27\;C:\Python27\Scripts
 (C:\Python27\Scripts\)easy_install django
-easy_install pymongo
-easy_install mongoengine
 cd NewBroadcast
 manage.py syncdb
 manage.py runserver 8001
 
-Install mongodb
-[admin]mongod --dbpath=D:\db --logpath=D:\db\log\mongodb.log --install
-[admin]netsh start mangodb
-django-admin-script.py startproject NewBroadcast
-
 How to coding
 (http://jingyan.baidu.com/article/ea24bc39a4fed2da62b3318f.html)
+
+Another Database
+Install mongodb
+easy_install pymongo
+easy_install mongoengine
+[admin] mongod --dbpath=D:\db --logpath=D:\db\log\mongodb.log --install
+[admin] netsh start mangodb
+django-admin-script.py startproject NewBroadcast
