@@ -7,6 +7,7 @@ How to install
 easy_install pymongo
 easy_install mongoengine
 cd NewBroadcast
+manage.py syncdb
 manage.py runserver 8001
 
 Install mongodb
