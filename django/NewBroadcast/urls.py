@@ -1,7 +1,9 @@
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
-from frametest import hello, ctime, temp
-from signin import Signin
+from NewBroadcast import frametest
+from NewBroadcast import signin
+from NewBroadcast import ajaxtest
+
 
 urlpatterns = patterns('',
     # Examples:
@@ -10,13 +12,16 @@ urlpatterns = patterns('',
 
     url(r'^upload/(?P<path>.*)$', 'django.views.static.serve',
         {'document_root': 'upload/'}),
-
-    url(r'^$', ctime),
     url(r'^admin/', include(admin.site.urls)),
-    url(r'^hello/(.+)/', hello),
-    url(r'^temp/', temp),
 
-    url(r'^signin$', Signin.form),
-    url(r'^signin/do$', Signin.do),
+    url(r'^$', frametest.ctime),
+    url(r'^hello/(.+)/', frametest.hello),
+    url(r'^temp/', frametest.temp),
+
+    url(r'^ajaxtest/$', ajaxtest.index),
+    url(r'^ajaxtest/getresult/$', ajaxtest.getresult),
+
+    url(r'^signin$', signin.Signin.form),
+    url(r'^signin/do$', signin.Signin.do),
 
 )
