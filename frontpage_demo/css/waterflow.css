@@ -1,0 +1,6 @@
+#wrap{width:auto;height:auto;margin:0 auto;position:relative;}
+#wrap .box{width:500px;height:auto;padding:10px;float:left;}
+#wrap .box .info{box-shadow:0 0 11px #666;}
+#wrap .box .info .pic{width:100%;height:auto;}
+#wrap .box .info .pic img{width:100%;}
+#wrap .box .info .title{width:260px;height:40px;margin:0 auto;line-height:40px;text-align:center;color:#666;font-size:18px;font-weight:bold;overflow:hidden;}
