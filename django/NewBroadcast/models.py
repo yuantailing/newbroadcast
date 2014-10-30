@@ -67,7 +67,7 @@ class Program(models.Model):
     description = models.TextField(null=True, blank=True, default=None)
     weight = models.IntegerField(blank=False, default=0)
     page_format = models.TextField(null=True, blank=True, default=None)
-    recorder = models.TextField(null=True, blan=True, default=None)
+    recorder = models.TextField(null=True, blank=True, default=None)
     source = models.TextField(null=True, blank=True, default=None)
     workers = models.TextField(null=True, blank=True, default=None)
     update_time = models.DateTimeField(auto_now_add=True, auto_now=True)
