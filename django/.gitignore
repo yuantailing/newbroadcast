@@ -37,3 +37,6 @@ nosetests.xml
 
 # db
 *.sqlite3
+
+# upload
+upload/*
