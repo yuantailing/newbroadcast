@@ -3,6 +3,8 @@ from django.contrib import admin
 from NewBroadcast import frametest
 from NewBroadcast import signin
 from NewBroadcast import ajaxtest
+from NewBroadcast import api
+from NewBroadcast import test
 
 
 urlpatterns = patterns('',
@@ -23,5 +25,14 @@ urlpatterns = patterns('',
 
     url(r'^signin$', signin.Signin.form),
     url(r'^signin/do$', signin.Signin.do),
+	
+	url(r'^user/$', api.api_user),
+	url(r'^program_group/$', api.api_program_group),
+	url(r'^program_series/$', api.api_program_series),
+	url(r'^program/$', api.api_program),
+	url(r'^api_source/$', api.api_source),
+	url(r'^api_comment/$', api.api_comment),
+
+	url(r'^user_test/$', test.test_user),
 
 )
