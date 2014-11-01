@@ -1,0 +1,80 @@
+# -*- coding: UTF-8 -*-
+from django.http import HttpResponse
+from django.shortcuts import *
+from django import template
+from django.template.loader import get_template
+from django.db import models
+from django.core import serializers
+import json
+
+from models import *
+
+class Signin:
+    @classmethod
+    def form(self, req):
+        t = get_template("signin/signin.html")
+        c = RequestContext(req);
+        html = t.render(c)
+        return HttpResponse(html)
+
+    @classmethod
+    def judge(self, req):
+        res = { }
+        try:
+            t_key = req.POST.get('key', None)
+            t_type = req.POST.get('ptype', None)
+            if (t_type == 'nickname'):
+                user = User.objects.get(nickname = t_key)
+            else:
+                user = User.objects.get(email = t_key)
+            res['exist'] = 'true'
+        except Exception, e:
+            res['exist'] = 'false'
+        return HttpResponse(json.dumps(res), content_type = 'application/json')
+
+    @classmethod
+    def do(self, req):
+        res = { }
+        try:
+            user = User()
+            p_email = req.POST.get('email', None)
+            p_nickname = req.POST.get('nickname', None)
+            p_password = req.POST.get('password', None)
+            p_password2 = req.POST.get('password2', None)
+            if (p_password == p_password2):
+                user.email = p_email
+                user.nickname = p_nickname
+                user.password = p_password
+                print 1
+                user.save()
+                res['result'] = 'success'
+                res['info'] = '注册成功'
+                req.session['uid'] = user.id
+            else:
+                res['result'] = 'failed'
+                res['info'] = '两次输入的密码不一致'
+        except Exception, e:
+            res['result'] = 'failed'
+            res['info'] = '用户名或密码已存在'
+        return HttpResponse(json.dumps(res), content_type='application/json')
+    
+    @classmethod
+    def test(self, req):
+        res = { }
+        try:
+            uid = req.session['uid']
+            user = User.objects.get(id=uid)
+            res['uid'] = user.id
+            res['result'] = 'have_login'
+        except Exception, e:
+            res['result'] = 'not_login'
+        return HttpResponse(json.dumps(res), content_type='application/json')
+
+    @classmethod
+    def logout(self, req):
+        res = { }
+        req.session['uid'] = None
+        res['result'] = 'success'
+        return HttpResponse(json.dumps(res), content_type='application/json')
+
+
