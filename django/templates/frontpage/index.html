@@ -1,45 +1,11 @@
-﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml"  style="height:100%; width:100%">
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf8" />
-<title></title>
-<!-- Loading Bootstrap -->
-<link href="/static/dist/css/vendor/bootstrap.min.css" rel="stylesheet">
-<link href="/static/dist/css/flat-ui.css" rel="stylesheet">
-<link href="/static/css/waterflow.css" rel="stylesheet">
+﻿{% extends "base.html" %}
 
-</head>
-	<body  style="height:100%; width:100%">
+{% block title %}
+清华大学广播站 - 首页
+{% endblock %}
 
-<!-- navbar -->
-<nav class="navbar navbar-inverse navbar-embossed" role="navigation">
-	<div class="navbar-header">
-		<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-collapse-01">
-		  <span class="sr-only">Toggle navigation</span>
-		</button>
-		<a class="navbar-brand" href="#">清华大学广播站</a>
-	</div>
-	<div class="collapse navbar-collapse" id="navbar-collapse-01">
-		<ul class="nav navbar-nav">
-		  <li><a href="#fakelink">首页</a></li>
-		  <li><a href="#fakelink">资源</a></li>
-		</ul>
-		<form class="navbar-form navbar-right" action="#" role="search">
-		  <button id="login" class="btn btn-primary" data-toggle="modal" data-target="#myModal">登陆</button>
-		  <button id="register" class="btn btn-primary">注册</button>
-		  <div class="form-group">
-			<div class="input-group">
-			  <input class="form-control" id="navbarInput-01" type="search" placeholder="Search">
-			  <span class="input-group-btn">
-				<button type="submit" class="btn"><span class="fui-search"></span></button>
-			  </span>
-			</div>
-		  </div>
-		</form>
-	</div><!-- /.navbar-collapse -->
-</nav>
- 
-  
+{% block body %}
+
 <!-- main content -->
 
 	<!-- column -->
@@ -183,10 +149,6 @@
 	
 	</div>
 
-<!-- jQuery (necessary for Flat UI's JavaScript plugins) -->
-<script src="/static/dist/js/vendor/jquery.min.js"></script>
-<!-- Include all compiled plugins (below), or include individual files as needed -->
-<script src="/static/dist/js/flat-ui.min.js"></script>
 <script type="text/javascript" src="/static/js/waterflow.js"></script>
-	</body>
-</html>
+
+{% endblock %}
