@@ -57,24 +57,3 @@ class Signin:
             res['result'] = 'failed'
             res['info'] = '用户名或密码已存在'
         return HttpResponse(json.dumps(res), content_type='application/json')
-    
-    @classmethod
-    def test(self, req):
-        res = { }
-        try:
-            uid = req.session['uid']
-            user = User.objects.get(id=uid)
-            res['uid'] = user.id
-            res['result'] = 'have_login'
-        except Exception, e:
-            res['result'] = 'not_login'
-        return HttpResponse(json.dumps(res), content_type='application/json')
-
-    @classmethod
-    def logout(self, req):
-        res = { }
-        req.session['uid'] = None
-        res['result'] = 'success'
-        return HttpResponse(json.dumps(res), content_type='application/json')
-
-
