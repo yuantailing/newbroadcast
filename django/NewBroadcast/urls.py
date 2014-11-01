@@ -1,5 +1,6 @@
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
+from NewBroadcast import frontpage
 from NewBroadcast import frametest
 from NewBroadcast import login
 from NewBroadcast import ajaxtest
@@ -23,6 +24,8 @@ urlpatterns = patterns('',
     url(r'^ajaxtest/$', ajaxtest.index),
     url(r'^ajaxtest/getresult/$', ajaxtest.getresult),
 
+	url(r'^index/$', frontpage.show_index),
+	
     url(r'^login/$', login.Login.form),
     url(r'^login/do/$', login.Login.do),
     url(r'^login/test/$', login.Login.test),
