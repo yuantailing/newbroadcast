@@ -86,6 +86,7 @@ USE_TZ = True
 
 STATIC_ROOT = 'static/'
 STATICFILES_DIRS = (
+	("dist", os.path.join(STATIC_ROOT,'dist')),
     ("css", os.path.join(STATIC_ROOT,'css')),
     ("js", os.path.join(STATIC_ROOT,'js')),
     ("images", os.path.join(STATIC_ROOT,'images')),

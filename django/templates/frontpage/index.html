@@ -1,0 +1,192 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"  style="height:100%; width:100%">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf8" />
+<title></title>
+<!-- Loading Bootstrap -->
+<link href="/static/dist/css/vendor/bootstrap.min.css" rel="stylesheet">
+<link href="/static/dist/css/flat-ui.css" rel="stylesheet">
+<link href="/static/css/waterflow.css" rel="stylesheet">
+
+</head>
+	<body  style="height:100%; width:100%">
+
+<!-- navbar -->
+<nav class="navbar navbar-inverse navbar-embossed" role="navigation">
+	<div class="navbar-header">
+		<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-collapse-01">
+		  <span class="sr-only">Toggle navigation</span>
+		</button>
+		<a class="navbar-brand" href="#">清华大学广播站</a>
+	</div>
+	<div class="collapse navbar-collapse" id="navbar-collapse-01">
+		<ul class="nav navbar-nav">
+		  <li><a href="#fakelink">首页</a></li>
+		  <li><a href="#fakelink">资源</a></li>
+		</ul>
+		<form class="navbar-form navbar-right" action="#" role="search">
+		  <button id="login" class="btn btn-primary" data-toggle="modal" data-target="#myModal">登陆</button>
+		  <button id="register" class="btn btn-primary">注册</button>
+		  <div class="form-group">
+			<div class="input-group">
+			  <input class="form-control" id="navbarInput-01" type="search" placeholder="Search">
+			  <span class="input-group-btn">
+				<button type="submit" class="btn"><span class="fui-search"></span></button>
+			  </span>
+			</div>
+		  </div>
+		</form>
+	</div><!-- /.navbar-collapse -->
+</nav>
+ 
+  
+<!-- main content -->
+
+	<!-- column -->
+	<div class="pagination">
+	  <ul>
+		<li class="previous">
+		  <a href="#" class="fui-arrow-left"></a>
+		</li>
+
+		<!-- Make dropdown appear above pagination -->
+		<li class="pagination-dropdown dropup">
+		  <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+			<i>读书</i>
+		  </a>
+		  <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+			<i>时评</i>
+		  </a>
+		  <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+			<i>资讯</i>
+		  </a>
+		  <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+			<i>访谈</i>
+		  </a>
+		  <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+			<i>音乐</i>
+		  </a>
+		  <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+			<i>体育</i>
+		  </a>
+		  <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+			<i>广播剧</i>
+		  </a>
+		</li>
+
+		<li class="next">
+		  <a href="#" class="fui-arrow-right"></a>
+		</li>
+	  </ul>
+	</div>
+	
+	<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+   <div class="modal-dialog">
+      <div class="modal-content">
+         <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+         </div>
+         <div class="modal-body">
+			<form class="form-horizontal" role="form">
+				<div class="form-group">
+					<label for="login-name" class="col-sm-2 control-label">用户名</label>
+					<div class="col-sm-6">
+						<input type="text" class="form-control" id="login-name" placeholder="请输入用户名">
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="lastname" class="col-sm-2 control-label">密码</label>
+					<div class="col-sm-6">
+						<input type="text" class="form-control" id="login-password" placeholder="请输入密码">
+					</div>
+				</div>
+			</form>
+         </div>
+         <div class="modal-footer">
+            <button type="button" class="btn btn-primary" data-dismiss="modal">登陆</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+         </div>
+      </div><!-- /.modal-content -->
+</div><!-- /.modal -->
+</div>
+		<div id="wrap">
+	
+		<div class="box">
+			<div class="info">
+				<div class="pic"><img src="/static/images/1.jpg"></div>
+				<div class="title"><a href="#">节目</div>
+			</div>
+		</div>
+		
+		<div class="box">
+			<div class="info">
+				<div class="pic"><img src="/static/images/2.jpg"></div>
+				<div class="title"><a href="#">节目</a></div>
+			</div>
+		</div>
+		
+		<div class="box">
+			<div class="info">
+				<div class="pic"><img src="/static/images/3.jpg"></div>
+				<div class="title"><a href="#">节目</a></div>
+			</div>
+		</div>
+		
+		<div class="box">
+			<div class="info">
+				<div class="pic"><img src="/static/images/4.jpg"></div>
+				<div class="title"><a href="#">节目</a></div>
+			</div>
+		</div>
+	
+		<div class="box">
+			<div class="info">
+				<div class="pic"><img src="/static/images/5.jpg"></div>
+				<div class="title"><a href="#">节目</a></div>
+			</div>
+		</div>
+		
+		<div class="box">
+			<div class="info">
+				<div class="pic"><img src="/static/images/6.jpg"></div>
+				<div class="title"><a href="#">节目</a></div>
+			</div>
+		</div>
+		
+		<div class="box">
+			<div class="info">
+				<div class="pic"><img src="/static/images/7.jpg"></div>
+				<div class="title"><a href="#">节目</a></div>
+			</div>
+		</div>
+		
+		<div class="box">
+			<div class="info">
+				<div class="pic"><img src="/static/images/8.jpg"></div>
+				<div class="title"><a href="#">节目</a></div>
+			</div>
+		</div>
+		
+		<div class="box">
+			<div class="info">
+				<div class="pic"><img src="/static/images/9.jpg"></div>
+				<div class="title"><a href="#">节目</a></div>
+			</div>
+		</div>
+		
+		<div class="box">
+			<div class="info">
+				<div class="pic"><img src="/static/images/10.jpg"></div>
+				<div class="title"><a href="#">节目</a></div>
+			</div>
+		</div>
+	
+	</div>
+
+<!-- jQuery (necessary for Flat UI's JavaScript plugins) -->
+<script src="/static/dist/js/vendor/jquery.min.js"></script>
+<!-- Include all compiled plugins (below), or include individual files as needed -->
+<script src="/static/dist/js/flat-ui.min.js"></script>
+<script type="text/javascript" src="/static/js/waterflow.js"></script>
+	</body>
+</html>
