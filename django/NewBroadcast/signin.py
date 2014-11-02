@@ -57,3 +57,4 @@ class Signin:
             res['result'] = 'failed'
             res['info'] = '用户名或密码已存在'
         return HttpResponse(json.dumps(res), content_type='application/json')
+
