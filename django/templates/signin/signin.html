@@ -1,17 +1,47 @@
 ﻿<html>
 <head>
-<title>AJAX test</title>
+<title>Sign In</title>
 <script type="text/javascript" src="http://libs.baidu.com/jquery/2.1.1/jquery.min.js" ></script>
 <script>
 $(document).ready(function(){
-  $('#input').keyup(function(){
+  $('#signin_submit').click(function(){
     $.ajax({
-      url:'/ajaxtest/getresult/',
+      url:'/signin/do/',
       type:"POST",
-      data:{input:$("#input").val()},
-        dataType:"html"
+      data:{email:$("#email").val(), nickname:$("#nickname").val(), password:$("#password").val(), password2:$("#password2").val()},
+      dataType:"json"
     }).done(function(msg){
-      $('#show').html(msg).show();
+      $('#show').text(msg.info).show();
+    }).fail(function(jqXHR,textStatus){
+      $('#show').html('request failed '+textStatus);
+    });
+  });
+  $('#email').blur(function(){
+    $.ajax({
+      url:'/signin/judge/',
+      type:"POST",
+      data:{key:$("#email").val(), ptype:"email"},
+      dataType:"json"
+    }).done(function(msg){
+        info = ""
+        if (msg.exist == "true")
+            info = "邮箱已存在，请重新输入"
+        $('#show').text(info).show();
+    }).fail(function(jqXHR,textStatus){
+      $('#show').html('request failed '+textStatus);
+    });
+  });
+  $('#nickname').blur(function(){
+    $.ajax({
+      url:'/signin/judge/',
+      type:"POST",
+      data:{key:$("#nickname").val(), ptype:"nickname"},
+      dataType:"json"
+    }).done(function(msg){
+        info = ""
+        if (msg.exist == "true")
+            info = "昵称已存在，请重新输入"
+        $('#show').text(info).show();
     }).fail(function(jqXHR,textStatus){
       $('#show').html('request failed '+textStatus);
     });
@@ -58,12 +88,14 @@ $(document).ajaxSend(function(event, xhr, settings) {
 </script>
 </head>
 <body>
-  <h1>AJAX test</h1>
-  <p>发送到服务器端计算MD5值</p>
-  <form id="form" method="post">
+  <p>登录</p>
     {% csrf_token %}
-    <input type="text" id="input" />
-  </form>
-  <div id="show"></div>
+    邮箱<input type="text" id="email" name="email"/><br/>
+    昵称<input type="text" id="nickname" name="nickname"/><br/>
+    密码<input type="password" id="password" name="password"/><br/>
+    确认密码<input type="password" id="password2" name="password2"/><br/>
+    <input type="button" id="signin_submit" value="登录" />
+    <div id="show"></div>
 </body>
 </html>
+
