@@ -87,10 +87,10 @@ USE_TZ = True
 STATIC_ROOT = 'static/'
 STATIC_URL = '/static/'
 STATICFILES_DIRS = (
-    ("dist", os.path.join(STATIC_ROOT,'dist')),
-    ("css", os.path.join(STATIC_ROOT,'css')),
-    ("js", os.path.join(STATIC_ROOT,'js')),
-    ("images", os.path.join(STATIC_ROOT,'images')),
+    ("dist", os.path.join(STATIC_ROOT, 'dist')),
+    ("css", os.path.join(STATIC_ROOT, 'css')),
+    ("js", os.path.join(STATIC_ROOT, 'js')),
+    ("images", os.path.join(STATIC_ROOT, 'images')),
 )
 
 TEMPLATE_DIRS = (
