@@ -27,10 +27,10 @@ urlpatterns = patterns('',
 
 	url(r'^index/$', frontpage.show_index),
 	
-    url(r'^login/$', login.Login.form),
-    url(r'^login/do/$', login.Login.do),
-    url(r'^login/test/$', login.Login.test),
-    url(r'^login/logout/$', login.Login.logout),
+    url(r'^login/$', login.form),
+    url(r'^login/do/$', login.do),
+    url(r'^login/test/$', login.test),
+    url(r'^login/logout/$', login.logout),
 
     url(r'^signin/$', signin.Signin.form),
     url(r'^signin/judge/$', signin.Signin.judge),
