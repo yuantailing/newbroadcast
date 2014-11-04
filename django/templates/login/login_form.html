@@ -83,11 +83,13 @@ $(document).ajaxSend(function(event, xhr, settings) {
 <body>
   <p>登录</p>
     {% csrf_token %}
-    <span>邮箱</span><input type="text" id="email" /><br/>
-    <span>密码</span><input type="password" id="password" /><br/>
-    <input type="button" id="login_submit" value="登录" />
-    <input type="button" id="logout_button" value="登出" />
-  <div id="login_status"></div>
-  <div id="show"></div>
+    <div>
+        <span>邮箱</span><input type="text" id="email" /><br/>
+        <span>密码</span><input type="password" id="password" /><br/>
+        <button type="button" id="login_submit">登录</button>
+        <button type="button" id="logout_button">登出</button>
+    </div>
+    <label id="login_status"></label>
+    <label id="show"></label>
 </body>
 </html>
