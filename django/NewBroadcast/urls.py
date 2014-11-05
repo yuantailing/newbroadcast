@@ -28,6 +28,7 @@ urlpatterns = patterns('',
 
     url(r'^index/$', frontpage.show_index),
 
+    url(r'^program/play/(.*)$', program.play_program),
     url(r'^program/(.*)$', program.show_program),
 
     url(r'^login/$', login.Login.form),

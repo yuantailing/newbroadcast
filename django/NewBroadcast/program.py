@@ -11,3 +11,7 @@ from models import *
 
 def show_program(req, arg):
     return render_to_response("program/show.html", {});
+
+def play_program(req, arg):
+    return render_to_response("program/player.html", {});
+
