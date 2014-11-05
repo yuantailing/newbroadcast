@@ -149,6 +149,18 @@
 	
 	</div>
 
+<script>
+	var data = $.ajax({
+		url:'/frontpage/waterflow_data',
+		type:"POST",
+		data:{input:$("#input").val()},
+		dataType:"html"
+    }).done(function(msg){
+		$('#show').html(msg).show();
+    }).fail(function(jqXHR,textStatus){
+		$('#show').html('request failed '+textStatus);
+    });
+</script>
 <script type="text/javascript" src="/static/js/waterflow.js"></script>
 
 {% endblock %}

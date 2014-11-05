@@ -68,8 +68,9 @@ class Program(models.Model):
     weight = models.IntegerField(blank=False, default=0)
     page_format = models.TextField(null=True, blank=True, default=None)
     recorder = models.TextField(null=True, blank=True, default=None)
-    source = models.TextField(null=True, blank=True, default=None)
+    source_id = models.TextField(null=True, blank=True, default=None)
     workers = models.TextField(null=True, blank=True, default=None)
+    picture_id = models.TextField(null=True, blank=True, default=None)
     update_time = models.DateTimeField(auto_now_add=True, auto_now=True)
     create_time = models.DateTimeField(auto_now_add=True)
 
@@ -111,6 +112,12 @@ class Source(models.Model):
         if not self.link:
             self.link = None
         super(Source, self).save()
+		if self.source_type == "picture":
+			o.["picture_id"] = self.id;
+			o.save();
+		if self.source_type == "program":
+			o.["source_id"] = self.id;
+			o.save();
 
 
 class Comment(models.Model):
