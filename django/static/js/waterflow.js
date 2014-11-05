@@ -1,4 +1,5 @@
 ﻿window.onload = function(){
+	var loadbox = 0;
 	var data = [
 					{'src':'1.jpg','title':'节目'},
 					{'src':'2.jpg','title':'节目'},
@@ -25,7 +26,7 @@
 		pic.className = 'pic';
 		info.appendChild(pic);
 		var img = document.createElement('img');
-		img.src = 'images/'+data[i].src;
+		img.src = '/static/images/'+data[i].src;
 		img.style.height = 'auto';
 		pic.appendChild(img);
 		var title = document.createElement('div');
@@ -39,6 +40,14 @@
 			if (count_complete == data.length) {
 				PBL('wrap','box');
 			}
+		}
+
+		if (loadbox == 0) {
+			var boxs = getClass(wrap,'box'); // get all boxes;
+			var boxW = boxs[0].offsetWidth; // the entHeight);width of the box;
+			var colsNum = Math.floor(document.documentElement.clientWidth/boxW); // get the column number;
+			wrap.style.width = boxW*colsNum+'px'; // the width of the wrap;
+			loadbox = 1;
 		}
 	}	
 
@@ -56,7 +65,7 @@
 				pic.className = 'pic';
 				info.appendChild(pic);
 				var img = document.createElement('img');
-				img.src = 'images/'+data[i].src;
+				img.src = '/static/images/'+data[i].src;
 				img.style.height = 'auto';
 				pic.appendChild(img);
 				var title = document.createElement('div');
@@ -82,7 +91,7 @@ function PBL(wrap,box){
 	for (var i = 0; i < boxs.length; i++) {
 		if(i<colsNum){
 			everyH[i] = boxs[i].offsetHeight; // box's height;
-			console.log(boxs[i].offsetHeight);
+			//console.log(boxs[i].offsetHeight);
 		} else{
 			var minH = Math.min.apply(null,everyH); // minest height;
 			var minIndex = getIndex(minH,everyH); // index of the minest one;
