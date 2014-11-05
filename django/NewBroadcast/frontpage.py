@@ -8,6 +8,9 @@ from django.core import serializers
 import json
 
 from models import *
-
 def show_index(req):
-    return render_to_response("frontpage/index.html", {});
+        t = get_template("frontpage/index.html")
+        c = RequestContext(req);
+        html = t.render(c)
+        return HttpResponse(html)
+

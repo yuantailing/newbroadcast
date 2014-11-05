@@ -6,11 +6,13 @@ from django.template.loader import get_template
 from django.db import models
 from django.core import serializers
 import json
+from django.views.decorators.csrf import csrf_exempt
 
 from models import *
 
 class Signin:
     @classmethod
+    @csrf_exempt
     def form(self, req):
         t = get_template("signin/signin.html")
         c = RequestContext(req);
@@ -18,6 +20,7 @@ class Signin:
         return HttpResponse(html)
 
     @classmethod
+    @csrf_exempt
     def judge(self, req):
         res = { }
         try:
@@ -33,6 +36,7 @@ class Signin:
         return HttpResponse(json.dumps(res), content_type = 'application/json')
 
     @classmethod
+    @csrf_exempt
     def do(self, req):
         res = { }
         try:
@@ -57,4 +61,3 @@ class Signin:
             res['result'] = 'failed'
             res['info'] = '用户名或密码已存在'
         return HttpResponse(json.dumps(res), content_type='application/json')
-

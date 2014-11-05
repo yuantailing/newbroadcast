@@ -6,50 +6,51 @@ from django.template.loader import get_template
 from django.db import models
 from django.core import serializers
 import json
+from django.views.decorators.csrf import csrf_exempt
 
 from models import *
 
-class Login:
-    @classmethod
-    def form(self, req):
-        t = get_template("login/login_form.html")
-        c = RequestContext(req);
-        html = t.render(c)
-        return HttpResponse(html)
 
-    @classmethod
-    def do(self, req):
+def form(req):
+    t = get_template("login/login_form.html")
+    c = RequestContext(req);
+    html = t.render(c)
+    return HttpResponse(html)
+
+@csrf_exempt
+def do(req):
+    print "A\n"
+    res = { }
+    try:
+        p_email = req.POST.get('email', None)
+        p_password = req.POST.get('password', None)
+        print p_email
+        print p_password
+        user = User.objects.get(email=p_email)
         res = { }
-        try:
-            p_email = req.POST.get('email', None)
-            p_password = req.POST.get('password', None)
-            user = User.objects.get(email=p_email)
-            res = { }
-            if (user.password == p_password):
-                res['result'] = 'success'
-                req.session['uid'] = user.id
-            else:
-                res['result'] = 'failed'
-        except Exception, e:
-            res['result'] = 'exception'
-        return HttpResponse(json.dumps(res), content_type='application/json')
+        if (user.password == p_password):
+            res['result'] = 'success'
+            req.session['uid'] = user.id
+        else:
+            res['result'] = 'failed'
+    except Exception, e:
+        res['result'] = 'exception'
+    return HttpResponse(json.dumps(res), content_type='application/json')
     
-    @classmethod
-    def test(self, req):
-        res = { }
-        try:
-            uid = req.session['uid']
-            user = User.objects.get(id=uid)
-            res['uid'] = user.id
-            res['result'] = 'have_login'
-        except Exception, e:
-            res['result'] = 'not_login'
-        return HttpResponse(json.dumps(res), content_type='application/json')
+def test(req):
+    res = { }
+    try:
+        uid = req.session['uid']
+        user = User.objects.get(id=uid)
+        res['uid'] = user.id
+        res['result'] = 'have_login'
+    except Exception, e:
+        res['result'] = 'not_login'
+    return HttpResponse(json.dumps(res), content_type='application/json')
 
-    @classmethod
-    def logout(self, req):
-        res = { }
-        req.session['uid'] = None
-        res['result'] = 'success'
-        return HttpResponse(json.dumps(res), content_type='application/json')
+def logout(req):
+    res = { }
+    req.session['uid'] = None
+    res['result'] = 'success'
+    return HttpResponse(json.dumps(res), content_type='application/json')
 
