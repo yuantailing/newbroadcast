@@ -1,15 +1,14 @@
-﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"  style="height:100%; width:100%">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf8" />
 <title>{% block title %}清华大学广播站{% endblock %}</title>
 <!-- Loading Bootstrap -->
-<link href="/static/dist/css/vendor/bootstrap.min.css" rel="stylesheet">
-<link href="/static/dist/css/flat-ui.css" rel="stylesheet">
-<link href="/static/css/waterflow.css" rel="stylesheet">
-
+<link href="/static/dist/css/vendor/bootstrap.min.css" rel="stylesheet" />
+<link href="/static/dist/css/flat-ui.css" rel="stylesheet" />
+<link href="/static/css/waterflow.css" rel="stylesheet" />
 </head>
-	<body  style="height:100%; width:100%">
+<body  style="height:100%; width:100%">
 <!-- navbar -->
 <nav class="navbar navbar-inverse navbar-embossed" role="navigation">
 	<div class="navbar-header">
@@ -37,13 +36,13 @@
 		</form>
 	</div><!-- /.navbar-collapse -->
 </nav>
-
-{% block body %}<span>empty</span>{% endblock %}
+{% block body %}<span>&lt;empty&gt;</span>{% endblock %}
 {% block footer %}{% endblock %}
-
 <!-- jQuery (necessary for Flat UI's JavaScript plugins) -->
 <script src="/static/dist/js/vendor/jquery.min.js"></script>
 <!-- Include all compiled plugins (below), or include individual files as needed -->
 <script src="/static/dist/js/flat-ui.min.js"></script>
-	</body>
+
+{% block script %}{% endblock %}
+</body>
 </html>

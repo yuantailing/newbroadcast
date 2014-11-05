@@ -1,5 +1,5 @@
 ﻿window.onload = function(){
-	PBL('wrap','box');
+	var loadbox = 0;
 	var data = [
 					{'src':'1.jpg','title':'节目'},
 					{'src':'2.jpg','title':'节目'},
@@ -12,7 +12,46 @@
 					{'src':'9.jpg','title':'节目'},
 					{'src':'10.jpg','title':'节目'}
 				];
-	
+	var wrap = document.getElementById('wrap');
+	var count_complete = 0;
+	for(i in data) {
+		//console.log(i);
+		var box = document.createElement('div');
+		box.className = 'box';
+		wrap.appendChild(box);
+		var info = document.createElement('div');
+		info.className = 'info';
+		box.appendChild(info);
+		var pic = document.createElement('div');
+		pic.className = 'pic';
+		info.appendChild(pic);
+		var img = document.createElement('img');
+		img.src = '/static/images/'+data[i].src;
+		img.style.height = 'auto';
+		pic.appendChild(img);
+		var title = document.createElement('div');
+		title.className = 'title';
+		info.appendChild(title);
+		var a = document.createElement('a');
+		a.setAttribute("href", "/program/1");
+		a.innerHTML = data[i].title;
+		title.appendChild(a);
+		img.onload = function() {
+			count_complete ++;
+			if (count_complete == data.length) {
+				PBL('wrap','box');
+			}
+		}
+
+		if (loadbox == 0) {
+			var boxs = getClass(wrap,'box'); // get all boxes;
+			var boxW = boxs[0].offsetWidth; // the entHeight);width of the box;
+			var colsNum = Math.floor(document.documentElement.clientWidth/boxW); // get the column number;
+			wrap.style.width = boxW*colsNum+'px'; // the width of the wrap;
+			loadbox = 1;
+		}
+	}	
+
 	window.onscroll = function(){
 		if(getCheck()){
 			var wrap = document.getElementById('wrap');
@@ -34,6 +73,7 @@
 				title.className = 'title';
 				info.appendChild(title);
 				var a = document.createElement('a');
+				a.setAttribute("href", "/program/1");
 				a.innerHTML = data[i].title;
 				title.appendChild(a);
 			}
@@ -41,24 +81,26 @@
 		}
 	}
 }
+//waterflow;
 function PBL(wrap,box){
-	//	1.?????Լ?ÿһ??box
 	var wrap = document.getElementById(wrap);
-	var boxs  = getClass(wrap,box);
-	//	2.???Ļ????????
-	var boxW = boxs[0].offsetWidth;
-	var colsNum = Math.floor(document.documentElement.clientWidth/boxW);
-	wrap.style.width = boxW*colsNum+'px';//Ϊ??㸳ֵ???
-	//	3.ѭ????????ox?????????????
-	var everyH = [];//???һ?????洢ÿһ?еĸ߶?
+	var boxs  = getClass(wrap,box); // get all boxes;
+	
+	var boxW = boxs[0].offsetWidth; // the entHeight);width of the box;
+	var colsNum = Math.floor(document.documentElement.clientWidth/boxW); // get the column number;
+	wrap.style.width = boxW*colsNum+'px'; // the width of the wrap;
+	var everyH = [];
 	for (var i = 0; i < boxs.length; i++) {
 		if(i<colsNum){
-			everyH[i] = boxs[i].offsetHeight;
-		}else{
-			var minH = Math.min.apply(null,everyH);//???С??еĸ߶?
-			var minIndex = getIndex(minH,everyH); //???С?е???
-			getStyle(boxs[i],minH,boxs[minIndex].offsetLeft,i);
-			everyH[minIndex] += boxs[i].offsetHeight;//????С?еĸ߶?
+			everyH[i] = boxs[i].offsetHeight; // box's height;
+			//console.log(boxs[i].offsetHeight);
+		} else{
+			var minH = Math.min.apply(null,everyH); // minest height;
+			var minIndex = getIndex(minH,everyH); // index of the minest one;
+			
+			//console.log(minH + ' ' + minIndex + ' ' + everyH[minIndex]);
+			getStyle(boxs[i],minH,boxs[minIndex].offsetLeft,i); 
+			everyH[minIndex] += boxs[i].offsetHeight;
 		}
 	}
 }
