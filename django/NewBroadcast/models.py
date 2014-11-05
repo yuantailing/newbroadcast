@@ -112,12 +112,12 @@ class Source(models.Model):
         if not self.link:
             self.link = None
         super(Source, self).save()
-		if self.source_type == "picture":
-			o.["picture_id"] = self.id;
-			o.save();
-		if self.source_type == "program":
-			o.["source_id"] = self.id;
-			o.save();
+        if self.source_type == "picture":
+            o["picture_id"] = self.id;
+            o.save();
+        if self.source_type == "program":
+            o["source_id"] = self.id;
+            o.save();
 
 
 class Comment(models.Model):
@@ -132,6 +132,6 @@ class Comment(models.Model):
             self.content = None
         super(Comment, self).save()
 
-from django.contrib import admin
-admin.site.register((User, ProgramGroup, ProgramSeries, Program,
-                     Source, Comment))
+#from django.contrib import admin
+#admin.site.register((User, ProgramGroup, ProgramSeries, Program,
+#                     Source, Comment))
