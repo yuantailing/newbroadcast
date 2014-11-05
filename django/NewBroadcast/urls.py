@@ -19,7 +19,7 @@ urlpatterns = patterns('',
         {'document_root': 'upload/'}),
     url(r'^admin/', include(admin.site.urls)),
 
-    url(r'^$', frametest.ctime),
+    url(r'^$', frontpage.show_index),
     url(r'^hello/(.+)/', frametest.hello),
     url(r'^temp/', frametest.temp),
 

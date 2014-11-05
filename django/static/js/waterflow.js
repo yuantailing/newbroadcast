@@ -33,6 +33,7 @@
 		title.className = 'title';
 		info.appendChild(title);
 		var a = document.createElement('a');
+		a.setAttribute("href", "/program/1");
 		a.innerHTML = data[i].title;
 		title.appendChild(a);
 		img.onload = function() {
@@ -72,6 +73,7 @@
 				title.className = 'title';
 				info.appendChild(title);
 				var a = document.createElement('a');
+				a.setAttribute("href", "/program/1");
 				a.innerHTML = data[i].title;
 				title.appendChild(a);
 			}
