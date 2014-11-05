@@ -49,3 +49,12 @@ urlpatterns = patterns('',
     url(r'^user_test/$', test.test_user),
 
 )
+
+from django.conf import settings
+if settings.DEBUG is False: #if DEBUG is True it will be served automatically
+    urlpatterns += patterns('',
+                            url(r'^static/(?P<path>.*)$',
+                                'django.views.static.serve',
+                                {'document_root': settings.STATIC_ROOT,
+                                 }),
+                            )
