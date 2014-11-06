@@ -1,0 +1,49 @@
+#wrap {
+	width:auto;
+	height:auto;
+	margin:0 auto;
+	position:relative;
+}
+#wrap .box {
+	width:500px;
+	height:auto;
+	padding:10px;
+	float:left;
+	position: relative;
+}
+
+#wrap .box .info {
+	position:relative;
+	box-shadow:0 0 11px #666;
+}
+
+#wrap .box .info .pic{
+	width:100%;
+	height:auto;
+}
+
+#wrap .box .info .pic  img{
+	width:100%;
+}
+
+#wrap .box .info .title{
+	position:absolute;
+	bottom: 0%;
+	width: 100%;
+	padding: 0% 5% 0% 5%;
+
+	background-color: #000;
+	text-align: center;
+	opacity: 0;	
+
+	transition: opacity 1s;
+}
+
+#wrap .box .info .title a{
+	color: #fff;
+	font-family: "微软雅黑";
+}
+
+#wrap .box .info .title:hover{
+	opacity: 0.5;
+}

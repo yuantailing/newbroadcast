@@ -3,7 +3,7 @@ from django.db import models
 from django.core import serializers
 from django.http import HttpResponse
 
-from models import *
+from NewBroadcast.models import *
 
 def api_user(req):
 	r_id = req.GET.get('id');

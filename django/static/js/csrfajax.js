@@ -1,24 +1,3 @@
-﻿<html>
-<head>
-<title>AJAX test</title>
-<script type="text/javascript" src="http://libs.baidu.com/jquery/2.1.1/jquery.min.js" ></script>
-<script>
-$(document).ready(function(){
-  $('#input').keyup(function(){
-    $.ajax({
-      url:'/ajaxtest/getresult/',
-      type:"POST",
-      data:{input:$("#input").val()},
-        dataType:"html"
-    }).done(function(msg){
-      $('#show').html(msg).show();
-    }).fail(function(jqXHR,textStatus){
-      $('#show').html('request failed '+textStatus);
-    });
-  });
-});
-</script>
-<script>
 $(document).ajaxSend(function(event, xhr, settings) {  
     function getCookie(name) {  
         var cookieValue = null;  
@@ -55,15 +34,3 @@ $(document).ajaxSend(function(event, xhr, settings) {
         xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));  
     }  
 });
-</script>
-</head>
-<body>
-  <h1>AJAX test</h1>
-  <p>发送到服务器端计算MD5值</p>
-  <form id="form" method="post">
-    {% csrf_token %}
-    <input type="text" id="input" />
-  </form>
-  <div id="show"></div>
-</body>
-</html>

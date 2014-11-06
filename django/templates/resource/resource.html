@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+{% block body %}
+    <!-- /.container -->
+	<div style="height:100%; width:100%" class="text-center">
+		<!-- 组别 -->
+		<div style="height:100%; width:100%" class="pagination text-center">
+			<ul style="height:100%; width:80%">
+				<!-- Make dropdown appear above pagination -->
+				<li style="height:100%; width:14.2857%"><a onclick="selectActiveIt(this)" style="height:100%; width:100%">读书</a></li>
+				<li style="height:100%; width:14.2857%"><a onclick="selectActiveIt(this)" style="height:100%; width:100%">时评</a></li>
+				<li style="height:100%; width:14.2857%"><a onclick="selectActiveIt(this)" style="height:100%; width:100%">资讯</a></li>
+				<li style="height:100%; width:14.2857%"><a onclick="selectActiveIt(this)" style="height:100%; width:100%">访谈</a></li>
+				<li style="height:100%; width:14.2857%"><a onclick="selectActiveIt(this)" style="height:100%; width:100%">音乐</a></li>
+				<li style="height:100%; width:14.2857%"><a onclick="selectActiveIt(this)" style="height:100%; width:100%">体育</a></li>
+				<li style="height:100%; width:14.2857%"><a onclick="selectActiveIt(this)" style="height:100%; width:100%">广播剧</a></li>
+			</ul>
+		</div>
+		
+		<div style="height:10px"></div>
+		<div class="row" style="height:80%; width:80%; margin:auto">
+			<!-- 系列 -->
+			<div style="height:100%; width:20%; float:left">
+				<div class="btn-group-vertical btn-group-sm">
+					<button type="button" class="btn btn-primary">系列系列列系列</button>
+					<button type="button" class="btn btn-primary">系列</button>
+					<button type="button" class="btn btn-primary">系列</button>
+					<button type="button" class="btn btn-primary">系列</button>
+				</div>
+			</div>
+			<!-- 节目 -->
+			<div style="height:100%; width:80%; float:right">
+				<ul class="list-group">
+					<a href="/program/1" style="color:black"><li class="list-group-item" onmouseover="activeIt(this)" onmouseout="deactiveIt(this)">First</li></a>
+					<a href="/program/1" style="color:black"><li class="list-group-item" onmouseover="activeIt(this)" onmouseout="deactiveIt(this)">First</li></a>
+					<a href="/program/1" style="color:black"><li class="list-group-item" onmouseover="activeIt(this)" onmouseout="deactiveIt(this)">First</li></a>
+					<a href="/program/1" style="color:black"><li class="list-group-item" onmouseover="activeIt(this)" onmouseout="deactiveIt(this)">First</li></a>
+					<a href="/program/1" style="color:black"><li class="list-group-item" onmouseover="activeIt(this)" onmouseout="deactiveIt(this)">First</li></a>
+					<a href="/program/1" style="color:black"><li class="list-group-item" onmouseover="activeIt(this)" onmouseout="deactiveIt(this)">First</li></a>
+					<a href="/program/1" style="color:black"><li class="list-group-item" onmouseover="activeIt(this)" onmouseout="deactiveIt(this)">First</li></a>
+					<a href="/program/1" style="color:black"><li class="list-group-item" onmouseover="activeIt(this)" onmouseout="deactiveIt(this)">First</li></a>
+					<a href="/program/1" style="color:black"><li class="list-group-item" onmouseover="activeIt(this)" onmouseout="deactiveIt(this)">First</li></a>
+				</ul>
+			</div>
+		</div>
+		
+		<!-- 翻页 -->
+		<div style="height:100%; width:80%">
+			<ul class="pagination-plain" style="float:right">
+				<li class="previous">
+					<a href="#" class="fui-arrow-left"></a>
+				</li>
+				<li>
+					<a href="#">1</a>
+				</li>
+				<li>
+					<a href="#">2</a>
+				</li>
+				<li>
+					<a href="#">3</a>
+				</li>
+				<li class="previous">
+					<a href="#" class="fui-arrow-right"></a>
+				</li>
+			</ul>
+		</div>
+	</div>
+
+
+    <!-- jQuery (necessary for Flat UI's JavaScript plugins) -->
+    <script src="js/vendor/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="js/flat-ui.min.js"></script>
+	
+	<script>
+		function bigDisplay(x) {
+			var size=1.2*$('#yy').height();
+			$('#yy').height(size);
+		}
+		function activeIt(x) {
+			if (!x) return;
+			var xClassName = x.className;
+			if (xClassName.length == 0) {
+				x.className = xClassName;
+				return;
+			}
+			if (xClassName == "active" || xClassName.match(new RegExp("(^|\\s)" + "active" + "(\\s|$)"))) 
+				return;
+			x.className = xClassName + " " + "active";
+		}
+		function deactiveIt(x) {
+			if (!x) return;
+			var xClassName = x.className;
+			if (xClassName.length == 0)
+				return;
+			if (xClassName == "active") {
+				x.className = "";
+				return;
+			}
+			if (xClassName.match(new RegExp("(^|\\s)" + "active" + "(\\s|$)"))) 
+				x.className = xClassName.replace((new RegExp("(^|\\s)" + "active" + "(\\s|$)")),""); 
+		}
+		function selectActiveIt(x) {
+			var y=x.parentNode;
+			if (!y) return;
+			var yClassName = y.className;
+			y.className = yClassName + " " + "active";
+			var lists = $(x).parent().siblings();
+			for (var i=0; i<lists.length; i++) {
+				deactiveIt(lists[i]);
+			}
+		}
+	</script>
+
+{% endblock %}
