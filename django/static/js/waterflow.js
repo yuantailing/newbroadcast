@@ -1,6 +1,19 @@
 ﻿window.onload = function(){
 	var loadbox = 0;
-	var data = [
+    $('#input').keyup(function(){
+        $.ajax({
+            url:'/index/waterflow',
+            type:"GET",
+            data:{s_w:0, e_w:20},
+        }).done(function(result){
+            console.log(result);
+            //var email = result['fields']['email'];
+            //$('#show').html(email).show();
+        }).fail(function(jqXHR,textStatus){
+            $('#show').html('request failed '+textStatus);
+        });
+    });
+    var data = [
 					{'src':'1.jpg','title':'节目'},
 					{'src':'2.jpg','title':'节目'},
 					{'src':'3.jpg','title':'节目'},
@@ -54,7 +67,18 @@
 
 	window.onscroll = function(){
 		if(getCheck()){
-			var wrap = document.getElementById('wrap');
+            $.ajax({
+                url:'/index/waterflow',
+                type:"GET",
+                data:{s_w:0, e_w:20},
+            }).done(function(result){
+                console.log(result);
+                //var email = result['fields']['email'];
+                //$('#show').html(email).show();
+            }).fail(function(jqXHR,textStatus){
+                console.log('request failed '+textStatus);
+            });
+            var wrap = document.getElementById('wrap');
 			for(i in data){
 				var box = document.createElement('div');
 				box.className = 'box';

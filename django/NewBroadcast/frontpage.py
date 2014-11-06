@@ -18,7 +18,7 @@ def waterflow_data(req):
     ret = [];
     for o in obj:
         tmpret = {};
-        piclink = o.picture[0].doc.url;
+        piclink = o.picture.doc.url;
         tmpret = {key: o[key] for key in ('title', 'description', 'page_format', 'recorder', 'worker')};
         tmpret["picture_link"] = piclink;
         ret.append(tmpret);
