@@ -19,13 +19,10 @@ def form(req):
 
 @csrf_exempt
 def do(req):
-    print "A\n"
     res = { }
     try:
         p_email = req.POST.get('email', None)
         p_password = req.POST.get('password', None)
-        print p_email
-        print p_password
         user = User.objects.get(email=p_email)
         res = { }
         if (user.password == p_password):
