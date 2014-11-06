@@ -1,5 +1,5 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml"  style="height:100%; width:100%">
+<html xmlns="http://www.w3.org/1999/xhtml" style="height:100%; width:100%">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf8" />
 <title>{% block title %}清华大学广播站{% endblock %}</title>
@@ -8,117 +8,10 @@
 <link href="/static/dist/css/flat-ui.css" rel="stylesheet" />
 <link href="/static/css/waterflow.css" rel="stylesheet" />
 </head>
-<body  style="height:100%; width:100%">
-<!-- navbar -->
-<nav class="navbar navbar-inverse navbar-embossed" role="navigation">
-	<div class="navbar-header">
-		<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-collapse-01">
-		  <span class="sr-only">Toggle navigation</span>
-		</button>
-		<a class="navbar-brand" href="#">清华大学广播站</a>
-	</div>
-	<div class="collapse navbar-collapse" id="navbar-collapse-01">
-		<ul class="nav navbar-nav">
-		  <li><a href="/index/">首页</a></li>
-		  <li><a href="/resource/">资源</a></li>
-		</ul>
-		<form class="navbar-form navbar-right" action="#" role="search">
-		  <button type="button" id="login" class="btn btn-primary" data-toggle="modal" data-target="#myModal1">登陆</button>
-		  <button type="button" id="register" class="btn btn-primary" data-toggle="modal" data-target="#myModal2">注册</button>
-		  <div class="form-group">
-			<div class="input-group">
-			  <input class="form-control" id="navbarInput-01" type="search" placeholder="Search">
-			  <span class="input-group-btn">
-				<button type="submit" class="btn"><span class="fui-search"></span></button>
-			  </span>
-			</div>
-		  </div>
-		</form>
-	</div><!-- /.navbar-collapse -->
-</nav>
-
-	<div class="modal fade" id="myModal1" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-         <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-         </div>
-         <div class="modal-body">
-			<form class="form-horizontal" role="form">
-                {% csrf_token %}
-                <div class="form-group">
-                    <label id="login_status" class="col-sm-6 control-label"></label>
-                    <br/>
-                    <label id="show" class="col-sm-6 control-label"></label>
-                </div>
-				<div class="form-group">
-					<label for="login-email" class="col-sm-offset-1 col-sm-2 control-label">邮箱</label>
-					<div class="col-sm-6">
-						<input type="text" class="form-control" id="login-email" placeholder="请输入邮箱">
-					</div>
-				</div>
-				<div class="form-group">
-					<label for="login-password" class="col-sm-offset-1 col-sm-2 control-label">密码</label>
-					<div class="col-sm-6">
-						<input type="text" class="form-control" id="login-password" placeholder="请输入密码">
-					</div>
-				</div>
-			</form>
-         </div>
-         <div class="modal-footer">
-            <button type="button" class="btn btn-primary" id="login_submit">登陆</button>
-            <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-         </div>
-      </div><!-- /.modal-content -->
-    </div><!-- /.modal-dialog -->
-    </div>
-
-    <div class="modal fade" id="myModal2" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-         <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-         </div>
-         <div class="modal-body">
-			<form class="form-horizontal" role="form">
-                {% csrf_token %}
-                <div class="form-group">
-                    <label id="show2" class="col-sm-6 control-label"></label>
-                </div>
-				<div class="form-group">
-					<label for="signin-email" class="col-sm-offset-1 col-sm-2 control-label">邮箱</label>
-					<div class="col-sm-6">
-						<input type="text" class="form-control" id="signin-email" placeholder="请输入邮箱">
-					</div>
-				</div>
-				<div class="form-group">
-					<label for="signin-nickname" class="col-sm-offset-1 col-sm-2 control-label">昵称</label>
-					<div class="col-sm-6">
-						<input type="text" class="form-control" id="signin-nickname" placeholder="请输入昵称">
-					</div>
-				</div>
-                <div class="form-group">
-                    <label for="signin-password" class="col-sm-offset-1 col-sm-2 control-label">密码</label>
-					<div class="col-sm-6">
-						<input type="text" class="form-control" id="signin-password" placeholder="请输入密码">
-					</div>
-				</div>
-                <div class="form-group">
-                    <label for="signin-password2" class="col-sm-offset-1 col-sm-2 control-label">确认密码</label>
-					<div class="col-sm-6">
-						<input type="text" class="form-control" id="signin-password2" placeholder="请再次输入密码">
-					</div>
-				</div>
-			</form>
-         </div>
-         <div class="modal-footer">
-            <button type="button" class="btn btn-primary" id="signin_submit">注册</button>
-            <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-         </div>
-      </div><!-- /.modal-content -->
-    </div><!-- /.modal-dialog -->
-    </div>
-
+<body style="height:100%; width:100%">
+{% include "login/loginmodal.html" %}
+{% include "login/signinmodal.html" %}
+{% include "navigation.html" %}
 {% block body %}<span>&lt;empty&gt;</span>{% endblock %}
 {% block footer %}{% endblock %}
 
