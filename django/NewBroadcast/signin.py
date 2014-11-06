@@ -33,7 +33,7 @@ class Signin:
             res['exist'] = 'true'
         except Exception, e:
             res['exist'] = 'false'
-        return HttpResponse(json.dumps(res), content_type = 'application/json')
+        return HttpResponse(json.dumps(res), content_type='application/json')
 
     @classmethod
     @csrf_exempt
@@ -49,7 +49,6 @@ class Signin:
                 user.email = p_email
                 user.nickname = p_nickname
                 user.password = p_password
-                print 1
                 user.save()
                 res['result'] = 'success'
                 res['info'] = '注册成功'

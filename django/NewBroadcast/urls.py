@@ -1,6 +1,7 @@
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
 from NewBroadcast import frontpage
+from NewBroadcast import resource
 from NewBroadcast import program
 from NewBroadcast import frametest
 from NewBroadcast import login
@@ -28,7 +29,8 @@ urlpatterns = patterns('',
 
     url(r'^index/$', frontpage.show_index),
     url(r'^index/waterflow$', frontpage.waterflow_data),
-    
+
+    url(r'^resource/(.*)$', resource.show),
     url(r'^login/$', login.form),
     url(r'^login/do/$', login.do),
     url(r'^login/test/$', login.test),
