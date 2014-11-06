@@ -1,21 +1,21 @@
 from django.contrib import admin
 from NewBroadcast.models import *
 
-class ProgramInline(admin.ModelAdmin):
+class SourceInline(admin.StackedInline):
     model = Source;
-    fields = ('source_type', 'doc');
+    fields = ['doc'];
     extra = 1;
     
 
-class PictureInline(admin.ModelAdmin):
-    model = Source;
-    fields = ('source_type', 'doc');
+class PictureInline(admin.StackedInline):
+    model = Picture;
+    fields = ['doc'];
     extra = 1;
 
 
 class ProgramAdmin(admin.ModelAdmin):
-    fields = ['series_id', 'title', 'description', 'weight', 'page_format', 'recorder', 'workers']
-    inlines = [ProgramInline, PictureInline]
+    fields = ['series', 'title', 'description', 'weight', 'page_format', 'recorder', 'workers']
+    inlines = [SourceInline, PictureInline]
 
 
 admin.site.register((User, ProgramGroup, ProgramSeries, Comment))

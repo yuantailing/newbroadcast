@@ -46,7 +46,7 @@ class ProgramGroup(models.Model):
 
 
 class ProgramSeries(models.Model):
-    group_id = models.IntegerField(blank=False, default=None, db_index=True)
+    group = models.ForeignKey(ProgramGroup, related_name="series", blank=False)
     title = models.TextField(blank=False, default=None)
     description = models.TextField(null=True, blank=True, default=None)
     weight = models.IntegerField(blank=False, default=0)
@@ -62,15 +62,13 @@ class ProgramSeries(models.Model):
 
 
 class Program(models.Model):
-    series_id = models.IntegerField(blank=False, default=None, db_index=True)
+    series = models.ForeignKey(ProgramSeries, related_name="program", blank=False)
     title = models.TextField(blank=False, default=None)
     description = models.TextField(null=True, blank=True, default=None)
     weight = models.IntegerField(blank=False, default=0)
     page_format = models.TextField(null=True, blank=True, default=None)
     recorder = models.TextField(null=True, blank=True, default=None)
-    source_id = models.TextField(null=True, blank=True, default=None)
     workers = models.TextField(null=True, blank=True, default=None)
-    picture_id = models.TextField(null=True, blank=True, default=None)
     update_time = models.DateTimeField(auto_now_add=True, auto_now=True)
     create_time = models.DateTimeField(auto_now_add=True)
 
@@ -83,41 +81,25 @@ class Program(models.Model):
             self.page_format = None
         if not self.recorder:
             self.recorder = None
-        if not self.source:
-            self.source = None
         if not self.workers:
             self.workers = None
         super(Program, self).save()
 
-
+        
 class Source(models.Model):
-    program_id = models.IntegerField(blank=False, default=None, db_index=True)
-    source_type = models.TextField(blank=False, default=None)
-    title = models.TextField(null=True, blank=True, default=None)
-    description = models.TextField(null=True, blank=True, default=None)
-    link = models.TextField(null=True, blank=True, default=None)
+    program = models.ForeignKey(Program, related_name="source", unique=True);
     doc = models.FileField(null=True, blank=True, default=None,
                            upload_to='source/')
-    weight = models.IntegerField(blank=False, default=0)
     update_time = models.DateTimeField(auto_now_add=True, auto_now=True)
     create_time = models.DateTimeField(auto_now_add=True)
+            
 
-    def save(self):
-        if not self.title:
-            self.title = None
-        if not self.description:
-            self.description = None
-        if not self.source_type:
-            self.source_type = None
-        if not self.link:
-            self.link = None
-        super(Source, self).save()
-        if self.source_type == "picture":
-            o["picture_id"] = self.id;
-            o.save();
-        if self.source_type == "program":
-            o["source_id"] = self.id;
-            o.save();
+class Picture(models.Model):
+    program = models.ForeignKey(Program, related_name="picture", unique=True);
+    doc = models.FileField(null=True, blank=True, default=None,
+                           upload_to='source/')
+    update_time = models.DateTimeField(auto_now_add=True, auto_now=True)
+    create_time = models.DateTimeField(auto_now_add=True)
 
 
 class Comment(models.Model):
@@ -131,7 +113,3 @@ class Comment(models.Model):
         if not self.content:
             self.content = None
         super(Comment, self).save()
-
-#from django.contrib import admin
-#admin.site.register((User, ProgramGroup, ProgramSeries, Program,
-#                     Source, Comment))
