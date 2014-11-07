@@ -14,16 +14,16 @@
         });
     });
     var data = [
-					{'src':'1.jpg','title':'节目'},
-					{'src':'2.jpg','title':'节目'},
-					{'src':'3.jpg','title':'节目'},
-					{'src':'4.jpg','title':'节目'},
-					{'src':'5.jpg','title':'节目'},
-					{'src':'6.jpg','title':'节目'},
-					{'src':'7.jpg','title':'节目'},
-					{'src':'8.jpg','title':'节目'},
-					{'src':'9.jpg','title':'节目'},
-					{'src':'10.jpg','title':'节目'}
+					{'src':'1.jpg','title':'节目1', 'content':'我是节目1的内容，鼠标移上方时显示'},
+					{'src':'2.jpg','title':'节目2'},
+					{'src':'3.jpg','title':'节目3'},
+					{'src':'4.jpg','title':'节目4'},
+					{'src':'5.jpg','title':'节目5'},
+					{'src':'6.jpg','title':'节目6'},
+					{'src':'7.jpg','title':'节目7'},
+					{'src':'8.jpg','title':'节目8'},
+					{'src':'9.jpg','title':'节目9'},
+					{'src':'10.jpg','title':'节目10', 'content':'节目10的内容'}
 				];
 	var wrap = document.getElementById('wrap');
 	var count_complete = 0;
@@ -48,6 +48,18 @@
 		var a = document.createElement('a');
 		a.setAttribute("href", "/program/1");
 		a.innerHTML = data[i].title;
+		var p = document.createElement('p');
+		p.innerHTML = data[i].content;
+		p.style.display = 'none';
+		a.appendChild(p);
+		a.onmouseover = function () {
+			p = this.getElementsByTagName('p');
+			p[0].style.display = 'block';
+		}
+		a.onmouseout = function () {
+			p = this.getElementsByTagName('p');
+			p[0].style.display = 'none';
+		}
 		title.appendChild(a);
 		img.onload = function() {
 			count_complete ++;

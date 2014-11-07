@@ -34,16 +34,10 @@
 
 	background-color: #000;
 	text-align: center;
-	opacity: 0;	
-
-	transition: opacity 1s;
+	opacity: 0.5;	
 }
 
 #wrap .box .info .title a{
 	color: #fff;
 	font-family: "微软雅黑";
-}
-
-#wrap .box .info .title:hover{
-	opacity: 0.5;
 }
