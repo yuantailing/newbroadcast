@@ -9,6 +9,7 @@ from NewBroadcast import signin
 from NewBroadcast import ajaxtest
 from NewBroadcast import api
 from NewBroadcast import test
+from NewBroadcast import space
 
 
 urlpatterns = patterns('',
@@ -29,6 +30,8 @@ urlpatterns = patterns('',
 
     url(r'^index/$', frontpage.show_index),
     url(r'^index/waterflow$', frontpage.waterflow_data),
+
+    url(r'^space/$', space.show_space),
 
     url(r'^resource/(.*)$', resource.show),
     url(r'^login/$', login.form),
