@@ -11,8 +11,13 @@ manage.py runserver 8001
 How to coding
 (http://jingyan.baidu.com/article/ea24bc39a4fed2da62b3318f.html)
 
+How to run models test
+manage.py shell
+from NewBroadcast.models_test import *
+run_test()
+
 Another Database
-Install mongodb
+(Install mongodb)
 easy_install pymongo
 easy_install mongoengine
 [admin] mongod --dbpath=D:\db --logpath=D:\db\log\mongodb.log --install
