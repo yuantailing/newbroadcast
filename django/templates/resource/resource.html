@@ -103,7 +103,8 @@
 			var y=x.parentNode;
 			if (!y) return;
 			var yClassName = y.className;
-			y.className = yClassName + " " + "active";
+			if (!yClassName.match(new RegExp("(^|\\s)" + "active" + "(\\s|$)")))
+				y.className = yClassName + " " + "active";
 			var lists = $(x).parent().siblings();
 			for (var i=0; i<lists.length; i++) {
 				deactiveIt(lists[i]);
