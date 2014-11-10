@@ -9,4 +9,4 @@ import json
 
 from models import *
 def show(req, arg):
-    return render_to_response("resource/resource.html", {});
+    return render_to_response("resource/resource.html", context_instance=RequestContext(req));

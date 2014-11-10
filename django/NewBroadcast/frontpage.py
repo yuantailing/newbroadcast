@@ -9,8 +9,8 @@ import json
 
 from models import *
 def show_index(req):
-    return render_to_response("frontpage/index.html", {});
-    
+    return render_to_response("frontpage/index.html", context_instance=RequestContext(req))
+
 def waterflow_data(req):
     s_w = req.GET.get('s_w');
     e_w = req.GET.get('e_w');

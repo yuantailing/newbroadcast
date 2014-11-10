@@ -23,8 +23,8 @@ def show_program(req, arg):
                     {'pgid':pgid, 'title':title,
                      'strong':description[0:1], 'description':description[1:],
                      'medialink':medialink, 'piclink':piclink,
-                     'table':table});
+                     'table':table},
+                    context_instance=RequestContext(req));
 
 def play_program(req, arg):
-    return render_to_response("program/player.html", {});
-
+    return render_to_response("program/player.html", context_instance=RequestContext(req));
