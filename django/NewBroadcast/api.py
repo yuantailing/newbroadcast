@@ -1,9 +1,9 @@
-import json
+# -*- coding: UTF-8 -*-
 from django.db import models
 from django.core import serializers
 from django.http import HttpResponse
-
 from NewBroadcast.models import *
+import json
 
 def api_user(req):
     r_id = req.GET.get('id');
@@ -35,6 +35,7 @@ def api_comment(req):
     obj = Comment.objects.get(id = r_id);
     return HttpResponse(serializers.serialize('json', [obj])[1 : -1], content_type = "application/json");
 
+
 import os
 
 class ProgramLocalImporter:
@@ -57,5 +58,19 @@ class ProgramLocalImporter:
                              picture_file, save=False)
         pro.save()
 
-        
-            
+'''
+本地导入文件的方法：
+运行manage.py shell
+from NewBroadcast.api import ProgramLocalImporter
+pp = ProgramLocalImporter()
+pp.set_title('importer title here')
+pp.set_picture_filename('static/images/1.jpg')
+pp.save()
+
+批量导入示例：
+for i in range(1,11):
+    pp = ProgramLocalImporter()
+    pp.set_title('importer title here')
+    pp.set_picture_filename('static/images/' + str(i) + '.jpg')
+    pp.save()
+'''
