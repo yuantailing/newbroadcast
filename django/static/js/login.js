@@ -8,8 +8,9 @@ $(document).ready(function(){
             dataType:"json"
         }).done(function(msg){
             $('#show').text(msg.result).show();
+            $('#user-info').html("[" + msg.nickname + "],你好 <a href=\"/space/" + msg.id + "\">个人中心</a>");
         }).fail(function(jqXHR,textStatus){
-            $('#show').html('request failed '+textStatus);
+            $('#show').html('request failed ' + textStatus);
         });
     });
     $.ajax({
@@ -19,8 +20,9 @@ $(document).ready(function(){
         dataType:"json"
     }).done(function(msg){
       $('#login_status').text(msg.result).show();
+      
     }).fail(function(jqXHR,textStatus){
-      $('#login_status').html('request failed '+textStatus);
+      $('#login_status').html('request failed '+ textStatus);
     });
 });
 $(document).ready(function(){
