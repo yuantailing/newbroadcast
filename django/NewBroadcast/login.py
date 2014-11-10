@@ -21,6 +21,7 @@ def do(req):
         if (user.password == p_password):
             res['result'] = 'success'
             res['nickname'] = user.nickname
+            res['id'] = user.id
             req.session['uid'] = user.id
         else:
             res['result'] = 'failed'

@@ -8,7 +8,7 @@ $(document).ready(function(){
             dataType:"json"
         }).done(function(msg){
             $('#show').text(msg.result).show();
-            $('#user-info').html("[" + msg.nickname + "],你好");
+            $('#user-info').html("[" + msg.nickname + "],你好 <a href=\"/space/" + msg.id + "\">个人中心</a>");
         }).fail(function(jqXHR,textStatus){
             $('#show').html('request failed ' + textStatus);
         });
