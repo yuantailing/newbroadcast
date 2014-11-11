@@ -29,7 +29,10 @@ urlpatterns = patterns('',
     url(r'^resource/(.*)$', resource.show),
 
     url(r'^program/play/(.*)$', program.play_program),
-    url(r'^program/(.*)$', program.show_program),
+    url(r'^program/listall/$', program.list_all),
+    url(r'^program/getarr/$', program.get_arr),
+    url(r'^program/getarr_test/$', program.getarr_test),
+    url(r'^program/([0-9]*)$', program.show_program),
 
     url(r'^login/do/$', login.do),
     url(r'^login/test/$', login.test),

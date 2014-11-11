@@ -25,4 +25,4 @@ admin.site.register((User, ProgramGroup, ProgramSeries, Comment))
 admin.site.register(Program, ProgramAdmin)
 '''
 
-admin.site.register((User, ProgramGroup, Program, Comment))
+admin.site.register((User, ProgramGroup, Program, Comment, Source))

@@ -45,33 +45,41 @@ class ProgramLocalImporter:
             super(ProgramLocalImporter.SizeFile, self).__init__(filename, 'rb');
         def size(self):
             return self.file_size
+    def __init__(self):
+        self.title = None
+        self.group_id = None
+        self.picture_arr = []
+        self.audio_id = None
+        self.document_arr = []
     def set_title(self, title):
         self.title = title
     def set_group(self, group_id):
         self.group_id = group_id
-    def set_picture_filename(self, name):
-        self.picture_filename = name
+    def add_picture(self, name):
+        src = Source()
+        src.document.save(os.path.split(name)[1],
+                          ProgramLocalImporter.SizeFile(name), save=False)
+        src.save()
+        self.picture_arr.append(src.id)
     def set_audio_filename(self, name):
-        self.audio_filename = name
-    def set_document_filename(self, name):
-        self.document_filename = name
+        src = Source()
+        src.document.save(os.path.split(name)[1],
+                          ProgramLocalImporter.SizeFile(name), save=False)
+        src.save()
+        self.audio = src.id
+    def add_document(self, name):
+        src = Source()
+        src.document.save(os.path.split(name)[1],
+                          ProgramLocalImporter.SizeFile(name), save=False)
+        src.save()
+        self.document_arr.append(src.id)
     def save(self):
         pro = Program()
         pro.title = self.title
-        if 'group_id' in dir(self):
-            pro.group = ProgramGroup.objects.get(id=self.group_id)
-        if 'picture_filename' in dir(self):
-            picture_file = ProgramLocalImporter.SizeFile(self.picture_filename)
-            pro.picture.save(os.path.split(self.picture_filename)[1],
-                             picture_file, save=False)
-        if 'audio_filename' in dir(self):
-            audio_file = ProgramLocalImporter.SizeFile(self.audio_filename)
-            pro.audio.save(os.path.split(self.audio_filename)[1],
-                             audio_file, save=False)
-        if 'document_filename' in dir(self):
-            document_file = ProgramLocalImporter.SizeFile(self.document_filename)
-            pro.document.save(os.path.split(self.document_filename)[1],
-                             document_file, save=False)
+        pro.group = ProgramGroup.objects.get(id=self.group_id)
+        pro.picture = json.dumps(self.picture_arr)
+        pro.audio = self.audio_id
+        pro.document = json.dumps(self.document_arr)
         pro.save()
 
 
@@ -81,7 +89,8 @@ class ProgramLocalImporter:
 from NewBroadcast.api import ProgramLocalImporter
 pp = ProgramLocalImporter()
 pp.set_title('importer title here')
-pp.set_picture_filename('static/images/1.jpg')
+pp.set_group(2) # 假设存在group 2
+pp.add_picture('static/images/' + str(2) + '.jpg')
 pp.save()
 
 批量导入示例：
@@ -90,6 +99,6 @@ for i in range(1,11):
     pp = ProgramLocalImporter()
     pp.set_title('importer title here')
     pp.set_group(2) # 假设存在group 2
-    pp.set_picture_filename('static/images/' + str(i) + '.jpg')
+    pp.add_picture('static/images/' + str(i) + '.jpg')
     pp.save()
 '''

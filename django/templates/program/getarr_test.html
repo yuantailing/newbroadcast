@@ -1,0 +1,32 @@
+﻿{% extends "base.html" %}
+{% block body %}
+  <h1>AJAX 获取节目信息</h1>
+  <div id="listall_show"></div>
+  <div id="getarr_show"></div>
+{% endblock %}
+{% block script %}
+<script>
+$(document).ready(function(){
+    $.ajax({
+      url:'/program/listall/',
+      type:"GET",
+      data:{'pid':new Array(1,2,3)},
+        dataType:"json"
+    }).done(function(msg){
+      $('#listall_show').html('all program id: ' + msg.pid.join(','));
+    }).fail(function(jqXHR,textStatus){
+      $('#listall_show').html('request failed '+ textStatus);
+    });
+    $.ajax({
+      url:'/program/getarr/',
+      type:"POST",
+      data:{'pid':new Array(1,2,3)},
+        dataType:"json"
+    }).done(function(msg){
+      $('#getarr_show').html(msg.program[0].title + '<br/>' + msg.program[1].title + '<br/>' + msg.program[2].title + '<br/>');
+    }).fail(function(jqXHR,textStatus){
+      $('#getarr_show').html('request failed '+ textStatus);
+    });
+});
+</script>
+{% endblock %}
