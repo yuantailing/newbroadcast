@@ -50,15 +50,12 @@ class Program(models.Model):
     title = models.TextField(blank=False, default=None)
     description = models.TextField(null=True, blank=True, default=None)
     weight = models.IntegerField(blank=False, default=0)
-    page_format = models.TextField(null=True, blank=True, default=None)
     recorder = models.TextField(null=True, blank=True, default=None)
+    contributor = models.TextField(null=True, blank=True, default=None)
     workers = models.TextField(null=True, blank=True, default=None)
-    picture = models.FileField(null=True, blank=True, default=None,
-                           upload_to='program/picture/')
-    audio = models.FileField(null=True, blank=True, default=None,
-                           upload_to='program/audio/')
-    document = models.FileField(null=True, blank=True, default=None,
-                           upload_to='program/document/')
+    picture = models.TextField(null=True, blank=True, default=None) # json of list
+    audio = models.IntegerField(null=True, blank=True, default=True)
+    document = models.TextField(null=True, blank=True, default=None) # json of list
     update_time = models.DateTimeField(auto_now_add=True, auto_now=True)
     create_time = models.DateTimeField(auto_now_add=True)
 
@@ -69,13 +66,28 @@ class Program(models.Model):
             self.title = None
         if not self.description:
             self.description = None
-        if not self.page_format:
-            self.page_format = None
         if not self.recorder:
             self.recorder = None
+        if not self.contributor:
+            self.page_format = None
         if not self.workers:
             self.workers = None
+        if not self.picture:
+            self.picture = None
+        if not self.document:
+            self.document = None
         super(Program, self).save()
+
+
+class Source(models.Model):
+    document = models.FileField(null=True, blank=True, default=None,
+                           upload_to='source')
+    md5 = models.TextField(null=True, blank=True, default=None)
+
+    def save(self):
+        if not self.md5:
+            self.md5 = None
+        super(Source, self).save()
 
 
 class Comment(models.Model):
