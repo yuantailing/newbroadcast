@@ -1,6 +1,8 @@
 {% extends "base.html" %}
 {% block body %}
     <!-- /.container -->
+	  <div id="listall_show"></div>
+  <div id="getarr_show"></div>
 	<div style="height:100%; width:100%" class="text-center">
 		<!-- 组别 -->
 		<div style="height:100%; width:100%" class="pagination text-center">
@@ -29,7 +31,7 @@
 			</div>
 			<!-- 节目 -->
 			<div style="height:100%; width:80%; float:right">
-				<ul class="list-group">
+				<ul id="res-list" class="list-group">
 					<a href="/program/1" style="color:black"><li class="list-group-item" onmouseover="activeIt(this)" onmouseout="deactiveIt(this)">First</li></a>
 					<a href="/program/1" style="color:black"><li class="list-group-item" onmouseover="activeIt(this)" onmouseout="deactiveIt(this)">First</li></a>
 					<a href="/program/1" style="color:black"><li class="list-group-item" onmouseover="activeIt(this)" onmouseout="deactiveIt(this)">First</li></a>
@@ -70,11 +72,34 @@
     <script src="js/vendor/jquery.min.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="js/flat-ui.min.js"></script>
-	
+{% endblock %}
+{% block script %}
 	<script>
-		function bigDisplay(x) {
-			var size=1.2*$('#yy').height();
-			$('#yy').height(size);
+	var pids = new Array();
+	var index = 0;
+		$(document).ready(function(){
+			$.ajax({
+			  url:'/resource/listall/',
+			  type:"GET",
+			  data:{'pid':new Array(1,2,3)},
+				dataType:"json"
+			}).done(function(msg){
+				pids = msg.pid;
+				showResource();
+			}).fail(function(jqXHR,textStatus){
+			});
+		});
+		function showResource() {
+			for (var i=0;i<pids.length;i++) {
+				var anode=document.createElement("a");
+				anode.style.color="black";
+				anode.href="/program/"+pids[i];
+				var linode=document.createElement("li");
+				linode.className="list-group-item";
+				linode.innerHTML="second";
+				anode.appendChild(linode);
+				document.getElementById("res-list").appendChild(anode);
+			}
 		}
 		function activeIt(x) {
 			if (!x) return;
