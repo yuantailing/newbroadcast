@@ -9,11 +9,26 @@ import json
 
 from models import *
 def show(req):
-    return render_to_response("resource/resource.html", context_instance=RequestContext(req));
+    groups = []
+    for gp in ProgramGroup.objects.order_by("order"):
+        dt = { }
+        dt['id'] = gp.id
+        dt['title'] = gp.title
+        groups.append(dt)
+    liwidth = 99 / len(dt)
+    return render_to_response("resource/resource.html",
+                              {'groups':groups, 'liwidth': liwidth},
+                              context_instance=RequestContext(req));
 
 def list_all(req):
     res = []
-    for pg in Program.objects.all():
+    for pg in Program.objects.order_by('-weight'):
+        res.append(pg.id)
+    return HttpResponse(json.dumps({'pid':res}), content_type='application/json')
+
+def group_filter(req, arg):
+    res = []
+    for pg in ProgramGroup.objects.get(id=int(arg)).program.all().order_by('-weight'):
         res.append(pg.id)
     return HttpResponse(json.dumps({'pid':res}), content_type='application/json')
 
