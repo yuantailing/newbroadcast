@@ -10,6 +10,7 @@ def getresult(req):
                         md5(txt.encode("utf-8")).hexdigest())
 
 def index(req):
-    t = get_template("ajaxtest/index.html")
-    c = RequestContext(req)
-    return HttpResponse(t.render(c))
+    # t = get_template("ajaxtest/index.html")
+    # c = RequestContext(req)
+    # return HttpResponse(t.render(c))
+    return render_to_response("ajaxtest/index.html", context_instance=RequestContext(req))

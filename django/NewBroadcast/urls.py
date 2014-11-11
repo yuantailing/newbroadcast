@@ -1,14 +1,13 @@
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
+from NewBroadcast import ajaxtest
 from NewBroadcast import frontpage
 from NewBroadcast import resource
 from NewBroadcast import program
-from NewBroadcast import frametest
 from NewBroadcast import login
 from NewBroadcast import signin
-from NewBroadcast import ajaxtest
 from NewBroadcast import api
-from NewBroadcast import test
+from NewBroadcast import space
 
 
 urlpatterns = patterns('',
@@ -16,13 +15,10 @@ urlpatterns = patterns('',
     # url(r'^$', 'NewBroadcast.views.home', name='home'),
     # url(r'^blog/', include('blog.urls')),
 
+    url(r'^$', frontpage.show_index),
     url(r'^upload/(?P<path>.*)$', 'django.views.static.serve',
         {'document_root': 'upload/'}),
     url(r'^admin/', include(admin.site.urls)),
-
-    url(r'^$', frontpage.show_index),
-    url(r'^hello/(.+)/', frametest.hello),
-    url(r'^temp/', frametest.temp),
 
     url(r'^ajaxtest/$', ajaxtest.index),
     url(r'^ajaxtest/getresult/$', ajaxtest.getresult),
@@ -31,17 +27,16 @@ urlpatterns = patterns('',
     url(r'^index/waterflow$', frontpage.waterflow_data),
 
     url(r'^resource/(.*)$', resource.show),
-    url(r'^login/$', login.form),
-    url(r'^login/do/$', login.do),
-    url(r'^login/test/$', login.test),
-    url(r'^login/logout/$', login.logout),
 
     url(r'^program/play/(.*)$', program.play_program),
     url(r'^program/(.*)$', program.show_program),
 
-    url(r'^signin/$', signin.Signin.form),
-    url(r'^signin/judge/$', signin.Signin.judge),
-    url(r'^signin/do/$', signin.Signin.do),
+    url(r'^login/do/$', login.do),
+    url(r'^login/test/$', login.test),
+    url(r'^login/logout/$', login.logout),
+
+    url(r'^signin/judge/$', signin.judge),
+    url(r'^signin/do/$', signin.do),
 
     url(r'^user/$', api.api_user),
     url(r'^program_group/$', api.api_program_group),
@@ -50,7 +45,7 @@ urlpatterns = patterns('',
     url(r'^api_source/$', api.api_source),
     url(r'^api_comment/$', api.api_comment),
 
-    url(r'^user_test/$', test.test_user),
+    url(r'^space/$', space.show_space),
 
 )
 

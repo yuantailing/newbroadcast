@@ -32,47 +32,39 @@ class User(models.Model):
 
 class ProgramGroup(models.Model):
     title = models.TextField(blank=False, default=None)
-    description = models.TextField(null=True, blank=True, default=None)
-    weight = models.IntegerField(blank=False, default=0)
+    order = models.IntegerField(blank=False, default=0)
     update_time = models.DateTimeField(auto_now_add=True, auto_now=True)
     create_time = models.DateTimeField(auto_now_add=True)
 
     def save(self):
         if not self.title:
             self.title = None
-        if not self.description:
-            self.description = None
         super(ProgramGroup, self).save()
 
 
-class ProgramSeries(models.Model):
-    group = models.ForeignKey(ProgramGroup, related_name="series", blank=False)
-    title = models.TextField(blank=False, default=None)
-    description = models.TextField(null=True, blank=True, default=None)
-    weight = models.IntegerField(blank=False, default=0)
-    update_time = models.DateTimeField(auto_now_add=True, auto_now=True)
-    create_time = models.DateTimeField(auto_now_add=True)
-
-    def save(self):
-        if not self.title:
-            self.title = None
-        if not self.description:
-            self.description = None
-        super(ProgramSeries, self).save()
-
-
 class Program(models.Model):
-    series = models.ForeignKey(ProgramSeries, related_name="program", blank=False)
+    group = models.ForeignKey(ProgramGroup, related_name="program",
+                              null=True, blank=True, default=None,
+                              on_delete=models.SET_NULL)
+    series = models.TextField(null=True, blank=True, default=None)
     title = models.TextField(blank=False, default=None)
     description = models.TextField(null=True, blank=True, default=None)
     weight = models.IntegerField(blank=False, default=0)
     page_format = models.TextField(null=True, blank=True, default=None)
     recorder = models.TextField(null=True, blank=True, default=None)
     workers = models.TextField(null=True, blank=True, default=None)
+    picture = models.FileField(null=True, blank=True, default=None,
+                           upload_to='program/picture/')
+    audio = models.FileField(null=True, blank=True, default=None,
+                           upload_to='program/audio/')
+    document = models.FileField(null=True, blank=True, default=None,
+                           upload_to='program/document/')
     update_time = models.DateTimeField(auto_now_add=True, auto_now=True)
     create_time = models.DateTimeField(auto_now_add=True)
 
-    def save(self):
+    def save(self):        
+        if not self.series:
+            self.series = None
         if not self.title:
             self.title = None
         if not self.description:
@@ -85,26 +77,14 @@ class Program(models.Model):
             self.workers = None
         super(Program, self).save()
 
-        
-class Source(models.Model):
-    program = models.ForeignKey(Program, related_name="source", unique=True);
-    doc = models.FileField(null=True, blank=True, default=None,
-                           upload_to='source/')
-    update_time = models.DateTimeField(auto_now_add=True, auto_now=True)
-    create_time = models.DateTimeField(auto_now_add=True)
-            
-
-class Picture(models.Model):
-    program = models.ForeignKey(Program, related_name="picture", unique=True);
-    doc = models.FileField(null=True, blank=True, default=None,
-                           upload_to='source/')
-    update_time = models.DateTimeField(auto_now_add=True, auto_now=True)
-    create_time = models.DateTimeField(auto_now_add=True)
-
 
 class Comment(models.Model):
-    uid = models.IntegerField(blank=False, default=None, db_index=True)
-    program_id = models.IntegerField(blank=False, default=None, db_index=True)
+    user = models.ForeignKey(User, related_name="comment",
+                              null=False, blank=False, default=None,
+                              on_delete=models.CASCADE)
+    program = models.ForeignKey(Program, related_name="comment",
+                              null=False, blank=False, default=None,
+                              on_delete=models.CASCADE)
     content = models.TextField(blank=False, default=None)
     update_time = models.DateTimeField(auto_now_add=True, auto_now=True)
     create_time = models.DateTimeField(auto_now_add=True)
