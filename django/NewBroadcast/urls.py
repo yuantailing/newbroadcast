@@ -26,13 +26,13 @@ urlpatterns = patterns('',
     url(r'^index/$', frontpage.show_index),
     url(r'^index/waterflow$', frontpage.waterflow_data),
 
-    url(r'^resource/(.*)$', resource.show),
+    url(r'^resource/$', resource.show),
+    url(r'^resource/listall/$', resource.list_all),
+    url(r'^resource/getarr/$', resource.get_arr),
+    url(r'^resource/getarr_test/$', resource.getarr_test),
 
-    url(r'^program/play/(.*)$', program.play_program),
-    url(r'^program/listall/$', program.list_all),
-    url(r'^program/getarr/$', program.get_arr),
-    url(r'^program/getarr_test/$', program.getarr_test),
     url(r'^program/([0-9]*)$', program.show_program),
+    url(r'^program/play/(.*)$', program.play_program),
 
     url(r'^login/do/$', login.do),
     url(r'^login/test/$', login.test),
