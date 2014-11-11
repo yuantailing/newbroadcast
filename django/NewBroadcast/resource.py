@@ -22,7 +22,13 @@ def show(req):
 
 def list_all(req):
     res = []
-    for pg in Program.objects.all():
+    for pg in Program.objects.order_by('-weight'):
+        res.append(pg.id)
+    return HttpResponse(json.dumps({'pid':res}), content_type='application/json')
+
+def group_filter(req, arg):
+    res = []
+    for pg in ProgramGroup.objects.get(id=int(arg)).program.all().order_by('-weight'):
         res.append(pg.id)
     return HttpResponse(json.dumps({'pid':res}), content_type='application/json')
 

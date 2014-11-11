@@ -28,6 +28,7 @@ urlpatterns = patterns('',
 
     url(r'^resource/$', resource.show),
     url(r'^resource/listall/$', resource.list_all),
+    url(r'^resource/groupfilter/([0-9]*)$', resource.group_filter),
     url(r'^resource/getarr/$', resource.get_arr),
     url(r'^resource/getarr_test/$', resource.getarr_test),
 
