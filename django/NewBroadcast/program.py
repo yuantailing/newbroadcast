@@ -18,7 +18,7 @@ def show_program(req, arg):
         title = pg.title
 
     description = ""
-    if description:
+    if pg.description:
         description = pg.description
 
     table = []
@@ -33,9 +33,15 @@ def show_program(req, arg):
     if pg.workers:
         table.append((u"机务人员", pg.workers))
 
-    piclink = "/static/images/1.jpg"
+    piclink = []
+    if pg.picture:
+        pic_arr = json.loads(pg.picture)
+        for i in pic_arr:
+            piclink.append(Source.objects.get(id=i).document.url)
     
-    medialink = u"/upload/source/sample.mp3"
+    medialink = ""
+    if pg.audio:
+        medialink = Source.objects.get(id=pg.audio).document.url
     
     return render_to_response("program/show.html",
                     {'pgid':pgid, 'title':title,
@@ -45,4 +51,11 @@ def show_program(req, arg):
                     context_instance=RequestContext(req));
 
 def play_program(req, arg):
-    return render_to_response("program/player.html", context_instance=RequestContext(req));
+    pgid = int(arg)
+    pg = Program.objects.get(id=pgid)
+    medialink = ""
+    if pg.audio:
+        medialink = Source.objects.get(id=pg.audio).document.url
+    return render_to_response("program/player.html",
+                              {'medialink':medialink},
+                              context_instance=RequestContext(req));
