@@ -59,3 +59,11 @@ def play_program(req, arg):
     return render_to_response("program/player.html",
                               {'medialink':medialink},
                               context_instance=RequestContext(req));
+
+def list_all(req):
+    res = []
+    for pg in Program.objects.all():
+        res.append(pg.id)
+    return HttpResponse(json.dumps(res), content_type='application/json')
+
+

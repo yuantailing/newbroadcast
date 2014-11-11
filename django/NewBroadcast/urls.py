@@ -29,6 +29,7 @@ urlpatterns = patterns('',
     url(r'^resource/(.*)$', resource.show),
 
     url(r'^program/play/(.*)$', program.play_program),
+    url(r'^program/listall/$', program.list_all),
     url(r'^program/(.*)$', program.show_program),
 
     url(r'^login/do/$', login.do),
