@@ -8,7 +8,7 @@ from django.core import serializers
 import json
 
 from models import *
-def show(req, arg):
+def show(req):
     return render_to_response("resource/resource.html", context_instance=RequestContext(req));
 
 def list_all(req):
