@@ -18,6 +18,7 @@ def waterflow_data(req):
     ret = [];
     for o in obj:
         tmpret = {};
+        tmpret['id'] = o.id;
         pic_arr = json.loads(o.picture)
         if pic_arr and (len(pic_arr) > 0):
             tmpret['src'] = Source.objects.get(id=pic_arr[0]).document.url
@@ -25,6 +26,5 @@ def waterflow_data(req):
             pass
         tmpret['title'] = o.title;
         tmpret['content'] = o.description;
-        tmpret['audio_link'] = o.audio;
         ret.append(tmpret);
     return HttpResponse(json.dumps(ret), content_type = "application/json");
