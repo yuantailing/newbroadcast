@@ -18,8 +18,8 @@ def waterflow_data(req):
     ret = [];
     for o in obj:
         tmpret = {};
-        piclink = o.picture.doc.url;
-        tmpret = {key: o[key] for key in ('title', 'description', 'page_format', 'recorder', 'worker')};
+        piclink = o.picture.all()[0].doc.url;
+        tmpret = {'title': o.title};
         tmpret["picture_link"] = piclink;
         ret.append(tmpret);
     return HttpResponse(serializers.serialize('json', ret), content_type = "application/json");
