@@ -7,7 +7,7 @@ from NewBroadcast import program
 from NewBroadcast import login
 from NewBroadcast import signin
 from NewBroadcast import api
-from NewBroadcast import space
+from NewBroadcast import manager
 
 
 urlpatterns = patterns('',
@@ -45,7 +45,9 @@ urlpatterns = patterns('',
     url(r'^api_source/$', api.api_source),
     url(r'^api_comment/$', api.api_comment),
 
-    url(r'^space/$', space.show_space),
+    url(r'^space/$', manager.show_space),
+	url(r'^mgrres/$', manager.show_mgrres),
+	url(r'^mgruser/$', manager.show_mgruser),
 
 )
 
