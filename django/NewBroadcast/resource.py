@@ -9,7 +9,16 @@ import json
 
 from models import *
 def show(req):
-    return render_to_response("resource/resource.html", context_instance=RequestContext(req));
+    groups = []
+    for gp in ProgramGroup.objects.order_by("order"):
+        dt = { }
+        dt['id'] = gp.id
+        dt['title'] = gp.title
+        groups.append(dt)
+    liwidth = 99 / len(dt)
+    return render_to_response("resource/resource.html",
+                              {'groups':groups, 'liwidth': liwidth},
+                              context_instance=RequestContext(req));
 
 def list_all(req):
     res = []

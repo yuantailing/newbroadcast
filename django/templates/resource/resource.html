@@ -6,16 +6,15 @@
 		<div style="height:100%; width:100%" class="pagination text-center">
 			<ul style="height:100%; width:80%">
 				<!-- Make dropdown appear above pagination -->
-				<li style="height:100%; width:13%"><a onclick="selectActiveIt(this)" style="height:100%; width:100%">读书</a></li>
-				<li style="height:100%; width:14%"><a onclick="selectActiveIt(this)" style="height:100%; width:100%">时评</a></li>
-				<li style="height:100%; width:14%"><a onclick="selectActiveIt(this)" style="height:100%; width:100%">资讯</a></li>
-				<li style="height:100%; width:14%"><a onclick="selectActiveIt(this)" style="height:100%; width:100%">访谈</a></li>
-				<li style="height:100%; width:14%"><a onclick="selectActiveIt(this)" style="height:100%; width:100%">音乐</a></li>
-				<li style="height:100%; width:14%"><a onclick="selectActiveIt(this)" style="height:100%; width:100%">体育</a></li>
-				<li style="height:100%; width:16%;"><a onclick="selectActiveIt(this)" style="height:100%; width:100%">广播剧</a></li>
+                {% for pg in groups %}
+				<li style="height:100%; width:{{ liwidth }}%">
+					<a onclick="selectActiveIt(this)" style="height:100%; width:100%">{{ pg.title }}</a>
+					<input type="hidden" id="groupid" value="{{ pg.id }}" />
+				</li>
+                {% endfor %}
 			</ul>
 		</div>
-		
+
 		<div style="height:10px"></div>
 		<div class="row" style="height:80%; width:80%; margin:auto">
 			<!-- 系列 -->
