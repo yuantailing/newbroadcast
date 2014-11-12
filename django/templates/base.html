@@ -13,6 +13,7 @@
 <body>
 <!-- main content -->
 {% csrf_token %}
+<input type="hidden" id="user_power" value="{{ request.session.user_power }}" />
 {% include "login/loginmodal.html" %}
 {% include "login/signinmodal.html" %}
 {% include "navigation.html" %}
