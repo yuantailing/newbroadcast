@@ -1,6 +1,7 @@
 from django.contrib import admin
 from NewBroadcast.models import *
 
+'''
 class SourceInline(admin.StackedInline):
     model = Source;
     fields = ['doc'];
@@ -22,3 +23,6 @@ admin.site.register((User, ProgramGroup, ProgramSeries, Comment))
 # admin.site.register(ProgramGroup, ProgramGroupAdmin)
 # admin.site.register(ProgramSeries, ProgramSeriesAdmin)
 admin.site.register(Program, ProgramAdmin)
+'''
+
+admin.site.register((User, ProgramGroup, Program, Comment, Source))

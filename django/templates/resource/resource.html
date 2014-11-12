@@ -1,66 +1,43 @@
 {% extends "base.html" %}
 {% block body %}
     <!-- /.container -->
+	  <div id="listall_show"></div>
+  <div id="getarr_show"></div>
 	<div style="height:100%; width:100%" class="text-center">
 		<!-- 组别 -->
 		<div style="height:100%; width:100%" class="pagination text-center">
 			<ul style="height:100%; width:80%">
 				<!-- Make dropdown appear above pagination -->
-				<li style="height:100%; width:13%"><a onclick="selectActiveIt(this)" style="height:100%; width:100%">读书</a></li>
-				<li style="height:100%; width:14%"><a onclick="selectActiveIt(this)" style="height:100%; width:100%">时评</a></li>
-				<li style="height:100%; width:14%"><a onclick="selectActiveIt(this)" style="height:100%; width:100%">资讯</a></li>
-				<li style="height:100%; width:14%"><a onclick="selectActiveIt(this)" style="height:100%; width:100%">访谈</a></li>
-				<li style="height:100%; width:14%"><a onclick="selectActiveIt(this)" style="height:100%; width:100%">音乐</a></li>
-				<li style="height:100%; width:14%"><a onclick="selectActiveIt(this)" style="height:100%; width:100%">体育</a></li>
-				<li style="height:100%; width:16%;"><a onclick="selectActiveIt(this)" style="height:100%; width:100%">广播剧</a></li>
+                {% for pg in groups %}
+				<li style="height:100%; width:{{ liwidth }}%">
+					<a onclick="selectActiveIt(this)" style="height:100%; width:100%">{{ pg.title }}</a>
+					<input type="hidden" id="groupid" value="{{ pg.id }}" />
+				</li>
+                {% endfor %}
 			</ul>
 		</div>
-		
+
 		<div style="height:10px"></div>
 		<div class="row" style="height:80%; width:80%; margin:auto">
 			<!-- 系列 -->
-			<div style="height:100%; width:20%; float:left">
+			<!-- <div style="height:100%; width:20%; float:left">
 				<div class="btn-group-vertical btn-group-sm">
 					<button type="button" class="btn btn-primary">系列系列列系列</button>
 					<button type="button" class="btn btn-primary">系列</button>
 					<button type="button" class="btn btn-primary">系列</button>
 					<button type="button" class="btn btn-primary">系列</button>
 				</div>
-			</div>
+			</div> -->
 			<!-- 节目 -->
-			<div style="height:100%; width:80%; float:right">
-				<ul class="list-group">
-					<a href="/program/1" style="color:black"><li class="list-group-item" onmouseover="activeIt(this)" onmouseout="deactiveIt(this)">First</li></a>
-					<a href="/program/1" style="color:black"><li class="list-group-item" onmouseover="activeIt(this)" onmouseout="deactiveIt(this)">First</li></a>
-					<a href="/program/1" style="color:black"><li class="list-group-item" onmouseover="activeIt(this)" onmouseout="deactiveIt(this)">First</li></a>
-					<a href="/program/1" style="color:black"><li class="list-group-item" onmouseover="activeIt(this)" onmouseout="deactiveIt(this)">First</li></a>
-					<a href="/program/1" style="color:black"><li class="list-group-item" onmouseover="activeIt(this)" onmouseout="deactiveIt(this)">First</li></a>
-					<a href="/program/1" style="color:black"><li class="list-group-item" onmouseover="activeIt(this)" onmouseout="deactiveIt(this)">First</li></a>
-					<a href="/program/1" style="color:black"><li class="list-group-item" onmouseover="activeIt(this)" onmouseout="deactiveIt(this)">First</li></a>
-					<a href="/program/1" style="color:black"><li class="list-group-item" onmouseover="activeIt(this)" onmouseout="deactiveIt(this)">First</li></a>
-					<a href="/program/1" style="color:black"><li class="list-group-item" onmouseover="activeIt(this)" onmouseout="deactiveIt(this)">First</li></a>
+			<div style="height:100%; width:100%; float:right">
+				<ul id="res-list" class="list-group">
 				</ul>
 			</div>
 		</div>
 		
 		<!-- 翻页 -->
 		<div style="height:100%; width:80%">
-			<ul class="pagination-plain" style="float:right">
-				<li class="previous">
-					<a href="#" class="fui-arrow-left"></a>
-				</li>
-				<li>
-					<a href="#">1</a>
-				</li>
-				<li>
-					<a href="#">2</a>
-				</li>
-				<li>
-					<a href="#">3</a>
-				</li>
-				<li class="previous">
-					<a href="#" class="fui-arrow-right"></a>
-				</li>
+			<ul id="page-list" class="pagination-plain" style="float:right">
 			</ul>
 		</div>
 	</div>
@@ -70,11 +47,91 @@
     <script src="js/vendor/jquery.min.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="js/flat-ui.min.js"></script>
-	
+{% endblock %}
+{% block script %}
 	<script>
-		function bigDisplay(x) {
-			var size=1.2*$('#yy').height();
-			$('#yy').height(size);
+	var pids = new Array();
+	var index = 0;
+		$(document).ready(function(){
+			$.ajax({
+			  url:'/resource/listall/',
+			  type:"GET",
+			  data:{},
+				dataType:"json"
+			}).done(function(msg){
+				pids = msg.pid;
+				var count=parseInt(pids.length/10+1);
+				document.getElementById("page-list").innerHTML="";
+				if (count>1) {
+					var linode=document.createElement("li");
+					linode.setAttribute("class", "previous");
+					var anode=document.createElement("a");
+					anode.setAttribute("class", "fui-arrow-left");
+					anode.setAttribute("onclick", "prePage(this)");
+					linode.appendChild(anode);
+					document.getElementById("page-list").appendChild(linode);
+					for (var i=1;i<=count;i++) {
+						var linode=document.createElement("li");
+						var anode=document.createElement("a");
+						anode.innerHTML=i;
+						anode.setAttribute("onclick", "selectPage(this)");
+						linode.appendChild(anode);
+						document.getElementById("page-list").appendChild(linode);
+					}
+					var linode=document.createElement("li");
+					linode.setAttribute("class", "previous");
+					var anode=document.createElement("a");
+					anode.setAttribute("class", "fui-arrow-right");
+					anode.setAttribute("onclick", "nextPage(this)");
+					linode.appendChild(anode);
+					document.getElementById("page-list").appendChild(linode);
+				}
+				showResource();
+			}).fail(function(jqXHR,textStatus){
+			});
+		});
+		function showResource() {
+			var subpids = new Array();
+			var len;
+			if (pids.length-index > 10) {
+				len = 10;
+			} else {
+				len = pids.length-index;
+			}
+			for (var i=0;i < len;i++) {
+				subpids[i]=pids[i+index];
+			}
+			$.ajax({
+			  url:'/resource/getarr/',
+			  type:"POST",
+			  data:{'pid':subpids},
+				dataType:"json"
+			}).done(function(msg){
+				document.getElementById("res-list").innerHTML="";
+			  	for (var i=0;i<len;i++) {
+					var anode=document.createElement("a");
+					anode.style.color="black";
+					anode.href="/program/"+pids[i+index];
+					var linode=document.createElement("li");
+					linode.className="list-group-item";
+					linode.setAttribute("onmouseover", "activeIt(this)");
+					linode.setAttribute("onmouseout", "deactiveIt(this)");
+					anode.appendChild(linode);
+					var table=document.createElement("table");
+					table.setAttribute("class", "table");
+					table.setAttribute("cellpadding", "0");
+					var td1=document.createElement("td");
+					td1.innerHTML=msg.program[i].title;
+					var td2=document.createElement("td");
+					td2.innerHTML=msg.program[i].group+"/"+msg.program[i].series;
+					table.appendChild(td1);
+					table.appendChild(td2);
+					linode.appendChild(table);
+					document.getElementById("res-list").appendChild(anode);
+				}
+			}).fail(function(jqXHR,textStatus){
+			  $('#getarr_show').html('request failed '+ textStatus);
+			});
 		}
 		function activeIt(x) {
 			if (!x) return;
@@ -100,14 +157,68 @@
 				x.className = xClassName.replace((new RegExp("(^|\\s)" + "active" + "(\\s|$)")),""); 
 		}
 		function selectActiveIt(x) {
+			alert($(x).next().attr("value"));
 			var y=x.parentNode;
 			if (!y) return;
 			var yClassName = y.className;
-			y.className = yClassName + " " + "active";
+			if (!yClassName.match(new RegExp("(^|\\s)" + "active" + "(\\s|$)")))
+				y.className = yClassName + " " + "active";
 			var lists = $(x).parent().siblings();
 			for (var i=0; i<lists.length; i++) {
 				deactiveIt(lists[i]);
 			}
+			$.ajax({
+			  url:'/resource/groupfilter/'+$(x).next().attr("value"),
+			  type:"GET",
+			  data:{},
+				dataType:"json"
+			}).done(function(msg){
+				pids = msg.pid;
+				var count=parseInt(pids.length/10+1);
+				document.getElementById("page-list").innerHTML="";
+				if (count>1) {
+					var linode=document.createElement("li");
+					linode.setAttribute("class", "previous");
+					var anode=document.createElement("a");
+					anode.setAttribute("class", "fui-arrow-left");
+					anode.setAttribute("onclick", "prePage(this)");
+					linode.appendChild(anode);
+					document.getElementById("page-list").appendChild(linode);
+					for (var i=1;i<=count;i++) {
+						var linode=document.createElement("li");
+						var anode=document.createElement("a");
+						anode.innerHTML=i;
+						anode.setAttribute("onclick", "selectPage(this)");
+						linode.appendChild(anode);
+						document.getElementById("page-list").appendChild(linode);
+					}
+					var linode=document.createElement("li");
+					linode.setAttribute("class", "previous");
+					var anode=document.createElement("a");
+					anode.setAttribute("class", "fui-arrow-right");
+					anode.setAttribute("onclick", "nextPage(this)");
+					linode.appendChild(anode);
+					document.getElementById("page-list").appendChild(linode);
+				}
+				showResource();
+			}).fail(function(jqXHR,textStatus){
+			});
+		}
+		function nextPage(x) {
+			if (index+10<pids.length) {
+				index=index+10;
+				showResource();
+			}
+		}
+		function prePage(x) {
+			if (index-10>=0) {
+				index=index-10;
+				showResource();
+			}
+		}
+		function selectPage(x) {
+			index=(x.innerHTML-1)*10;
+			showResource();
 		}
 	</script>
 

@@ -1,119 +1,117 @@
 ﻿window.onload = function(){
-	var loadbox = 0;
-    $('#input').keyup(function(){
-        $.ajax({
-            url:'/index/waterflow',
-            type:"GET",
-            data:{s_w:0, e_w:20},
-        }).done(function(result){
-            console.log(result);
-            //var email = result['fields']['email'];
-            //$('#show').html(email).show();
-        }).fail(function(jqXHR,textStatus){
-            $('#show').html('request failed '+textStatus);
-        });
+	var data = [];
+    var num = 0;
+    var loadbox = 0;
+    $.ajax({
+        url:'/index/waterflow',
+        type:"GET",
+        data:{s_w:num, e_w:num+10},
+    }).done(function(result){
+        data = result;
+        console.log(data);
+        var wrap = document.getElementById('wrap');
+        var count_complete = 0;
+        for(i in data) {
+            //console.log(i);
+            var box = document.createElement('div');
+            box.className = 'box';
+            wrap.appendChild(box);
+            var info = document.createElement('div');
+            info.className = 'info';
+            box.appendChild(info);
+            var pic = document.createElement('div');
+            pic.className = 'pic';
+            info.appendChild(pic);
+            var img = document.createElement('img');
+            img.src = data[i].src;
+            img.style.height = 'auto';
+            pic.appendChild(img);
+            var title = document.createElement('div');
+            title.className = 'title';
+            info.appendChild(title);
+            var a = document.createElement('a');
+            a.setAttribute("href", "/program/" + data[i].id);
+            a.innerHTML = data[i].title;
+            var p = document.createElement('p');
+            p.innerHTML = data[i].content;
+            p.style.display = 'none';
+            a.appendChild(p);
+            a.onmouseover = function () {
+                p = this.getElementsByTagName('p');
+                p[0].style.display = 'block';
+            }
+            a.onmouseout = function () {
+                p = this.getElementsByTagName('p');
+                p[0].style.display = 'none';
+            }
+            title.appendChild(a);
+            img.onload = function() {
+                count_complete ++;
+                if (count_complete == data.length) {
+                    PBL('wrap','box');
+                }
+            }
+            if (loadbox == 0) {
+                var boxs = getClass(wrap,'box'); // get all boxes;
+                var boxW = boxs[0].offsetWidth; // the entHeight);width of the box;
+                var colsNum = Math.floor(document.documentElement.clientWidth/boxW); // get the column number;
+                wrap.style.width = boxW*colsNum+'px'; // the width of the wrap;
+                loadbox = 1;
+            }
+        }
+    }).fail(function(jqXHR,textStatus){
+        console.log('request failed '+textStatus);
     });
-    var data = [
-					{'src':'1.jpg','title':'节目1', 'content':'我是节目1的内容，鼠标移上方时显示'},
-					{'src':'2.jpg','title':'节目2'},
-					{'src':'3.jpg','title':'节目3'},
-					{'src':'4.jpg','title':'节目4'},
-					{'src':'5.jpg','title':'节目5'},
-					{'src':'6.jpg','title':'节目6'},
-					{'src':'7.jpg','title':'节目7'},
-					{'src':'8.jpg','title':'节目8'},
-					{'src':'9.jpg','title':'节目9'},
-					{'src':'10.jpg','title':'节目10', 'content':'节目10的内容'}
-				];
-	var wrap = document.getElementById('wrap');
-	var count_complete = 0;
-	for(i in data) {
-		//console.log(i);
-		var box = document.createElement('div');
-		box.className = 'box';
-		wrap.appendChild(box);
-		var info = document.createElement('div');
-		info.className = 'info';
-		box.appendChild(info);
-		var pic = document.createElement('div');
-		pic.className = 'pic';
-		info.appendChild(pic);
-		var img = document.createElement('img');
-		img.src = '/static/images/'+data[i].src;
-		img.style.height = 'auto';
-		pic.appendChild(img);
-		var title = document.createElement('div');
-		title.className = 'title';
-		info.appendChild(title);
-		var a = document.createElement('a');
-		a.setAttribute("href", "/program/1");
-		a.innerHTML = data[i].title;
-		var p = document.createElement('p');
-		p.innerHTML = data[i].content;
-		p.style.display = 'none';
-		a.appendChild(p);
-		a.onmouseover = function () {
-			p = this.getElementsByTagName('p');
-			p[0].style.display = 'block';
-		}
-		a.onmouseout = function () {
-			p = this.getElementsByTagName('p');
-			p[0].style.display = 'none';
-		}
-		title.appendChild(a);
-		img.onload = function() {
-			count_complete ++;
-			if (count_complete == data.length) {
-				PBL('wrap','box');
-			}
-		}
-
-		if (loadbox == 0) {
-			var boxs = getClass(wrap,'box'); // get all boxes;
-			var boxW = boxs[0].offsetWidth; // the entHeight);width of the box;
-			var colsNum = Math.floor(document.documentElement.clientWidth/boxW); // get the column number;
-			wrap.style.width = boxW*colsNum+'px'; // the width of the wrap;
-			loadbox = 1;
-		}
-	}	
 
 	window.onscroll = function(){
 		if(getCheck()){
+            num += 10;
             $.ajax({
                 url:'/index/waterflow',
                 type:"GET",
-                data:{s_w:0, e_w:20},
+                data:{s_w:num, e_w:num + 10},
             }).done(function(result){
                 console.log(result);
-                //var email = result['fields']['email'];
-                //$('#show').html(email).show();
+                data = result;
+                var wrap = document.getElementById('wrap');
+                for(i in data){
+                    var box = document.createElement('div');
+                    box.className = 'box';
+                    wrap.appendChild(box);
+                    var info = document.createElement('div');
+                    info.className = 'info';
+                    box.appendChild(info);
+                    var pic = document.createElement('div');
+                    pic.className = 'pic';
+                    info.appendChild(pic);
+                    var img = document.createElement('img');
+                    img.src = data[i].src;
+                    img.style.height = 'auto';
+                    pic.appendChild(img);
+                    var title = document.createElement('div');
+                    title.className = 'title';
+                    info.appendChild(title);
+                    var a = document.createElement('a');
+                    a.setAttribute("href", "/program/1");
+                    a.innerHTML = data[i].title;
+                    var p = document.createElement('p');
+                    p.innerHTML = data[i].content;
+                    p.style.display = 'none';
+                    a.appendChild(p);
+                    a.onmouseover = function () {
+                        p = this.getElementsByTagName('p');
+                        p[0].style.display = 'block';
+                    }
+                    a.onmouseout = function () {
+                        p = this.getElementsByTagName('p');
+                        p[0].style.display = 'none';
+                    }
+                    title.appendChild(a);
+                }
+                PBL('wrap','box');
             }).fail(function(jqXHR,textStatus){
                 console.log('request failed '+textStatus);
             });
-            var wrap = document.getElementById('wrap');
-			for(i in data){
-				var box = document.createElement('div');
-				box.className = 'box';
-				wrap.appendChild(box);
-				var info = document.createElement('div');
-				info.className = 'info';
-				box.appendChild(info);
-				var pic = document.createElement('div');
-				pic.className = 'pic';
-				info.appendChild(pic);
-				var img = document.createElement('img');
-				img.src = '/static/images/'+data[i].src;
-				img.style.height = 'auto';
-				pic.appendChild(img);
-				var title = document.createElement('div');
-				title.className = 'title';
-				info.appendChild(title);
-				var a = document.createElement('a');
-				a.setAttribute("href", "/program/1");
-				a.innerHTML = data[i].title;
-				title.appendChild(a);
-			}
-			PBL('wrap','box');
 		}
 	}
 }

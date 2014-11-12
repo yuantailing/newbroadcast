@@ -7,7 +7,7 @@ from NewBroadcast import program
 from NewBroadcast import login
 from NewBroadcast import signin
 from NewBroadcast import api
-from NewBroadcast import space
+from NewBroadcast import manager
 
 
 urlpatterns = patterns('',
@@ -26,10 +26,14 @@ urlpatterns = patterns('',
     url(r'^index/$', frontpage.show_index),
     url(r'^index/waterflow$', frontpage.waterflow_data),
 
-    url(r'^resource/(.*)$', resource.show),
+    url(r'^resource/$', resource.show),
+    url(r'^resource/listall/$', resource.list_all),
+    url(r'^resource/groupfilter/([0-9]*)$', resource.group_filter),
+    url(r'^resource/getarr/$', resource.get_arr),
+    url(r'^resource/getarr_test/$', resource.getarr_test),
 
+    url(r'^program/([0-9]*)$', program.show_program),
     url(r'^program/play/(.*)$', program.play_program),
-    url(r'^program/(.*)$', program.show_program),
 
     url(r'^login/do/$', login.do),
     url(r'^login/test/$', login.test),
@@ -45,7 +49,9 @@ urlpatterns = patterns('',
     url(r'^api_source/$', api.api_source),
     url(r'^api_comment/$', api.api_comment),
 
-    url(r'^space/$', space.show_space),
+    url(r'^space/$', manager.show_space),
+	url(r'^mgrres/$', manager.show_mgrres),
+	url(r'^mgruser/$', manager.show_mgruser),
 
 )
 

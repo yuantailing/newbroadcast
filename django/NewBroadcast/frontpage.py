@@ -14,12 +14,17 @@ def show_index(req):
 def waterflow_data(req):
     s_w = req.GET.get('s_w');
     e_w = req.GET.get('e_w');
-    obj = Program.objects.order_by("weight")[s_w: e_w];
+    obj = Program.objects.order_by("-weight")[s_w: e_w];
     ret = [];
     for o in obj:
         tmpret = {};
-        piclink = o.picture.doc.url;
-        tmpret = {key: o[key] for key in ('title', 'description', 'page_format', 'recorder', 'worker')};
-        tmpret["picture_link"] = piclink;
+        tmpret['id'] = o.id;
+        pic_arr = json.loads(o.picture)
+        if pic_arr and (len(pic_arr) > 0):
+            tmpret['src'] = Source.objects.get(id=pic_arr[0]).document.url
+        else:
+            pass
+        tmpret['title'] = o.title;
+        tmpret['content'] = o.description;
         ret.append(tmpret);
-    return HttpResponse(serializers.serialize('json', ret), content_type = "application/json");
+    return HttpResponse(json.dumps(ret), content_type = "application/json");

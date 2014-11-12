@@ -24,9 +24,11 @@
     {% endfor %}
   </table>
   <hr/>
+  {% for src in piclink %}
   <div class="row">
-    <img src="{{ piclink }}" class="img-rounded img-responsive center-block" />
+    <img src="{{ src }}" class="img-rounded img-responsive center-block" />
   </div>
   <br/>
+  {% endfor %}
 </div>
 {% endblock %}
