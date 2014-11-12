@@ -6,12 +6,48 @@
 
 {% block body %}
 <!-- main content -->
-<div class="container">
+<div class="container bs-docs-container">
 	<div class="row">
+		<div class="col-md-3">
+			<div class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix-top" role="complementary">
+            	<ul class="nav bs-docs-sidenav">
+                	<li>
+                		<a>个人信息管理</a>
+                		<ul class="nav">
+                			<li><a href="#picture">头像</a></li>
+                			<li><a href="#info">资料</a></li>
+                			<li><a href="#change-info">修改资料</a></li>
+                		</ul>
+                	</li>
+                	<li><a>上传资源管理</a></li>
+					<li><a>站内成员管理</a></li>
+                </ul>
+            </div>    
+		</div>
+		<div class="col-md-9" role="main">
+			<div class="bs-docs-section" id="picture">
+				<div id="head-picture">
+					<img class="image-responsive img-rounded" width="128" src="/static/images/1.jpg" />
+				</div>
+				<a href="#">更换头像</a>
+			</div>
+			<div class="bs-docs-section" id="info">
+				<table class="table table-striped">
+					<caption>个人信息</caption>
+					<tr><td>1</td><td>2</td></tr>
+					<tr><td>1</td><td>2</td></tr>
+					<tr><td>1</td><td>2</td></tr>
+					<tr><td>1</td><td>2</td></tr>
+					<tr><td>1</td><td>2</td></tr>
+				</table>
+			</div>
+			<div class="bs-docs-section" id="change-info">
+				<a>修改</a>
+			</div>
+		</div>
 	</div>
 </div>
 {% endblock %}
 
 {% block script %}
-<script type="text/javascript" src="/static/js/waterflow.js"></script>
 {% endblock %}

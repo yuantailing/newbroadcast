@@ -6,7 +6,9 @@
 <!-- Loading Bootstrap -->
 <link href="/static/dist/css/vendor/bootstrap.min.css" rel="stylesheet" />
 <link href="/static/dist/css/flat-ui.css" rel="stylesheet" />
+<link href="/static/dist/css/docs.min.css" rel="stylesheet" />
 <link href="/static/css/waterflow.css" rel="stylesheet" />
+{% block header %}{% endblock %}
 </head>
 <body>
 <!-- main content -->
@@ -20,6 +22,7 @@
 <script src="/static/dist/js/vendor/jquery.min.js"></script>
 <!-- Include all compiled plugins (below), or include individual files as needed -->
 <script src="/static/dist/js/flat-ui.min.js"></script>
+<script src="/static/dist/js/docs.min.js"></script>
 <script src="/static/js/csrfajax.js"></script>
 <script src="/static/js/login.js"></script>
 {% block script %}{% endblock %}
