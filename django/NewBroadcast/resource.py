@@ -45,3 +45,13 @@ def get_arr(req):
 def getarr_test(req):
     return render_to_response("resource/getarr_test.html",
                               context_instance=RequestContext(req));
+
+def result(req):
+    wd = req.POST.get('wd', None)
+    res = []
+    for pg in Program.objects.order_by('-weight'):
+        res.append(pg.id)
+    return render_to_response("resource/result.html",
+                              {'pid':json.dumps(res)},
+                              context_instance=RequestContext(req));
+
