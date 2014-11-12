@@ -41,7 +41,7 @@
             <p>修改节目信息</p>
          </div>
          <div class="modal-body">
-			<form class="form-horizontal" role="form">
+			<form id="modify-form" class="form-horizontal" role="form">
                 {% csrf_token %}
                 <div class="form-group">
                     <label id="modify_status" class="col-sm-6 control-label"></label>
@@ -73,12 +73,17 @@
 					</div>
 				</div>
 				<div class="form-group">
-					<label for="modify-picture" class="col-sm-offset-1 col-sm-2 control-label">图片</label>
+					<label for="modify-picture0" class="col-sm-offset-1 col-sm-2 control-label">图片</label>
 					<div class="col-sm-6">
-						<input type="text" class="form-control" id="modify-picture" placeholder="请输入描述">
+						<input type="file" class="form-control" id="modify-picture0">
 					</div>
 				</div>
 			</form>
+			<div class="col-sm-2" style="float:right">
+				<button class="btn btn-xs btn-primary" id="add-picture" onclick="addPicture(this)">+</button>
+				<button class="btn btn-xs btn-primary" id="del-picture" onclick="delPicture(this)">-</button>
+			</div>
+			<br/>
          </div>
          <div class="modal-footer">
             <button type="button" class="btn btn-primary" id="modify-submit">修改</button>
@@ -98,6 +103,7 @@
 	<script>
 	var pids = new Array();
 	var index = 0;
+	var pictureIndex=1;
 		$(document).ready(function(){
 			$.ajax({
 			  url:'/resource/listall/',
@@ -138,7 +144,7 @@
 		});
 /*			$('#modify-submit').click(function(){
 				$.ajax({
-					url:'',
+					url:'/resource/modify/',
 					type:"POST",
 					data:{group:$("#modify-group").val(), series:$("#modify-series").val(), title:$("#modify-title").val(), description:$("#modify-description").val(), picture:$("#modify-picture").val()},
 					dataType:"json"
@@ -148,7 +154,7 @@
 			});
 			$('#delete').click(function(){
 				$.ajax({
-					url:'',
+					url:'resource/delete/',
 					type:"POST",
 					data:{pid:$("#delete").parent().attr("value")},
 				}).done(function(msg){
@@ -314,6 +320,34 @@
 		function selectPage(x) {
 			index=(x.innerHTML-1)*10;
 			showResource();
+		}
+		function addPicture(x) {
+			var fdiv=document.createElement("div");
+			fdiv.setAttribute("class", "form-group");
+			fdiv.setAttribute("id", "adddiv"+pictureIndex);
+			document.getElementById("modify-form").appendChild(fdiv);
+			var plabel=document.createElement("label");
+			plabel.setAttribute("for", "modify-picture"+pictureIndex);
+			plabel.setAttribute("class", "col-sm-offset-1 col-sm-2 control-label");
+			plabel.innerHTML="图片";
+			fdiv.appendChild(plabel);
+			var pdiv=document.createElement("div");
+			pdiv.setAttribute("class", "col-sm-6");
+			fdiv.appendChild(pdiv);
+			var pinput=document.createElement("input");
+			pinput.setAttribute("type", "file");
+			pinput.setAttribute("class", "form-control");
+			pinput.setAttribute("id", "modify-picture"+pictureIndex);
+			pdiv.appendChild(pinput);
+			pictureIndex=pictureIndex+1;
+		}
+		function delPicture(x) {
+			if (pictureIndex>1) {
+				pictureIndex=pictureIndex-1;
+				var parent=document.getElementById("modify-form");
+				var node=document.getElementById("adddiv"+pictureIndex);
+				parent.removeChild(node);
+			}
 		}
 	</script>
 
