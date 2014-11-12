@@ -23,6 +23,7 @@ def do(req):
             res['nickname'] = user.nickname
             res['id'] = user.id
             req.session['uid'] = user.id
+            req.session['user_nickname'] = user.nickname
             req.session['user_power'] = user.power
         else:
             res['result'] = 'failed'

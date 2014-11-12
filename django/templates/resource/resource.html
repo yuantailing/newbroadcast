@@ -20,17 +20,9 @@
 		<div style="height:10px"></div>
 		<div class="row" style="height:80%; width:80%; margin:auto">
 			<!-- 系列 -->
-			<!-- <div style="height:100%; width:20%; float:left">
-				<div class="btn-group-vertical btn-group-sm">
-					<button type="button" class="btn btn-primary">系列系列列系列</button>
-					<button type="button" class="btn btn-primary">系列</button>
-					<button type="button" class="btn btn-primary">系列</button>
-					<button type="button" class="btn btn-primary">系列</button>
-				</div>
-			</div> -->
 			<!-- 节目 -->
 			<div style="height:100%; width:100%; float:right">
-				<ul id="res-list" class="list-group">
+				<ul id="res-list" class="list-group" style="height:100%; width:100%">
 				</ul>
 			</div>
 		</div>
@@ -41,6 +33,60 @@
 			</ul>
 		</div>
 	</div>
+<div class="modal fade" id="modifyModal" tabindex="-1" role="dialog" aria-labelledby="modifyModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+         <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <p>修改节目信息</p>
+         </div>
+         <div class="modal-body">
+			<form class="form-horizontal" role="form">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label id="modify_status" class="col-sm-6 control-label"></label>
+                    <br/>
+                    <label id="modify-show" class="col-sm-6 control-label"></label>
+                </div>
+				<div class="form-group">
+					<label for="modify-group" class="col-sm-offset-1 col-sm-2 control-label">组别</label>
+					<div class="col-sm-6">
+						<input type="text" class="form-control" id="modify-group" placeholder="请输入组别">
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="modify-series" class="col-sm-offset-1 col-sm-2 control-label">系列</label>
+					<div class="col-sm-6">
+						<input type="text" class="form-control" id="modify-series" placeholder="请输入系列">
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="modify-title" class="col-sm-offset-1 col-sm-2 control-label">名称</label>
+					<div class="col-sm-6">
+						<input type="text" class="form-control" id="modify-title" placeholder="请输入名称">
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="modify-description" class="col-sm-offset-1 col-sm-2 control-label">描述</label>
+					<div class="col-sm-6">
+						<input type="text" class="form-control" id="modify-description" placeholder="请输入描述">
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="modify-picture" class="col-sm-offset-1 col-sm-2 control-label">图片</label>
+					<div class="col-sm-6">
+						<input type="text" class="form-control" id="modify-picture" placeholder="请输入描述">
+					</div>
+				</div>
+			</form>
+         </div>
+         <div class="modal-footer">
+            <button type="button" class="btn btn-primary" id="modify-submit">修改</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+         </div>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div>
 
 
     <!-- jQuery (necessary for Flat UI's JavaScript plugins) -->
@@ -90,6 +136,26 @@
 			}).fail(function(jqXHR,textStatus){
 			});
 		});
+/*			$('#modify-submit').click(function(){
+				$.ajax({
+					url:'',
+					type:"POST",
+					data:{group:$("#modify-group").val(), series:$("#modify-series").val(), title:$("#modify-title").val(), description:$("#modify-description").val(), picture:$("#modify-picture").val()},
+					dataType:"json"
+				}).done(function(msg){
+				}).fail(function(jqXHR,textStatus){
+				});
+			});
+			$('#delete').click(function(){
+				$.ajax({
+					url:'',
+					type:"POST",
+					data:{pid:$("#delete").parent().attr("value")},
+				}).done(function(msg){
+					location.reload(true);
+				}).fail(function(jqXHR，textStatus){
+				});
+			});*/
 		function showResource() {
 			var subpids = new Array();
 			var len;
@@ -116,18 +182,47 @@
 					linode.className="list-group-item";
 					linode.setAttribute("onmouseover", "activeIt(this)");
 					linode.setAttribute("onmouseout", "deactiveIt(this)");
-					anode.appendChild(linode);
+					linode.setAttribute("value", pids[i+index]);
+					linode.appendChild(anode); //
 					var table=document.createElement("table");
 					table.setAttribute("class", "table");
-					table.setAttribute("cellpadding", "0");
+					table.setAttribute("cellspacing", "10");
 					var td1=document.createElement("td");
 					td1.innerHTML=msg.program[i].title;
 					var td2=document.createElement("td");
 					td2.innerHTML=msg.program[i].group+"/"+msg.program[i].series;
 					table.appendChild(td1);
 					table.appendChild(td2);
-					linode.appendChild(table);
-					document.getElementById("res-list").appendChild(anode);
+					anode.appendChild(table); //
+					if ($("#user_power").attr("value")=="admin" || $("#user_power").attr("value")=="administrator") {
+					//	linode.style.height="100%";
+					//	linode.style.width="100%";
+					//	anode.style.height="100%";
+					//	anode.style.width="80%";
+					//	table.style.height="100%";
+					//	table.style.width="60%";
+						var mbutton=document.createElement("button");
+						mbutton.setAttribute("type", "button");
+						mbutton.setAttribute("id", "modify");
+						mbutton.setAttribute("class", "btn btn-primary");
+						mbutton.setAttribute("data-toggle", "modal");
+						mbutton.setAttribute("data-target", "#modifyModal");
+						mbutton.innerHTML="修改";
+					//	mbutton.style.height="100%";
+					//	mbutton.style.width="10%";
+						mbutton.style.float="right";
+						linode.appendChild(mbutton);
+						var dbutton=document.createElement("button");
+						dbutton.setAttribute("type", "button");
+						dbutton.setAttribute("id", "delete");
+						dbutton.setAttribute("class", "btn btn-primary");
+						dbutton.innerHTML="删除";
+					//	dbutton.style.height="100%";
+					//	dbutton.style.width="10%";
+						dbutton.style.float="right";
+						linode.appendChild(dbutton);
+					}
+					document.getElementById("res-list").appendChild(linode);
 				}
 			}).fail(function(jqXHR,textStatus){
 			  $('#getarr_show').html('request failed '+ textStatus);
