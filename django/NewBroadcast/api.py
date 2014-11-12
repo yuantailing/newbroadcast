@@ -102,3 +102,26 @@ for i in range(1,11):
     pp.add_picture('static/images/' + str(i) + '.jpg')
     pp.save()
 '''
+
+from django.contrib.sessions.models import Session
+from django.contrib.sessions.backends.db import SessionStore
+
+def find_session(key, value):
+    for s in Session.objects.all():
+        d = s.get_decoded()
+        if key in d and d[key] == value:
+            return s
+    return None
+
+
+def set_session(session, key, value):
+    d = session.get_decoded()
+    d[key] = value
+    session.session_data = SessionStore().encode(d)
+    session.save()
+
+'''
+异步设置用户session的方法示例：
+sess = find_session('uid', 1)
+set_session(sess, 'user_power', 'admin')
+'''
