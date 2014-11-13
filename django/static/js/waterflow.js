@@ -50,11 +50,11 @@
             p.innerHTML = data[i].content;
             p.style.display = 'none';
             a.appendChild(p);
-            a.onmouseover = function () {
+            pic.onmouseover = function () {
                 p = this.getElementsByTagName('p');
                 p[0].style.display = 'block';
             }
-            a.onmouseout = function () {
+            pic.onmouseout = function () {
                 p = this.getElementsByTagName('p');
                 p[0].style.display = 'none';
             }
@@ -127,11 +127,11 @@
                     p.innerHTML = data[i].content;
                     p.style.display = 'none';
                     a.appendChild(p);
-                    a.onmouseover = function () {
+                    pic.onmouseover = function () {
                         p = this.getElementsByTagName('p');
                         p[0].style.display = 'block';
                     }
-                    a.onmouseout = function () {
+                    pic.onmouseout = function () {
                         p = this.getElementsByTagName('p');
                         p[0].style.display = 'none';
                     }
