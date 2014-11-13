@@ -8,17 +8,17 @@
 <script>
 $(document).ready(function(){
     $.ajax({
-      url:'/program/listall/',
+      url:'/resource/groupfilter/2',
       type:"GET",
       data:{'pid':new Array(1,2,3)},
         dataType:"json"
     }).done(function(msg){
-      $('#listall_show').html('all program id: ' + msg.pid.join(','));
+      $('#listall_show').html('all program id in group 2: ' + msg.pid.join(','));
     }).fail(function(jqXHR,textStatus){
       $('#listall_show').html('request failed '+ textStatus);
     });
     $.ajax({
-      url:'/program/getarr/',
+      url:'/resource/getarr/',
       type:"POST",
       data:{'pid':new Array(1,2,3)},
         dataType:"json"
