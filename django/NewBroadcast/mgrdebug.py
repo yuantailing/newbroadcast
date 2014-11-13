@@ -15,8 +15,8 @@ def change_power(req, arg):
     user = User.objects.get(id=int(req.session['uid']))
     req.session['user_power'] = arg
     user.power = arg
-    user.save
-    return HttpResponseRedirect('/')
+    user.save()
+    return HttpResponse(arg)
 
 def test(req):
     res = { }

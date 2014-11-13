@@ -22,6 +22,9 @@ urlpatterns = patterns('',
 
     url(r'^ajaxtest/$', ajaxtest.index),
     url(r'^ajaxtest/getresult/$', ajaxtest.getresult),
+    url(r'^ajaxtest/htmltest/$', ajaxtest.htmltest),
+    url(r'^ajaxtest/htmlresponse/$', ajaxtest.htmlresponse),
+                       
 
     url(r'^index/$', frontpage.show_index),
     url(r'^index/waterflow$', frontpage.waterflow_data),

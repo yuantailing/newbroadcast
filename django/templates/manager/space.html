@@ -245,4 +245,15 @@
 {% endblock %}
 
 {% block script %}
+<script>
+{% if request.session.uid %}
+$(document).ready(function() {
+	
+
+
+
+});
+{% endif %}
+</script>
+
 {% endblock %}
