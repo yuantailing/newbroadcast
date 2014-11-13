@@ -72,3 +72,34 @@ def play_program(req, arg):
     return render_to_response("program/player.html",
                               {'medialink':medialink},
                               context_instance=RequestContext(req));
+
+def recommand_program(req):
+    p_id = req.POST.get('id');
+    p_weight = req.POST.get('weight');
+    obj = Program.objects.get(id = p_id);
+    obj.weight = p_weight;
+    return HttpResponse(json.dumps([{"success":1}]), content_type = "application/json");
+    
+def add_program_group(req):
+    p_id = req.POST.get('id');
+    p_click = req.POST.get('click');
+    p_weight = req.POST.get('weight');
+    obj = Program.objects.get(id = p_id);
+    obj.weight = p_weight;
+    return HttpResponse(json.dumps([{"success":1}]), content_type = "application/json");
+    
+def delete_program_group(req):
+    p_id = req.POST.get('id');
+    p_click = req.POST.get('click');
+    p_weight = req.POST.get('weight');
+    obj = Program.objects.get(id = p_id);
+    obj.weight = p_weight;
+    return HttpResponse(json.dumps([{"success":1}]), content_type = "application/json");
+    
+def change_program_group(req):
+    p_id = req.POST.get('id');
+    p_click = req.POST.get('click');
+    p_weight = req.POST.get('weight');
+    obj = Program.objects.get(id = p_id);
+    obj.weight = p_weight;
+    return HttpResponse(json.dumps([{"success":1}]), content_type = "application/json");
