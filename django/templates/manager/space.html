@@ -51,10 +51,10 @@
 							<img class="image-responsive img-rounded row" width="128" src="/static/images/1.jpg"  id="space-picture"/>
 							<a class="row" href="#">更换头像</a>
 						</div>
-						<h4>Nick Name</h4>
+						<h4>{{ user.nickname }}</h4>
 					</div>
 					<div class="panel-body">
-						<p>example@example.com</p>
+						<p>{{ user.email }}</p>
 					</div>
 				</div>
 				<div class="panel panel-default" id="space-info">
@@ -63,11 +63,10 @@
 					</div>
 					<table class="panel-body table table-bordered table-hover">
 						<tr><td>#</td><td></td></tr>
-						<tr><td>昵称</td><td>Nick Name</td></tr>
-						<tr><td>邮箱</td><td>example@example.com</td></tr>
-						<tr><td>性别</td><td>1</td></tr>
-						<tr><td>权限</td><td>台员</td></tr>
-						<tr><td>联系方式</td><td>+8687654321</td></tr>
+						<tr><td>昵称</td><td>{{ user.nickname }}</td></tr>
+						<tr><td>邮箱</td><td>{{ user.email }}</td></tr>
+						<tr><td>权限</td><td>{{ power }}</td></tr>
+						{% if user.phone_number %}<tr><td>联系方式</td><td>{{ user.phone_number }}</td></tr>{% endif %}
 					</table>
 					<div class="panel-footer" id="space-change-info">
 						<button class="btn btn-primary" data-toggle="modal" data-target="#change-info">修改资料</button>
