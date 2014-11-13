@@ -270,7 +270,9 @@ $(document).ready(function(){
         }).done(function(msg){
         	if (msg.success) { 
         		$('#change-password-status').text(msg.info).show();
-
+        		$('#old-password').val("");
+        		$('#new-password').val("");
+        		$('#check-new-password').val("");
         	} else { 
         		$('#change-password-status').text(msg.info).show();
         	}
