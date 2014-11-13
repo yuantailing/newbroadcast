@@ -11,24 +11,28 @@ import json
 from models import *
 
 
-def do(req):
+def login(req):
     res = { }
     try:
         p_email = req.POST.get('email', None)
         p_password = req.POST.get('password', None)
-        user = User.objects.get(email=p_email)
-        res = { }
-        if (user.password == p_password):
-            res['result'] = 'success'
-            res['nickname'] = user.nickname
-            res['id'] = user.id
-            req.session['uid'] = user.id
-            req.session['user_nickname'] = user.nickname
-            req.session['user_power'] = user.power
-        else:
-            res['result'] = 'failed'
+        try:
+            user = User.objects.get(email=p_email)
+            if (user.password == p_password):
+                res['success'] = True
+                res['info'] = u'登录成功'
+                req.session['uid'] = user.id
+                req.session['user_nickname'] = user.nickname
+                req.session['user_power'] = user.power
+            else:
+                res['success'] = False
+                res['info'] = u'密码错误'
+        except Exception, e:
+            res['success'] = False
+            res['info'] = u'用户不存在'
     except Exception, e:
-        res['result'] = 'exception'
+        res['success'] = False
+        res['info'] = u'未知错误'
     return HttpResponse(json.dumps(res), content_type='application/json')
 
 def test(req):
@@ -36,15 +40,56 @@ def test(req):
     try:
         uid = req.session['uid']
         user = User.objects.get(id=uid)
+        res['login'] = True
         res['uid'] = user.id
-        res['result'] = 'have_login'
     except Exception, e:
-        res['result'] = 'not_login'
+        res['login'] = False
     return HttpResponse(json.dumps(res), content_type='application/json')
 
 def logout(req):
+    req.session.clear()
+    return HttpResponseRedirect('/')
+
+def exist_judge(req):
     res = { }
-    req.session['uid'] = None
-    res['result'] = 'success'
+    try:
+        t_key = req.POST.get('key', None)
+        t_type = req.POST.get('ptype', None)
+        if (t_type == 'nickname'):
+            user = User.objects.get(nickname = t_key)
+        else:
+            user = User.objects.get(email = t_key)
+        res['exist'] = 'true'
+    except Exception, e:
+        res['exist'] = 'false'
     return HttpResponse(json.dumps(res), content_type='application/json')
 
+def signin(req):
+    res = { }
+    try:
+        user = User()
+        p_email = req.POST.get('email', None)
+        p_nickname = req.POST.get('nickname', None)
+        p_password = req.POST.get('password', None)
+        p_password2 = req.POST.get('password2', None)
+        if (not p_password or p_password == p_password2):
+            user.email = p_email
+            user.nickname = p_nickname
+            user.password = p_password
+            try:
+                user.save()
+                res['success'] = True
+                res['info'] = u'注册成功'
+                req.session['uid'] = user.id
+                req.session['user_nickname'] = user.nickname
+                req.session['user_power'] = user.power
+            except Exception, e:
+                res['success'] = False
+                res['info'] = u'用户名/昵称错误'
+        else:
+            res['success'] = False
+            res['info'] = u'两次输入的密码不一致'
+    except Exception, e:
+        res['success'] = False
+        res['info'] = u'未知错误'
+    return HttpResponse(json.dumps(res), content_type='application/json')
