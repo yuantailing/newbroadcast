@@ -109,7 +109,7 @@ def upload_program(req):
             pic = Source()
             pic.document = tpicture
             pic.save()
-            prg.picture = pic.id
+            prg.picture = json.dumps([pic.id])
         if (taudio != None):
             ad = Source()
             ad.document = taudio
@@ -149,5 +149,5 @@ def show_modify(req, arg):
     return render_to_response("program/modify.html",
                     {'pgid':pgid, 'title':title,
                      'description':description,
-                     'medialink':medialink, 'piclink':piclink,
+                     'medialink':medialink, 'piclink':piclink}, 
                      context_instance=RequestContext(req));
