@@ -4,6 +4,10 @@
 个人中心
 {% endblock %}
 
+{% block header %}
+<link href="/static/dist/css/datepicker.css" rel="stylesheet" />
+{% endblock %}
+
 {% block body %}
 <!-- main content -->
 {% if request.session.uid %}
@@ -149,6 +153,7 @@
 					<label for="change-birthday" class="col-sm-offset-1 col-sm-2 control-label">生日</label>
 					<div class="col-sm-6">
 						<input type="text" class="form-control" id="change-birthday" placeholder="请输入新的生日" value="{{ user.birthday }}">
+						<script>$('#change-birthday').datepicker()</script>
 					</div>
 				</div>
 				<div class="form-group">
@@ -260,6 +265,7 @@
 {% endblock %}
 
 {% block script %}
+<script src="/static/dist/js/bootstrap-datepicker.js"></script>
 <script>
 $(document).ready(function(){
     $('#change-password-button').click(function(){
@@ -295,6 +301,9 @@ $(document).ready(function(){
             $('#change-info-status').html('与服务器连接中断');
         });
     });
+});
+$(document).ready(function() { 
+	$('#change-birthday').datepicker()
 });
 </script>
 
