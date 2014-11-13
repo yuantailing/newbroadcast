@@ -39,6 +39,13 @@ urlpatterns = patterns('',
 
     url(r'^program/([0-9]*)$', program.show_program),
     url(r'^program/play/(.*)$', program.play_program),
+    url(r'^program/upload/$', program.show_upload),
+    url(r'^program/upload/dealupload/$', program.upload_program),
+    url(r'^program/modify/([0-9]*)$', program.show_modify),
+    url(r'^program/modify/modifyword/([0-9]*)/$', program.modify_word),
+    url(r'^program/modify/modifyaudio/([0-9]*)/$', program.modify_audio),
+    url(r'^program/modify/modifypic/([0-9]*)/$', program.modify_pic),
+    url(r'^program/delete/([0-9]*)$', program.delete_program),
 
     url(r'^login/do/$', login.login),
     url(r'^login/test/$', login.test),

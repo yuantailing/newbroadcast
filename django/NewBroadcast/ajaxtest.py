@@ -35,8 +35,6 @@ def htmlresponse(req):
     user = User.objects.get(id=req.session['uid'])
     print user.id
     return render_to_response("ajaxtest/htmlresponse.html",
-                              {'nickname':user.nickname,
-                               'email':user.email,
-                               'power':power_trans(user.power),
-                               'phone':user.phone_number},
+                              {'user':user,
+                               'power':power_trans(user.power)},
                               context_instance=RequestContext(req))

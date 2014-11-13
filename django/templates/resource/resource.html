@@ -207,6 +207,13 @@
 					//	anode.style.width="80%";
 					//	table.style.height="100%";
 					//	table.style.width="60%";
+						var tbutton=document.createElement("button");
+						tbutton.setAttribute("type", "button");
+						tbutton.setAttribute("id", "recommend");
+						tbutton.setAttribute("class", "btn btn-primary");
+						tbutton.innerHTML="推荐";
+						tbutton.style.float="right";
+						linode.appendChild(tbutton);
 						var mbutton=document.createElement("button");
 						mbutton.setAttribute("type", "button");
 						mbutton.setAttribute("id", "modify");
@@ -258,7 +265,6 @@
 				x.className = xClassName.replace((new RegExp("(^|\\s)" + "active" + "(\\s|$)")),""); 
 		}
 		function selectActiveIt(x) {
-			alert($(x).next().attr("value"));
 			var y=x.parentNode;
 			if (!y) return;
 			var yClassName = y.className;

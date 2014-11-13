@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}{{ title }} - 清华大学广播站{% endblock %}
+{% block body %}
+<div class="col-sm-offset-5">
+{% if result %}
+<p>{{ result }}</p>
+{% endif %}
+<h1>添加新节目</h1>
+</br>
+</div>
+<form class="form-horizontal" action="dealupload/" method="post" role="form" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="form-group">
+        <label for="title" class="col-sm-offset-1 col-sm-2 control-label">节目标题</label>
+        <div class="col-sm-6">
+            <input type="text" class="form-control" name="title" id="title" placeholder="请输入节目标题">
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="description" class="col-sm-offset-1 col-sm-2 control-label">节目描述</label>
+        <div class="col-sm-6">
+            <input type="text" class="form-control" name="description" id="description" placeholder="请输入节目描述">
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="audio" class="col-sm-offset-1 col-sm-2 control-label">音频文件</label>
+        <div class="col-sm-6">
+            <input type="file" class="form-control" name="audio" id="audio" placeholder="请选择音频文件">
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="picture" class="col-sm-offset-1 col-sm-2 control-label">图片文件</label>
+        <div class="col-sm-6">
+            <input type="file" class="form-control" name="picture" id="picture" placeholder="请选择图片文件">
+        </div>
+    </div>
+    <div class="form-group">
+        <input class="btn btn-primary btn-lg col-sm-offset-5" type="submit" value="确定上传"\>
+    </div>
+</form>
+{% endblock %}
+
