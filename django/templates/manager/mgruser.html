@@ -4,7 +4,15 @@
 {% endblock %}
 
 {% block body %}
+
+{% if request.session.uid %}
 <!-- main content -->
+{% ifequal request.session.user_power 'user' %}
+{% include 'error/forbid-not-worker.html' %}
+{% else %}
+{% ifequal request.session.user_power 'worker' %}
+{% include 'error/forbid-not-admin.html' %}
+{% else %}
 <div class="container">
 	<div class="row">
 		<hr />
@@ -31,6 +39,11 @@
 		</div>
 	</div>
 </div>
+{% endifequal %}
+{% endifequal %}
+{% else %}
+{% include "error/forbid-not-user.html"%}
+{% endif %}
 {% endblock %}
 
 {% block script %}

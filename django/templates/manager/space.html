@@ -6,6 +6,7 @@
 
 {% block body %}
 <!-- main content -->
+{% if request.session.uid %}
 <div class="container bs-docs-container">
 	<div class="row">
 		<div class="col-md-3">
@@ -19,6 +20,9 @@
                 			<li><a href="#space-change-info">修改资料</a></li>
                 		</ul>
                 	</li>
+                	
+                	{% ifequal request.session.user_power 'user'%}
+                	{% else %}
                 	<li>
                 		<a href="#space-upload-manager">上传资源管理</a>
                 		<ul class="nav">
@@ -26,9 +30,14 @@
                 			<li><a href="#space-upload">上传资源</a></li>
                 		</ul>
                 	</li>
+                	{% ifequal request.session.user_power 'worker' %}
+                	{% else %}
 					<li>
 						<a href="#space-member-manager">站内成员管理</a>
 					</li>
+					{% endifequal %}
+					{% endifequal%}
+					
                 </ul>
             </div>
 		</div>
@@ -66,6 +75,8 @@
 					</div>
 				</div>
 			</div>
+			{% ifequal request.session.user_power 'user' %}
+			{% else %}
 			<!-- upload manager -->
 			<div class="bs-docs-section" id="space-upload-manager">
 				<hr />
@@ -86,6 +97,8 @@
 					</div>
 				</div>
 			</div>
+			{% ifequal request.session.user_power 'worker' %}
+            {% else %}
 			<!-- member manager -->
 			<div class="bs-docs-section" id="space-member-manager">
 				<hr />
@@ -98,6 +111,8 @@
 					</div>
 				</div>
 			</div>
+			{% endifequal %}
+			{% endifequal %}
 		</div>
 	</div>
 </div>
@@ -184,7 +199,8 @@
       </div><!-- /.modal-content -->
     </div>
 </div><!-- /.modal -->
-
+{% ifequal request.session.user_power 'user' %}
+{% else %}
 <div class="modal fade" id="space-fast-upload" tabindex="-1" role="dialog" aria-labelledby="space-fast-upload-label" aria-hidden="true">
    <div class="modal-dialog">
       <div class="modal-content">
@@ -222,6 +238,10 @@
       </div><!-- /.modal-content -->
     </div>
 </div><!-- /.modal -->
+{% endifequal %}
+{% else %}
+{% include "error/forbid-not-user.html"%}
+{% endif %}
 {% endblock %}
 
 {% block script %}

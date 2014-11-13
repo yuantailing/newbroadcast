@@ -4,7 +4,11 @@
 {% endblock %}
 
 {% block body %}
+{% if request.session.uid %}
 <!-- main content -->
+{% ifequal request.session.user_power 'user' %}
+{% include 'error/forbid-not-worker.html' %}
+{% else %}
 <div class="container">
 	<div class="row">
 		<hr />
@@ -22,7 +26,8 @@
 				</div>
 				<script>
 				for (i = 0; i < 10; i ++) {
-					document.write("<tr><td>节目" + i + "</td><td>简介" + i + "</td></tr>");
+					document.write("<tr><td>节目" + i + "</td><td>简介" + i + "</td>");
+					document.write("<td><button class=\"btn btn-primary\">修改</button></td></tr>");
 				}
 				</script>
 				
@@ -30,6 +35,10 @@
 		</div>
 	</div>
 </div>
+{% endifequal %}
+{% else %}
+{% include "error/forbid-not-user.html"%}
+{% endif %}
 {% endblock %}
 
 {% block script %}
