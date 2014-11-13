@@ -160,10 +160,65 @@ def show_modify(req, arg):
                      context_instance=RequestContext(req));
 
 
-def delete_program(req):
+def modify_word(req, arg):
+    pgid = int(arg)
+    pg = Program.objects.get(id = pgid)
+
+    try:
+        res = { }
+        ttitle = req.POST.get('title', None)
+        tdescription = req.POST.get('description', None)
+        if (ttitle != None):
+            pg.title = ttitle
+        if (tdescription != None):
+            pg.description = tdescription
+        pg.save()
+        res['result'] = 'success'
+    except Exception, e:
+        res['result'] = 'failed'
+    return HttpResponse(json.dumps(res), content_type='application/json')
+
+
+def modify_audio(req, arg):
+    pgid = int(arg)
+    pg = Program.objects.get(id = pgid)
+
+    try:
+        res = { }
+        taudio = req.FILES.get('audio', None)
+        ad = Source()
+        ad.document = taudio
+        ad.save()
+        pg.audio = ad.id
+        pg.save()
+        res['result'] = 'success'
+    except Exception, e:
+        res['result'] = 'failed'
+    return HttpResponse(json.dumps(res), content_type='application/json')
+
+
+def modify_pic(req, arg):
+    pgid = int(arg)
+    pg = Program.objects.get(id = pgid)
+
+    try:
+        res = { }
+        tpic = req.FILES.get('picture', None)
+        pic = Source()
+        pic.document = tpic
+        pic.save()
+        pg.picture = json.dumps([pic.id])
+        pg.save()
+        res['result'] = 'success'
+    except Exception, e:
+        res['result'] = 'failed'
+    return HttpResponse(json.dumps(res), content_type='application/json')
+
+
+def delete_program(req, arg):
     res = { }
     try:
-        prgid = req.POST.get('id', None)
+        prgid = int(arg)
         prg = Program.objects.get(id = prgid)
         prg.delete()
         res['result'] = 'success'
