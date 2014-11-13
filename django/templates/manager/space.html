@@ -263,9 +263,9 @@
 $(document).ready(function(){
     $('#change-password-button').click(function(){
         $.ajax({
-            url:'/manager/changepassword',
+            url:'/manager/changepassword/',
             type:"POST",
-            data:{old_password:$("#old-password").val(), new_password:$("#new-password").val(), check_password:$("check-new-password").val()},
+            data:{old_password:$("#old-password").val(), new_password:$("#new-password").val(), check_password:$("#check-new-password").val()},
             dataType:"json"
         }).done(function(msg){
         	if (msg.success) { 
@@ -284,7 +284,7 @@ $(document).ready(function(){
 $(document).ready(function(){
     $('#change-info-button').click(function(){
         $.ajax({
-            url:'/manager/changeinfo',
+            url:'/manager/changeinfo/',
             type:"POST",
             data:{nickname:$("#change-nickname").val(), email:$("#change-email").val(), birth:$("change-birth").val(), phone:$("change-phone").val()},
             dataType:"json"
