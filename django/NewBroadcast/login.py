@@ -16,19 +16,23 @@ def do(req):
     try:
         p_email = req.POST.get('email', None)
         p_password = req.POST.get('password', None)
-        user = User.objects.get(email=p_email)
-        res = { }
-        if (user.password == p_password):
-            res['result'] = 'success'
-            res['nickname'] = user.nickname
-            res['id'] = user.id
-            req.session['uid'] = user.id
-            req.session['user_nickname'] = user.nickname
-            req.session['user_power'] = user.power
-        else:
-            res['result'] = 'failed'
+        try:
+            user = User.objects.get(email=p_email)
+            if (user.password == p_password):
+                res['success'] = True
+                res['info'] = u'登录成功'
+                req.session['uid'] = user.id
+                req.session['user_nickname'] = user.nickname
+                req.session['user_power'] = user.power
+            else:
+                res['success'] = False
+                res['info'] = u'密码错误'
+        except Exception, e:
+            res['success'] = False
+            res['info'] = u'用户不存在'
     except Exception, e:
-        res['result'] = 'exception'
+        res['success'] = False
+        res['info'] = u'未知错误'
     return HttpResponse(json.dumps(res), content_type='application/json')
 
 def test(req):
@@ -43,9 +47,6 @@ def test(req):
     return HttpResponse(json.dumps(res), content_type='application/json')
 
 def logout(req):
-    req.session['uid'] = None
-    req.session['user_nickname'] = None
-    req.session['user_power'] = None
+    req.session.clear()
     return HttpResponseRedirect('/')
-
 

@@ -30,18 +30,24 @@ def do(req):
         p_nickname = req.POST.get('nickname', None)
         p_password = req.POST.get('password', None)
         p_password2 = req.POST.get('password2', None)
-        if (p_password == p_password2):
+        if (not p_password or p_password == p_password2):
             user.email = p_email
             user.nickname = p_nickname
             user.password = p_password
-            user.save()
-            res['result'] = 'success'
-            res['info'] = '注册成功'
-            req.session['uid'] = user.id
+            try:
+                user.save()
+                res['success'] = True
+                res['info'] = u'注册成功'
+                req.session['uid'] = user.id
+                req.session['user_nickname'] = user.nickname
+                req.session['user_power'] = user.power
+            except Exception, e:
+                res['success'] = False
+                res['info'] = u'用户名/昵称错误'
         else:
-            res['result'] = 'failed'
-            res['info'] = '两次输入的密码不一致'
+            res['success'] = False
+            res['info'] = u'两次输入的密码不一致'
     except Exception, e:
-        res['result'] = 'failed'
-        res['info'] = '用户名或密码已存在'
+        res['success'] = False
+        res['info'] = u'未知错误'
     return HttpResponse(json.dumps(res), content_type='application/json')

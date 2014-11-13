@@ -7,22 +7,13 @@ $(document).ready(function(){
             data:{email:$("#login-email").val(), password:$("#login-password").val()},
             dataType:"json"
         }).done(function(msg){
-            $('#show').text(msg.result).show();
-            $('#user-info').html("[" + msg.nickname + "],你好 <a href=\"/space/" + msg.id + "\">个人中心</a>");
+            if (msg.success)
+                location.reload();
+            else
+                $('#show').text(msg.info).show();
         }).fail(function(jqXHR,textStatus){
             $('#show').html('request failed ' + textStatus);
         });
-    });
-    $.ajax({
-      url:'/login/test/',
-      type:"GET",
-      data:{},
-        dataType:"json"
-    }).done(function(msg){
-      $('#login_status').text(msg.result).show();
-      
-    }).fail(function(jqXHR,textStatus){
-      $('#login_status').html('request failed '+ textStatus);
     });
 });
 $(document).ready(function(){
@@ -33,9 +24,12 @@ $(document).ready(function(){
       data:{email:$("#signin-email").val(), nickname:$("#signin-nickname").val(), password:$("#signin-password").val(), password2:$("#signin-password2").val()},
       dataType:"json"
     }).done(function(msg){
-      $('#show2').text(msg.info).show();
+      if (msg.success)
+        location.reload();
+      else
+        $('#show2').text(msg.info).show();
     }).fail(function(jqXHR,textStatus){
-      $('#show2').html('request failed '+textStatus);
+      $('#show2').html('与服务器连接中断');
     });
   });
   $('#signin-email').blur(function(){
