@@ -31,6 +31,7 @@ urlpatterns = patterns('',
     url(r'^resource/groupfilter/([0-9]*)$', resource.group_filter),
     url(r'^resource/getarr/$', resource.get_arr),
     url(r'^resource/getarr_test/$', resource.getarr_test),
+    url(r'^resource/result/$', resource.result),
 
     url(r'^program/([0-9]*)$', program.show_program),
     url(r'^program/play/(.*)$', program.play_program),
@@ -50,8 +51,8 @@ urlpatterns = patterns('',
     url(r'^api_comment/$', api.api_comment),
 
     url(r'^space/$', manager.show_space),
-	url(r'^mgrres/$', manager.show_mgrres),
-	url(r'^mgruser/$', manager.show_mgruser),
+    url(r'^mgrres/$', manager.show_mgrres),
+    url(r'^mgruser/$', manager.show_mgruser),
 
 )
 
