@@ -151,3 +151,15 @@ def show_modify(req, arg):
                      'description':description,
                      'medialink':medialink, 'piclink':piclink}, 
                      context_instance=RequestContext(req));
+
+
+def delete_program(req):
+    res = { }
+    try:
+        prgid = req.POST.get('id', None)
+        prg = Program.objects.get(id = prgid)
+        prg.delete()
+        res['result'] = 'success'
+    except Exception, e:
+        res['result'] = 'failed'
+    return HttpResponse(json.dumps(res), content_type='application/json')
