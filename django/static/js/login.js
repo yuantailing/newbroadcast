@@ -12,7 +12,7 @@ $(document).ready(function(){
             else
                 $('#show').text(msg.info).show();
         }).fail(function(jqXHR,textStatus){
-            $('#show').html('request failed ' + textStatus);
+            $('#show').html('与服务器连接中断');
         });
     });
 });
