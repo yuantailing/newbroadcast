@@ -61,10 +61,11 @@ urlpatterns = patterns('',
     url(r'^api_comment/$', api.api_comment),
 
     url(r'^space/$', manager.show_space),
-    url(r'^mgrres/$', manager.show_mgrres),
-    url(r'^mgruser/$', manager.show_mgruser),
+    url(r'^manage/mgrres/$', manager.show_mgrres),
+    url(r'^manage/mgruser/$', manager.show_mgruser),
     url(r'^manager/changepassword/$', manager.change_password),
-                       
+    url(r'^manager/changeinfo/$', manager.change_info),
+
     url(r'^mgrdebug/changepower/(.*)$', mgrdebug.change_power),
 
 )

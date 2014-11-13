@@ -70,8 +70,8 @@
 						<tr><td>昵称</td><td>{{ user.nickname }}</td></tr>
 						<tr><td>邮箱</td><td>{{ user.email }}</td></tr>
 						<tr><td>权限</td><td>{{ power }}</td></tr>
-						{% if user.birthday %}<tr><td>生日</td><td>{{ user.birthday }}</td></tr>{% endif %}
-						{% if user.phone_number %}<tr><td>联系方式</td><td>{{ user.phone_number }}</td></tr>{% endif %}
+						{% if user.birthday %}<tr><td>生日</td><td>{{ user.birthday|date:"Y-m-d" }}</td></tr>{% endif %}
+						{% if user.phone_number %}<tr><td>联系电话</td><td>{{ user.phone_number }}</td></tr>{% endif %}
 					</table>
 					<div class="panel-footer" id="space-change-info">
 						<button class="btn btn-primary" data-toggle="modal" data-target="#change-info">修改资料</button>
@@ -94,7 +94,7 @@
 						<tr><td>节目3</td><td>1</td></tr>
 						<tr><td>节目4</td><td>台员</td></tr>
 						<tr><td>节目5</td><td>+8687654321</td></tr>
-						<tr><td><a href="/mgrres">更多...</a></td></tr>
+						<tr><td><a href="/manage/mgrres">更多...</a></td></tr>
 					</table>
 					<div class="panel-footer" id="space-upload">
 						<a href="/program/upload/"><button class="btn btn-primary">上传节目</button></a>
@@ -111,7 +111,7 @@
 						<h4>成员管理</h4>
 					</div>
 					<div class="panel-body">
-						<a href="/mgruser">全部成员</a>
+						<a href="/manage/mgruser">全部成员</a>
 					</div>
 				</div>
 			</div>
@@ -143,23 +143,25 @@
 						<input type="text" class="form-control" id="change-nickname" placeholder="请输入新的昵称" value="{{ user.nickname}}">
 					</div>
 				</div>
+					<fieldset disabled="true">
 				<div class="form-group">
-					<label for="change-email" class="col-sm-offset-1 col-sm-2 control-label">邮箱</label>
-					<div class="col-sm-6">
+					<label for="change-email" class="col-sm-offset-1 col-sm-2 control-label" style="color:#bbb;">邮箱</label>
+                    <div class="col-sm-6">
 						<input type="text" class="form-control" id="change-email" placeholder="请输入新的邮箱" value="{{ user.email }}">
 					</div>
 				</div>
+                
+                    </fieldset>
 				<div class="form-group">
 					<label for="change-birthday" class="col-sm-offset-1 col-sm-2 control-label">生日</label>
 					<div class="col-sm-6">
-						<input type="text" class="form-control" id="change-birthday" placeholder="请输入新的生日" value="{{ user.birthday }}">
-						<script>$('#change-birthday').datepicker()</script>
+						<input type="text" class="form-control" id="change-birthday" placeholder="请输入新的生日" value="{{ user.birthday|date:"Y-m-d" }}">
 					</div>
 				</div>
 				<div class="form-group">
 					<label for="change-phone" class="col-sm-offset-1 col-sm-2 control-label">联系电话</label>
 					<div class="col-sm-6">
-						<input type="text" class="form-control" id="change-phone" placeholder="请输入新的联系电话" value="{{ user.phone_number}}">
+						<input type="text" class="form-control" id="change-phone" placeholder="请输入新的联系电话"{% if user.phone_number %} value="{{ user.phone_number }}{% endif %}">
 					</div>
 				</div>
 			</form>
@@ -293,7 +295,7 @@ $(document).ready(function(){
         $.ajax({
             url:'/manager/changeinfo/',
             type:"POST",
-            data:{nickname:$("#change-nickname").val(), email:$("#change-email").val(), birth:$("change-birth").val(), phone:$("change-phone").val()},
+            data:{nickname:$("#change-nickname").val(), birth:$("#change-birthday").val(), phone:$("#change-phone").val()},
             dataType:"json"
         }).done(function(msg){
             $('#change-info-status').text(msg.info).show();
