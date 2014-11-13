@@ -5,9 +5,9 @@ from django import template
 from django.template.loader import get_template
 from django.db import models
 from django.core import serializers
+from django import forms
 import json
 import os
-
 from models import *
 
 def show_program(req, arg):
@@ -63,6 +63,7 @@ def show_program(req, arg):
                      'table':table, 'doc_links':doc_links},
                     context_instance=RequestContext(req));
 
+
 def play_program(req, arg):
     pgid = int(arg)
     pg = Program.objects.get(id=pgid)
@@ -72,3 +73,81 @@ def play_program(req, arg):
     return render_to_response("program/player.html",
                               {'medialink':medialink},
                               context_instance=RequestContext(req));
+
+
+def show_upload(req):
+    return render_to_response("program/upload.html", context_instance=RequestContext(req))
+
+
+def upload_program(req):
+    res = { }
+    try:
+        prg = Program()
+
+        tgroup = req.POST.get('group', None)
+        tseries = req.POST.get('series', None)
+        ttitle = req.POST.get('title', None)
+        tdescription = req.POST.get('description', None)
+        tweight = req.POST.get('weight', None)
+        trecorder = req.POST.get('recorder', None)
+        tpicture = req.FILES.get('picture', None) # json of list
+        taudio = req.FILES.get('audio', None)
+        tdocument = req.POST.get('document', None) # json of list
+        if (tgroup != None):
+            prg.group = tgroup
+        if (tseries != None):
+            prg.series = tseries
+        if (ttitle != None):
+            prg.title = ttitle
+        if (tdescription != None):
+            prg.description = tdescription
+        if (tweight != None):
+            prg.weight = tweight
+        if (trecorder != None):
+            prg.recorder = trecorder
+        if (tpicture != None):
+            pic = Source()
+            pic.document = tpicture
+            pic.save()
+            prg.picture = pic.id
+        if (taudio != None):
+            ad = Source()
+            ad.document = taudio
+            ad.save()
+            prg.audio = ad.id
+        if (tdocument != None):
+            prg.document = tdocument
+        prg.save()
+        res['result'] = 'success'
+    except Exception, e:
+        res['result'] = 'failed'
+    return HttpResponse(json.dumps(res), content_type='application/json')
+
+
+def show_modify(req, arg):
+    pgid = int(arg)
+    pg = Program.objects.get(id=pgid)
+
+    title = ""
+    if pg.title:
+        title = pg.title
+
+    description = ""
+    if pg.description:
+        description = pg.description
+
+    piclink = []
+    if pg.picture:
+        pic_arr = json.loads(pg.picture)
+        for i in pic_arr:
+            piclink.append(Source.objects.get(id=i).document.url)
+    
+    medialink = ""
+    if pg.audio:
+        medialink = Source.objects.get(id=pg.audio).document.url
+
+    return render_to_response("program/modify.html",
+                    {'pgid':pgid, 'title':title,
+                     'description':description,
+                     'medialink':medialink, 'piclink':piclink,
+                     context_instance=RequestContext(req));

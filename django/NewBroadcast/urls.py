@@ -35,6 +35,8 @@ urlpatterns = patterns('',
 
     url(r'^program/([0-9]*)$', program.show_program),
     url(r'^program/play/(.*)$', program.play_program),
+    url(r'^program/upload/$', program.show_upload),
+    url(r'^program/upload/dealupload/$', program.upload_program),
 
     url(r'^login/do/$', login.do),
     url(r'^login/test/$', login.test),
