@@ -74,7 +74,6 @@ def play_program(req, arg):
                               {'medialink':medialink},
                               context_instance=RequestContext(req));
 
-
 def show_upload(req):
     result = req.GET.get('result', None)
     if result == 'success':
@@ -225,3 +224,10 @@ def delete_program(req, arg):
     except Exception, e:
         res['result'] = 'failed'
     return HttpResponse(json.dumps(res), content_type='application/json')
+
+def recommand_program(req):
+    p_id = req.POST.get('id');
+    p_weight = req.POST.get('weight');
+    obj = Program.objects.get(id = p_id);
+    obj.weight = p_weight;
+    return HttpResponse(json.dumps([{"success":1}]), content_type = "application/json");
