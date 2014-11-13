@@ -76,7 +76,14 @@ def play_program(req, arg):
 
 
 def show_upload(req):
-    return render_to_response("program/upload.html", context_instance=RequestContext(req))
+    result = req.GET.get('result', None)
+    if result == 'success':
+        result = u'上传成功'
+    elif result == 'failed':
+        result = u'操作失败'
+    return render_to_response("program/upload.html",
+                              {'result':result},
+                              context_instance=RequestContext(req))
 
 
 def upload_program(req):
@@ -121,7 +128,7 @@ def upload_program(req):
         res['result'] = 'success'
     except Exception, e:
         res['result'] = 'failed'
-    return HttpResponse(json.dumps(res), content_type='application/json')
+    return HttpResponseRedirect('/program/upload/?result=' + res['result'])
 
 
 def show_modify(req, arg):

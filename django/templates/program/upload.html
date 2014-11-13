@@ -2,6 +2,9 @@
 {% block title %}{{ title }} - 清华大学广播站{% endblock %}
 {% block body %}
 <div class="col-sm-offset-5">
+{% if result %}
+<p>{{ result }}</p>
+{% endif %}
 <h1>添加新节目</h1>
 </br>
 </div>

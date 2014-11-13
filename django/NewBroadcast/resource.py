@@ -37,7 +37,10 @@ def get_arr(req):
     pid = req.POST.getlist(u'pid[]', [])
     for i in pid:
         pg = Program.objects.get(id=int(i))
-        sn = {'title':pg.title, 'group':pg.group.title, 'series':pg.series}
+        group_title = None
+        if (pg.group):
+            group_title = pg.group.title
+        sn = {'title':pg.title, 'group':group_title, 'series':pg.series}
         res.append(sn)
     return HttpResponse(json.dumps({'program':res}),
                         content_type='application/json')
