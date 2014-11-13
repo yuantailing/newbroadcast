@@ -1,0 +1,11 @@
+					<table class="panel-body table table-bordered table-hover">
+						<tr><td>#</td><td></td></tr>
+						<tr><td>昵称</td><td>{{ user.nickname }}</td></tr>
+						<tr><td>邮箱</td><td>{{ user.email }}</td></tr>
+						<tr><td>权限</td><td>{{ power }}</td></tr>
+						{% if user.phone %}<tr><td>联系方式</td><td>{{ user.phone }}</td></tr>{% endif %}
+					</table>
+					<div class="panel-footer" id="space-change-info">
+						<button class="btn btn-primary" data-toggle="modal" data-target="#change-info">修改资料</button>
+						<button class="btn btn-primary" data-toggle="modal" data-target="#change-password">修改密码</button>	
+					</div>

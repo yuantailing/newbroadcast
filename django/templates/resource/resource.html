@@ -1,80 +1,245 @@
 {% extends "base.html" %}
 {% block body %}
     <!-- /.container -->
+	  <div id="listall_show"></div>
+  <div id="getarr_show"></div>
 	<div style="height:100%; width:100%" class="text-center">
 		<!-- 组别 -->
 		<div style="height:100%; width:100%" class="pagination text-center">
 			<ul style="height:100%; width:80%">
 				<!-- Make dropdown appear above pagination -->
-				<li style="height:100%; width:14.2857%"><a onclick="selectActiveIt(this)" style="height:100%; width:100%">读书</a></li>
-				<li style="height:100%; width:14.2857%"><a onclick="selectActiveIt(this)" style="height:100%; width:100%">时评</a></li>
-				<li style="height:100%; width:14.2857%"><a onclick="selectActiveIt(this)" style="height:100%; width:100%">资讯</a></li>
-				<li style="height:100%; width:14.2857%"><a onclick="selectActiveIt(this)" style="height:100%; width:100%">访谈</a></li>
-				<li style="height:100%; width:14.2857%"><a onclick="selectActiveIt(this)" style="height:100%; width:100%">音乐</a></li>
-				<li style="height:100%; width:14.2857%"><a onclick="selectActiveIt(this)" style="height:100%; width:100%">体育</a></li>
-				<li style="height:100%; width:14.2857%"><a onclick="selectActiveIt(this)" style="height:100%; width:100%">广播剧</a></li>
+                {% for pg in groups %}
+				<li style="height:100%; width:{{ liwidth }}%">
+					<a onclick="selectActiveIt(this)" style="height:100%; width:100%">{{ pg.title }}</a>
+					<input type="hidden" id="groupid" value="{{ pg.id }}" />
+				</li>
+                {% endfor %}
 			</ul>
 		</div>
-		
+
 		<div style="height:10px"></div>
 		<div class="row" style="height:80%; width:80%; margin:auto">
 			<!-- 系列 -->
-			<div style="height:100%; width:20%; float:left">
-				<div class="btn-group-vertical btn-group-sm">
-					<button type="button" class="btn btn-primary">系列系列列系列</button>
-					<button type="button" class="btn btn-primary">系列</button>
-					<button type="button" class="btn btn-primary">系列</button>
-					<button type="button" class="btn btn-primary">系列</button>
-				</div>
-			</div>
 			<!-- 节目 -->
-			<div style="height:100%; width:80%; float:right">
-				<ul class="list-group">
-					<a href="/program/1" style="color:black"><li class="list-group-item" onmouseover="activeIt(this)" onmouseout="deactiveIt(this)">First</li></a>
-					<a href="/program/1" style="color:black"><li class="list-group-item" onmouseover="activeIt(this)" onmouseout="deactiveIt(this)">First</li></a>
-					<a href="/program/1" style="color:black"><li class="list-group-item" onmouseover="activeIt(this)" onmouseout="deactiveIt(this)">First</li></a>
-					<a href="/program/1" style="color:black"><li class="list-group-item" onmouseover="activeIt(this)" onmouseout="deactiveIt(this)">First</li></a>
-					<a href="/program/1" style="color:black"><li class="list-group-item" onmouseover="activeIt(this)" onmouseout="deactiveIt(this)">First</li></a>
-					<a href="/program/1" style="color:black"><li class="list-group-item" onmouseover="activeIt(this)" onmouseout="deactiveIt(this)">First</li></a>
-					<a href="/program/1" style="color:black"><li class="list-group-item" onmouseover="activeIt(this)" onmouseout="deactiveIt(this)">First</li></a>
-					<a href="/program/1" style="color:black"><li class="list-group-item" onmouseover="activeIt(this)" onmouseout="deactiveIt(this)">First</li></a>
-					<a href="/program/1" style="color:black"><li class="list-group-item" onmouseover="activeIt(this)" onmouseout="deactiveIt(this)">First</li></a>
+			<div style="height:100%; width:100%; float:right">
+				<ul id="res-list" class="list-group" style="height:100%; width:100%">
 				</ul>
 			</div>
 		</div>
 		
 		<!-- 翻页 -->
 		<div style="height:100%; width:80%">
-			<ul class="pagination-plain" style="float:right">
-				<li class="previous">
-					<a href="#" class="fui-arrow-left"></a>
-				</li>
-				<li>
-					<a href="#">1</a>
-				</li>
-				<li>
-					<a href="#">2</a>
-				</li>
-				<li>
-					<a href="#">3</a>
-				</li>
-				<li class="previous">
-					<a href="#" class="fui-arrow-right"></a>
-				</li>
+			<ul id="page-list" class="pagination-plain" style="float:right">
 			</ul>
 		</div>
 	</div>
+<div class="modal fade" id="modifyModal" tabindex="-1" role="dialog" aria-labelledby="modifyModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+         <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <p>修改节目信息</p>
+         </div>
+         <div class="modal-body">
+			<form id="modify-form" class="form-horizontal" role="form">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label id="modify_status" class="col-sm-6 control-label"></label>
+                    <br/>
+                    <label id="modify-show" class="col-sm-6 control-label"></label>
+                </div>
+				<div class="form-group">
+					<label for="modify-group" class="col-sm-offset-1 col-sm-2 control-label">组别</label>
+					<div class="col-sm-6">
+						<input type="text" class="form-control" id="modify-group" placeholder="请输入组别">
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="modify-series" class="col-sm-offset-1 col-sm-2 control-label">系列</label>
+					<div class="col-sm-6">
+						<input type="text" class="form-control" id="modify-series" placeholder="请输入系列">
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="modify-title" class="col-sm-offset-1 col-sm-2 control-label">名称</label>
+					<div class="col-sm-6">
+						<input type="text" class="form-control" id="modify-title" placeholder="请输入名称">
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="modify-description" class="col-sm-offset-1 col-sm-2 control-label">描述</label>
+					<div class="col-sm-6">
+						<input type="text" class="form-control" id="modify-description" placeholder="请输入描述">
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="modify-picture0" class="col-sm-offset-1 col-sm-2 control-label">图片</label>
+					<div class="col-sm-6">
+						<input type="file" class="form-control" id="modify-picture0">
+					</div>
+				</div>
+			</form>
+			<div class="col-sm-2" style="float:right">
+				<button class="btn btn-xs btn-primary" id="add-picture" onclick="addPicture(this)">+</button>
+				<button class="btn btn-xs btn-primary" id="del-picture" onclick="delPicture(this)">-</button>
+			</div>
+			<br/>
+         </div>
+         <div class="modal-footer">
+            <button type="button" class="btn btn-primary" id="modify-submit">修改</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+         </div>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div>
 
 
     <!-- jQuery (necessary for Flat UI's JavaScript plugins) -->
     <script src="js/vendor/jquery.min.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="js/flat-ui.min.js"></script>
-	
+{% endblock %}
+{% block script %}
 	<script>
-		function bigDisplay(x) {
-			var size=1.2*$('#yy').height();
-			$('#yy').height(size);
+	var pids = new Array();
+	var index = 0;
+	var pictureIndex=1;
+		$(document).ready(function(){
+			$.ajax({
+			  url:'/resource/listall/',
+			  type:"GET",
+			  data:{},
+				dataType:"json"
+			}).done(function(msg){
+				pids = msg.pid;
+				var count=parseInt(pids.length/10+1);
+				document.getElementById("page-list").innerHTML="";
+				if (count>1) {
+					var linode=document.createElement("li");
+					linode.setAttribute("class", "previous");
+					var anode=document.createElement("a");
+					anode.setAttribute("class", "fui-arrow-left");
+					anode.setAttribute("onclick", "prePage(this)");
+					linode.appendChild(anode);
+					document.getElementById("page-list").appendChild(linode);
+					for (var i=1;i<=count;i++) {
+						var linode=document.createElement("li");
+						var anode=document.createElement("a");
+						anode.innerHTML=i;
+						anode.setAttribute("onclick", "selectPage(this)");
+						linode.appendChild(anode);
+						document.getElementById("page-list").appendChild(linode);
+					}
+					var linode=document.createElement("li");
+					linode.setAttribute("class", "previous");
+					var anode=document.createElement("a");
+					anode.setAttribute("class", "fui-arrow-right");
+					anode.setAttribute("onclick", "nextPage(this)");
+					linode.appendChild(anode);
+					document.getElementById("page-list").appendChild(linode);
+				}
+				showResource();
+			}).fail(function(jqXHR,textStatus){
+			});
+		});
+/*			$('#modify-submit').click(function(){
+				$.ajax({
+					url:'/resource/modify/',
+					type:"POST",
+					data:{group:$("#modify-group").val(), series:$("#modify-series").val(), title:$("#modify-title").val(), description:$("#modify-description").val(), picture:$("#modify-picture").val()},
+					dataType:"json"
+				}).done(function(msg){
+				}).fail(function(jqXHR,textStatus){
+				});
+			});
+			$('#delete').click(function(){
+				$.ajax({
+					url:'resource/delete/',
+					type:"POST",
+					data:{pid:$("#delete").parent().attr("value")},
+				}).done(function(msg){
+					location.reload(true);
+				}).fail(function(jqXHR，textStatus){
+				});
+			});*/
+		function showResource() {
+			var subpids = new Array();
+			var len;
+			if (pids.length-index > 10) {
+				len = 10;
+			} else {
+				len = pids.length-index;
+			}
+			for (var i=0;i < len;i++) {
+				subpids[i]=pids[i+index];
+			}
+			$.ajax({
+			  url:'/resource/getarr/',
+			  type:"POST",
+			  data:{'pid':subpids},
+				dataType:"json"
+			}).done(function(msg){
+				document.getElementById("res-list").innerHTML="";
+			  	for (var i=0;i<len;i++) {
+					var anode=document.createElement("a");
+					anode.style.color="black";
+					anode.href="/program/"+pids[i+index];
+					var linode=document.createElement("li");
+					linode.className="list-group-item";
+					linode.setAttribute("onmouseover", "activeIt(this)");
+					linode.setAttribute("onmouseout", "deactiveIt(this)");
+					linode.setAttribute("value", pids[i+index]);
+					linode.appendChild(anode); //
+					var table=document.createElement("table");
+					table.setAttribute("class", "table");
+					table.setAttribute("cellspacing", "10");
+					var td1=document.createElement("td");
+					td1.innerHTML=msg.program[i].title;
+					var td2=document.createElement("td");
+					td2.innerHTML=msg.program[i].group+"/"+msg.program[i].series;
+					table.appendChild(td1);
+					table.appendChild(td2);
+					anode.appendChild(table); //
+					if ($("#user_power").attr("value")=="admin" || $("#user_power").attr("value")=="administrator") {
+					//	linode.style.height="100%";
+					//	linode.style.width="100%";
+					//	anode.style.height="100%";
+					//	anode.style.width="80%";
+					//	table.style.height="100%";
+					//	table.style.width="60%";
+						var tbutton=document.createElement("button");
+						tbutton.setAttribute("type", "button");
+						tbutton.setAttribute("id", "recommend");
+						tbutton.setAttribute("class", "btn btn-primary");
+						tbutton.innerHTML="推荐";
+						tbutton.style.float="right";
+						linode.appendChild(tbutton);
+						var mbutton=document.createElement("button");
+						mbutton.setAttribute("type", "button");
+						mbutton.setAttribute("id", "modify");
+						mbutton.setAttribute("class", "btn btn-primary");
+						mbutton.setAttribute("data-toggle", "modal");
+						mbutton.setAttribute("data-target", "#modifyModal");
+						mbutton.innerHTML="修改";
+					//	mbutton.style.height="100%";
+					//	mbutton.style.width="10%";
+						mbutton.style.float="right";
+						linode.appendChild(mbutton);
+						var dbutton=document.createElement("button");
+						dbutton.setAttribute("type", "button");
+						dbutton.setAttribute("id", "delete");
+						dbutton.setAttribute("class", "btn btn-primary");
+						dbutton.innerHTML="删除";
+					//	dbutton.style.height="100%";
+					//	dbutton.style.width="10%";
+						dbutton.style.float="right";
+						linode.appendChild(dbutton);
+					}
+					document.getElementById("res-list").appendChild(linode);
+				}
+			}).fail(function(jqXHR,textStatus){
+			  $('#getarr_show').html('request failed '+ textStatus);
+			});
 		}
 		function activeIt(x) {
 			if (!x) return;
@@ -103,10 +268,91 @@
 			var y=x.parentNode;
 			if (!y) return;
 			var yClassName = y.className;
-			y.className = yClassName + " " + "active";
+			if (!yClassName.match(new RegExp("(^|\\s)" + "active" + "(\\s|$)")))
+				y.className = yClassName + " " + "active";
 			var lists = $(x).parent().siblings();
 			for (var i=0; i<lists.length; i++) {
 				deactiveIt(lists[i]);
+			}
+			$.ajax({
+			  url:'/resource/groupfilter/'+$(x).next().attr("value"),
+			  type:"GET",
+			  data:{},
+				dataType:"json"
+			}).done(function(msg){
+				pids = msg.pid;
+				var count=parseInt(pids.length/10+1);
+				document.getElementById("page-list").innerHTML="";
+				if (count>1) {
+					var linode=document.createElement("li");
+					linode.setAttribute("class", "previous");
+					var anode=document.createElement("a");
+					anode.setAttribute("class", "fui-arrow-left");
+					anode.setAttribute("onclick", "prePage(this)");
+					linode.appendChild(anode);
+					document.getElementById("page-list").appendChild(linode);
+					for (var i=1;i<=count;i++) {
+						var linode=document.createElement("li");
+						var anode=document.createElement("a");
+						anode.innerHTML=i;
+						anode.setAttribute("onclick", "selectPage(this)");
+						linode.appendChild(anode);
+						document.getElementById("page-list").appendChild(linode);
+					}
+					var linode=document.createElement("li");
+					linode.setAttribute("class", "previous");
+					var anode=document.createElement("a");
+					anode.setAttribute("class", "fui-arrow-right");
+					anode.setAttribute("onclick", "nextPage(this)");
+					linode.appendChild(anode);
+					document.getElementById("page-list").appendChild(linode);
+				}
+				showResource();
+			}).fail(function(jqXHR,textStatus){
+			});
+		}
+		function nextPage(x) {
+			if (index+10<pids.length) {
+				index=index+10;
+				showResource();
+			}
+		}
+		function prePage(x) {
+			if (index-10>=0) {
+				index=index-10;
+				showResource();
+			}
+		}
+		function selectPage(x) {
+			index=(x.innerHTML-1)*10;
+			showResource();
+		}
+		function addPicture(x) {
+			var fdiv=document.createElement("div");
+			fdiv.setAttribute("class", "form-group");
+			fdiv.setAttribute("id", "adddiv"+pictureIndex);
+			document.getElementById("modify-form").appendChild(fdiv);
+			var plabel=document.createElement("label");
+			plabel.setAttribute("for", "modify-picture"+pictureIndex);
+			plabel.setAttribute("class", "col-sm-offset-1 col-sm-2 control-label");
+			plabel.innerHTML="图片";
+			fdiv.appendChild(plabel);
+			var pdiv=document.createElement("div");
+			pdiv.setAttribute("class", "col-sm-6");
+			fdiv.appendChild(pdiv);
+			var pinput=document.createElement("input");
+			pinput.setAttribute("type", "file");
+			pinput.setAttribute("class", "form-control");
+			pinput.setAttribute("id", "modify-picture"+pictureIndex);
+			pdiv.appendChild(pinput);
+			pictureIndex=pictureIndex+1;
+		}
+		function delPicture(x) {
+			if (pictureIndex>1) {
+				pictureIndex=pictureIndex-1;
+				var parent=document.getElementById("modify-form");
+				var node=document.getElementById("adddiv"+pictureIndex);
+				parent.removeChild(node);
 			}
 		}
 	</script>
