@@ -84,7 +84,7 @@
                     box.appendChild(info);
                     var pic = document.createElement('a');
                     pic.className = 'pic';
-                    pic.setAttribute("href", "/program/1");
+                    pic.setAttribute("href", "/program/" + data[i].id);
                     info.appendChild(pic);
                     var img = document.createElement('img');
                     img.src = data[i].src;
