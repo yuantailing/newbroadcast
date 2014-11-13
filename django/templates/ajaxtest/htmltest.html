@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block body %}
+				<div class="panel panel-default" id="space-info">
+					<div class="panel-heading">
+						<h4 clas="col-md-4">个人资料</h4>
+					</div>
+				</div>
+{% endblock %}
+
+{% block script %}
+<script>
+$(document).ready(function(){
+        $.ajax({
+            url:'/ajaxtest/htmlresponse/',
+            type:"GET",
+            data:{email:$("#login-email").val(), password:$("#login-password").val()},
+            dataType:"html"
+        }).done(function(msg){
+            $('#space-info').append(msg);
+        }).fail(function(jqXHR,textStatus){
+            $('#space-info').append('载入失败');
+        });
+});
+</script>
+{% endblock %}
