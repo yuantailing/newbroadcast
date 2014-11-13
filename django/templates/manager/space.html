@@ -177,6 +177,7 @@
             <h4 class="modal-title">
                修改密码
             </h4>
+            <div id="change-password-status"></div>
          </div>
          <div class="modal-body">
             <form class="form-horizontal" role="form">
@@ -202,7 +203,7 @@
 			</form>
          </div>
          <div class="modal-footer">
-            <button type="button" class="btn btn-primary">
+            <button type="button" class="btn btn-primary" id="change-password-button">
               	提交
             </button>
             <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
@@ -257,14 +258,20 @@
 
 {% block script %}
 <script>
-{% if request.session.uid %}
-$(document).ready(function() {
-	
-
-
-
+$(document).ready(function(){
+    $('#change-password-button').click(function(){
+        $.ajax({
+            url:'/manager/changepassword',
+            type:"POST",
+            data:{old_password:$("#old-password").val(), new_password:$("#new-passwowrd").val(), check_password:$("check-new-passwowrd").val()},
+            dataType:"json"
+        }).done(function(msg){
+            $('#change-password-status').text(msg.info).show();
+        }).fail(function(jqXHR,textStatus){
+            $('#change-password-status').html('与服务器连接中断');
+        });
+    });
 });
-{% endif %}
 </script>
 
 {% endblock %}
