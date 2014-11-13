@@ -43,8 +43,9 @@ def test(req):
     return HttpResponse(json.dumps(res), content_type='application/json')
 
 def logout(req):
-    res = { }
     req.session['uid'] = None
-    res['result'] = 'success'
-    return HttpResponse(json.dumps(res), content_type='application/json')
+    req.session['user_nickname'] = None
+    req.session['user_power'] = None
+    return HttpResponseRedirect('/')
+
 
