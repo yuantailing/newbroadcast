@@ -50,6 +50,46 @@ def modifyProgram(req):
     return HttpResponse(json.dumps(res), content_type='application/json')
 
 
+def uploadProgram(req):
+    res = { }
+    try:
+        prg = Program()
+
+        tgroup = req.POST.get('group', None)
+        tseries = req.POST.get('series', None)
+        ttitle = req.POST.get('title', None)
+        tdescription = req.POST.get('description', None)
+        tweight = req.POST.get('weight', None)
+        trecorder = req.POST.get('recorder', None)
+        tpicture = req.POST.get('picture', None) # json of list
+        taudio = req.POST.get('audio', None)
+        tdocument = req.POST.get('document', None) # json of list
+
+        if (tgroup != None):
+            prg.group = tgroup
+        if (tseries != None):
+            prg.series = tseries
+        if (ttitle != None):
+            prg.title = ttitle
+        if (tdescription != None):
+            prg.description = tdescription
+        if (tweight != None):
+            prg.weight = tweight
+        if (trecorder != None):
+            prg.recorder = trecorder
+        if (tpicture != None):
+            prg.picture = tpicture
+        if (taudio != None):
+            prg.audio = taudio
+        if (tdocument != None):
+            prg.document = tdocument
+        prg.save()
+        res['result'] = 'success'
+    except Exception, e:
+        res['result'] = 'failed'
+    return HttpResponse(json.dumps(res), content_type='application/json')
+
+
 def deleteProgram(req):
     res = { }
     try:
