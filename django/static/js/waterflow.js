@@ -74,6 +74,7 @@
                 console.log(result);
                 data = result;
                 var wrap = document.getElementById('wrap');
+                var count_complete = 0;
                 for(i in data){
                     var box = document.createElement('div');
                     box.className = 'box';
@@ -107,10 +108,15 @@
                         p[0].style.display = 'none';
                     }
                     title.appendChild(a);
+                    img.onload = function() {
+		                count_complete ++;
+		                if (count_complete == data.length) {
+		                    PBL('wrap','box');
+		                }
+	            	}
                 }
-                PBL('wrap','box');
             }).fail(function(jqXHR,textStatus){
-                console.log('request failed '+textStatus);
+                console.log('request failed '+ textStatus);
             });
 		}
 	}
