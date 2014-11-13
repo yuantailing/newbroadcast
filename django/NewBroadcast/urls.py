@@ -8,6 +8,7 @@ from NewBroadcast import login
 from NewBroadcast import signin
 from NewBroadcast import api
 from NewBroadcast import manager
+from NewBroadcast import mgrdebug
 
 
 urlpatterns = patterns('',
@@ -53,6 +54,8 @@ urlpatterns = patterns('',
     url(r'^space/$', manager.show_space),
     url(r'^mgrres/$', manager.show_mgrres),
     url(r'^mgruser/$', manager.show_mgruser),
+                       
+    url(r'^mgrdebug/changepower/(.*)$', mgrdebug.change_power),
 
 )
 
