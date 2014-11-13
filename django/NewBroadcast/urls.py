@@ -5,7 +5,6 @@ from NewBroadcast import frontpage
 from NewBroadcast import resource
 from NewBroadcast import program
 from NewBroadcast import login
-from NewBroadcast import signin
 from NewBroadcast import api
 from NewBroadcast import manager
 from NewBroadcast import mgrdebug
@@ -37,12 +36,11 @@ urlpatterns = patterns('',
     url(r'^program/([0-9]*)$', program.show_program),
     url(r'^program/play/(.*)$', program.play_program),
 
-    url(r'^login/do/$', login.do),
+    url(r'^login/do/$', login.login),
     url(r'^login/test/$', login.test),
     url(r'^login/logout/$', login.logout),
-
-    url(r'^signin/judge/$', signin.judge),
-    url(r'^signin/do/$', signin.do),
+    url(r'^signin/judge/$', login.exist_judge),
+    url(r'^signin/do/$', login.signin),
 
     url(r'^user/$', api.api_user),
     url(r'^program_group/$', api.api_program_group),
