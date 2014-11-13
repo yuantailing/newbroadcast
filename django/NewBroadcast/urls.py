@@ -5,9 +5,9 @@ from NewBroadcast import frontpage
 from NewBroadcast import resource
 from NewBroadcast import program
 from NewBroadcast import login
-from NewBroadcast import signin
 from NewBroadcast import api
 from NewBroadcast import manager
+from NewBroadcast import mgrdebug
 
 
 urlpatterns = patterns('',
@@ -22,6 +22,9 @@ urlpatterns = patterns('',
 
     url(r'^ajaxtest/$', ajaxtest.index),
     url(r'^ajaxtest/getresult/$', ajaxtest.getresult),
+    url(r'^ajaxtest/htmltest/$', ajaxtest.htmltest),
+    url(r'^ajaxtest/htmlresponse/$', ajaxtest.htmlresponse),
+                       
 
     url(r'^index/$', frontpage.show_index),
     url(r'^index/waterflow$', frontpage.waterflow_data),
@@ -38,12 +41,11 @@ urlpatterns = patterns('',
     url(r'^program/upload/$', program.show_upload),
     url(r'^program/upload/dealupload/$', program.upload_program),
 
-    url(r'^login/do/$', login.do),
+    url(r'^login/do/$', login.login),
     url(r'^login/test/$', login.test),
     url(r'^login/logout/$', login.logout),
-
-    url(r'^signin/judge/$', signin.judge),
-    url(r'^signin/do/$', signin.do),
+    url(r'^signin/judge/$', login.exist_judge),
+    url(r'^signin/do/$', login.signin),
 
     url(r'^user/$', api.api_user),
     url(r'^program_group/$', api.api_program_group),
@@ -55,6 +57,8 @@ urlpatterns = patterns('',
     url(r'^space/$', manager.show_space),
     url(r'^mgrres/$', manager.show_mgrres),
     url(r'^mgruser/$', manager.show_mgruser),
+                       
+    url(r'^mgrdebug/changepower/(.*)$', mgrdebug.change_power),
 
 )
 

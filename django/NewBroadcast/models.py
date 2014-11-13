@@ -8,9 +8,9 @@ class User(models.Model):
     password = models.TextField(blank=False, default=None)
     nickname = models.TextField(blank=False, default=None, unique=True)
     power = models.CharField(blank=False, default='user', max_length=32,
-                             choices=(('user', 'user'), ('admin', 'admin'),
-                                      ('worker', 'worker'),
-                                      ('administrator', 'administrator')))
+                             choices=(('user', 'user'), ('worker', 'worker'),
+                                      ('admin', 'admin'),
+                                      ('superadmin', 'superadmin')))
     birthday = models.DateTimeField(null=True, blank=True, default=None)
     phone_number = models.CharField(null=True, blank=True, default=None,
                                     max_length=32)
