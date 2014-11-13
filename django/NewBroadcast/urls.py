@@ -25,6 +25,7 @@ urlpatterns = patterns('',
 
     url(r'^index/$', frontpage.show_index),
     url(r'^index/waterflow$', frontpage.waterflow_data),
+    url(r'^index/click$', frontpage.click),
 
     url(r'^resource/(.*)$', resource.show),
 

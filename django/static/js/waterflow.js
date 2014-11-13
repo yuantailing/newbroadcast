@@ -92,7 +92,7 @@
                     title.className = 'title';
                     info.appendChild(title);
                     var a = document.createElement('a');
-                    a.setAttribute("href", "/program/1");
+                    a.setAttribute("href", "/program/" + data[i].id);
                     a.innerHTML = data[i].title;
                     var p = document.createElement('p');
                     p.innerHTML = data[i].content;

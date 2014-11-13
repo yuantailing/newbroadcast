@@ -28,3 +28,6 @@ def waterflow_data(req):
         tmpret['content'] = o.description;
         ret.append(tmpret);
     return HttpResponse(json.dumps(ret), content_type = "application/json");
+
+def click(req):
+    return;
