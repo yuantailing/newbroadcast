@@ -5,7 +5,7 @@
 {% endblock %}
 
 {% block header %}
-<link href="/static/dist/css/datepicker.css" rel="stylesheet" />
+<link href="/static/css/birthday-picker.css" rel="stylesheet" />
 {% endblock %}
 
 {% block body %}
@@ -70,8 +70,8 @@
 						<tr><td>昵称</td><td>{{ user.nickname }}</td></tr>
 						<tr><td>邮箱</td><td>{{ user.email }}</td></tr>
 						<tr><td>权限</td><td>{{ power }}</td></tr>
-						{% if user.birthday %}<tr><td>生日</td><td>{{ user.birthday|date:"Y-m-d" }}</td></tr>{% endif %}
 						{% if user.phone_number %}<tr><td>联系电话</td><td>{{ user.phone_number }}</td></tr>{% endif %}
+						{% if user.birthday %}<tr><td>生日</td><td>{{ user.birthday|date:"Y-m-d" }}</td></tr>{% endif %}
 					</table>
 					<div class="panel-footer" id="space-change-info">
 						<button class="btn btn-primary" data-toggle="modal" data-target="#change-info">修改资料</button>
@@ -143,25 +143,29 @@
 						<input type="text" class="form-control" id="change-nickname" placeholder="请输入新的昵称" value="{{ user.nickname}}">
 					</div>
 				</div>
-					<fieldset disabled="true">
+				<fieldset disabled="true">
 				<div class="form-group">
 					<label for="change-email" class="col-sm-offset-1 col-sm-2 control-label" style="color:#bbb;">邮箱</label>
                     <div class="col-sm-6">
 						<input type="text" class="form-control" id="change-email" placeholder="请输入新的邮箱" value="{{ user.email }}">
 					</div>
 				</div>
-                
-                    </fieldset>
-				<div class="form-group">
-					<label for="change-birthday" class="col-sm-offset-1 col-sm-2 control-label">生日</label>
-					<div class="col-sm-6">
-						<input type="text" class="form-control" id="change-birthday" placeholder="请输入新的生日" value="{{ user.birthday|date:"Y-m-d" }}">
-					</div>
-				</div>
-				<div class="form-group">
+                </fieldset>
+                <div class="form-group">
 					<label for="change-phone" class="col-sm-offset-1 col-sm-2 control-label">联系电话</label>
 					<div class="col-sm-6">
 						<input type="text" class="form-control" id="change-phone" placeholder="请输入新的联系电话"{% if user.phone_number %} value="{{ user.phone_number }}{% endif %}">
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="change-birthday" class="col-sm-offset-1 col-sm-2 control-label">生日</label>
+					<div class="col-sm-6">
+						<input type="text" class="form-control" id="change-birthday" placeholder="请输入新的生日" value="{{ user.birthday|date:"Y-m-d" }}" data-date-format="yyyy-mm-dd">
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="change-birthday" class="col-sm-offset-1 col-sm-2 control-label"></label>
+					<div class="col-sm-6" id="birthday-picker">
 					</div>
 				</div>
 			</form>
@@ -267,7 +271,7 @@
 {% endblock %}
 
 {% block script %}
-<script src="/static/dist/js/bootstrap-datepicker.js"></script>
+<script src="/static/js/birthday-picker.js"></script>
 <script>
 $(document).ready(function(){
     $('#change-password-button').click(function(){

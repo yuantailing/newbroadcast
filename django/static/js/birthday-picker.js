@@ -24,7 +24,7 @@
 	var Datepicker = function(element, options){
 		this.element = $(element);
 		this.format = DPGlobal.parseFormat(options.format||this.element.data('date-format')||'mm/dd/yyyy');
-		this.picker = $(DPGlobal.template).appendTo('#change-info').hide().on('mousedown.Datepicker',$.proxy(this.mousedown, this)).on('click.Datepicker',$.proxy(this.click, this));
+		this.picker = $(DPGlobal.template).appendTo('#birthday-picker').hide().on('mousedown.Datepicker',$.proxy(this.mousedown, this)).on('click.Datepicker',$.proxy(this.click, this));
 
 		this.isInput = this.element.is('input') || this.element.is('textarea');
 		this.component = this.element.is('.date') ? this.element.find('.add-on') : false;
@@ -101,8 +101,8 @@
 		place: function(){
 			var offset = this.component ? this.component.offset() : this.element.offset();
 			this.picker.css({
-				top: offset.top + this.height,
-				left: offset.left
+				top: 0, //offset.top + this.height,
+				left: 0//offset.left
 			});
 		},
 		
