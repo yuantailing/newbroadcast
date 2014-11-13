@@ -126,6 +126,8 @@
             <h4 class="modal-title">
                修改资料
             </h4>
+            <div id="change-info-status">
+            </div>
          </div>
          <div class="modal-body">
             <form class="form-horizontal" role="form">
@@ -157,7 +159,7 @@
 			</form>
          </div>
          <div class="modal-footer">
-            <button type="button" class="btn btn-primary">
+            <button type="button" class="btn btn-primary" id="change-info-button">
               	提交
             </button>
             <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
@@ -269,6 +271,20 @@ $(document).ready(function(){
             $('#change-password-status').text(msg.info).show();
         }).fail(function(jqXHR,textStatus){
             $('#change-password-status').html('与服务器连接中断');
+        });
+    });
+});
+$(document).ready(function(){
+    $('#change-info-button').click(function(){
+        $.ajax({
+            url:'/manager/changeinfo',
+            type:"POST",
+            data:{nickname:$("#change-nickname").val(), email:$("#change-email").val(), birth:$("change-birth").val(), phone:$("change-phone").val()},
+            dataType:"json"
+        }).done(function(msg){
+            $('#change-info-status').text(msg.info).show();
+        }).fail(function(jqXHR,textStatus){
+            $('#change-info-status').html('与服务器连接中断');
         });
     });
 });
