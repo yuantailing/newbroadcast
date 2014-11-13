@@ -57,3 +57,30 @@ def change_password(req):
             res['success'] = False
             res['info'] = u'未知错误'
     return HttpResponse(json.dumps(res), content_type='application/json')
+
+def change_info(req):
+    res = {}
+    nick = req.POST.get('nickname', None)
+    birth = req.POST.get('birth', None)
+    phone = req.POST.get('phone', None)
+    try:
+        try:
+            user = User.objects.get(nickname=nick)
+            print user
+            if user.id == req.session['uid']:
+                raise Exception
+            res['success'] = False
+            res['info'] = u'昵称已存在'
+        except Exception, e:
+            user = User.objects.get(id=req.session['uid'])
+            user.nickname = nick
+            user.birthday = birth
+            user.phone_number = phone
+            user.save()
+            res['success'] = True
+            res['info'] = u'修改资料成功'
+    except Exception, e:
+            res['success'] = False
+            res['info'] = u'未知错误'
+    return HttpResponse(json.dumps(res), content_type='application/json')
+

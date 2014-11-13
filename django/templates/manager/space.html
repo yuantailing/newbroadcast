@@ -139,12 +139,6 @@
 					</div>
 				</div>
 				<div class="form-group">
-					<label for="change-email" class="col-sm-offset-1 col-sm-2 control-label">邮箱</label>
-					<div class="col-sm-6">
-						<input type="text" class="form-control" id="change-email" placeholder="请输入新的邮箱">
-					</div>
-				</div>
-				<div class="form-group">
 					<label for="change-birthday" class="col-sm-offset-1 col-sm-2 control-label">生日</label>
 					<div class="col-sm-6">
 						<input type="text" class="form-control" id="change-birthday" placeholder="请输入新的生日">
@@ -286,7 +280,7 @@ $(document).ready(function(){
         $.ajax({
             url:'/manager/changeinfo/',
             type:"POST",
-            data:{nickname:$("#change-nickname").val(), email:$("#change-email").val(), birth:$("change-birth").val(), phone:$("change-phone").val()},
+            data:{nickname:$("#change-nickname").val(), birth:$("#change-birthday").val(), phone:$("#change-phone").val()},
             dataType:"json"
         }).done(function(msg){
             $('#change-info-status').text(msg.info).show();

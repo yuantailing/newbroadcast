@@ -64,7 +64,8 @@ urlpatterns = patterns('',
     url(r'^mgrres/$', manager.show_mgrres),
     url(r'^mgruser/$', manager.show_mgruser),
     url(r'^manager/changepassword/$', manager.change_password),
-                       
+    url(r'^manager/changeinfo/$', manager.change_info),
+
     url(r'^mgrdebug/changepower/(.*)$', mgrdebug.change_power),
 
 )
