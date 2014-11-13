@@ -11,19 +11,6 @@
 			<li><a href="/index/">首页</a></li>
 			<li><a href="/resource/">资源</a></li>
 		</ul>
-<<<<<<< HEAD
-		<form class="navbar-form navbar-right" action="#" role="search">
-		  <div class="form-group" id="user-info">
-		    <button type="button" id="login" class="btn btn-primary" data-toggle="modal" data-target="#myModal1">登录</button>
-		    <button type="button" id="register" class="btn btn-primary" data-toggle="modal" data-target="#myModal2">注册</button>
-		  </div>
-		  <div class="form-group">
-			<div class="input-group">
-			  <input class="form-control" id="navbarInput-01" type="search" placeholder="Search">
-			  <span class="input-group-btn">
-				<button type="submit" name="search" class="btn" style="margin-left:0px;"><span class="fui-search"></span></button>
-			  </span>
-=======
 		<form class="navbar-form navbar-right" action="/resource/result/" method="get" role="search">
 			{% if request.session.uid %}
 			<div class="form-group" id="user-info">
@@ -43,7 +30,6 @@
 						<button type="submit" class="btn" style="margin-left:0px;"><span class="fui-search"></span></button>
 					</span>
 				</div>
->>>>>>> 4ec29226a2f18fe43f4c8d9c4665f8ae12065bdb
 			</div>
 		</form>
 	</div><!-- /.navbar-collapse -->
