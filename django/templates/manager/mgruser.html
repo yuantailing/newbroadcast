@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}
+用户管理
+{% endblock %}
+
+{% block body %}
+
+{% if request.session.uid %}
+<!-- main content -->
+{% ifequal request.session.user_power 'user' %}
+{% include 'error/forbid-not-worker.html' %}
+{% else %}
+{% ifequal request.session.user_power 'worker' %}
+{% include 'error/forbid-not-admin.html' %}
+{% else %}
+<div class="container">
+	<div class="row">
+		<hr />
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h4>用户管理</h4>
+			</div>
+			<table class="panel-body table table-bordered table-striped table-hover">
+				<div>
+					<div class="col-md-3">
+					</div>
+					<div class="col-md-9">
+						<ul id="page-list" class="pagination-plain" style="float:right"><li class="previous"><a class="fui-arrow-left" onclick="prePage(this)"></a></li><li><a onclick="selectPage(this)">1</a></li><li><a onclick="selectPage(this)">2</a></li><li class="previous"><a class="fui-arrow-right" onclick="nextPage(this)"></a></li></ul>
+					</div>
+				</div>
+				<script>
+				for (i = 0; i < 10; i ++) {
+					document.write("<tr><td>用户" + i + "</td><td>信息" + i + "</td>");
+					document.write("<td><button class=\"btn btn-primary\">修改</button></td></tr>");
+				}
+				</script>
+				
+			</table>
+		</div>
+	</div>
+</div>
+{% endifequal %}
+{% endifequal %}
+{% else %}
+{% include "error/forbid-not-user.html"%}
+{% endif %}
+{% endblock %}
+
+{% block script %}
+{% endblock %}

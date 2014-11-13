@@ -5,9 +5,9 @@ from NewBroadcast import frontpage
 from NewBroadcast import resource
 from NewBroadcast import program
 from NewBroadcast import login
-from NewBroadcast import signin
 from NewBroadcast import api
-from NewBroadcast import space
+from NewBroadcast import manager
+from NewBroadcast import mgrdebug
 
 
 urlpatterns = patterns('',
@@ -22,25 +22,29 @@ urlpatterns = patterns('',
 
     url(r'^ajaxtest/$', ajaxtest.index),
     url(r'^ajaxtest/getresult/$', ajaxtest.getresult),
+    url(r'^ajaxtest/htmltest/$', ajaxtest.htmltest),
+    url(r'^ajaxtest/htmlresponse/$', ajaxtest.htmlresponse),
+                       
 
     url(r'^index/$', frontpage.show_index),
     url(r'^index/waterflow$', frontpage.waterflow_data),
     url(r'^index/click$', frontpage.click),
 
-    url(r'^resource/(.*)$', resource.show),
+    url(r'^resource/$', resource.show),
+    url(r'^resource/listall/$', resource.list_all),
+    url(r'^resource/groupfilter/([0-9]*)$', resource.group_filter),
+    url(r'^resource/getarr/$', resource.get_arr),
+    url(r'^resource/getarr_test/$', resource.getarr_test),
+    url(r'^resource/result/$', resource.result),
 
-    url(r'^program/play/(.*)$', program.play_program),
-    url(r'^program/listall/$', program.list_all),
-    url(r'^program/getarr/$', program.get_arr),
-    url(r'^program/getarr_test/$', program.getarr_test),
     url(r'^program/([0-9]*)$', program.show_program),
+    url(r'^program/play/(.*)$', program.play_program),
 
-    url(r'^login/do/$', login.do),
+    url(r'^login/do/$', login.login),
     url(r'^login/test/$', login.test),
     url(r'^login/logout/$', login.logout),
-
-    url(r'^signin/judge/$', signin.judge),
-    url(r'^signin/do/$', signin.do),
+    url(r'^signin/judge/$', login.exist_judge),
+    url(r'^signin/do/$', login.signin),
 
     url(r'^user/$', api.api_user),
     url(r'^program_group/$', api.api_program_group),
@@ -49,7 +53,11 @@ urlpatterns = patterns('',
     url(r'^api_source/$', api.api_source),
     url(r'^api_comment/$', api.api_comment),
 
-    url(r'^space/$', space.show_space),
+    url(r'^space/$', manager.show_space),
+    url(r'^mgrres/$', manager.show_mgrres),
+    url(r'^mgruser/$', manager.show_mgruser),
+                       
+    url(r'^mgrdebug/changepower/(.*)$', mgrdebug.change_power),
 
 )
 

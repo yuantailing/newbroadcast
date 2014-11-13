@@ -19,8 +19,9 @@
             var info = document.createElement('div');
             info.className = 'info';
             box.appendChild(info);
-            var pic = document.createElement('div');
+            var pic = document.createElement('a');
             pic.className = 'pic';
+            pic.setAttribute("href", "/program/" + data[i].id);
             info.appendChild(pic);
             var img = document.createElement('img');
             img.src = data[i].src;
@@ -29,8 +30,7 @@
             var title = document.createElement('div');
             title.className = 'title';
             info.appendChild(title);
-            var a = document.createElement('a');
-            a.setAttribute("href", "/program/" + data[i].id);
+            var a = document.createElement('div');
             a.innerHTML = data[i].title;
             var p = document.createElement('p');
             p.innerHTML = data[i].content;
@@ -55,7 +55,7 @@
                 var boxs = getClass(wrap,'box'); // get all boxes;
                 var boxW = boxs[0].offsetWidth; // the entHeight);width of the box;
                 var colsNum = Math.floor(document.documentElement.clientWidth/boxW); // get the column number;
-                wrap.style.width = boxW*colsNum+'px'; // the width of the wrap;
+                wrap.style.width = boxW*colsNum +'px'; // the width of the wrap;
                 loadbox = 1;
             }
         }
@@ -74,6 +74,7 @@
                 console.log(result);
                 data = result;
                 var wrap = document.getElementById('wrap');
+                var count_complete = 0;
                 for(i in data){
                     var box = document.createElement('div');
                     box.className = 'box';
@@ -81,8 +82,9 @@
                     var info = document.createElement('div');
                     info.className = 'info';
                     box.appendChild(info);
-                    var pic = document.createElement('div');
+                    var pic = document.createElement('a');
                     pic.className = 'pic';
+                    pic.setAttribute("href", "/program/1");
                     info.appendChild(pic);
                     var img = document.createElement('img');
                     img.src = data[i].src;
@@ -91,8 +93,7 @@
                     var title = document.createElement('div');
                     title.className = 'title';
                     info.appendChild(title);
-                    var a = document.createElement('a');
-                    a.setAttribute("href", "/program/" + data[i].id);
+                    var a = document.createElement('div');
                     a.innerHTML = data[i].title;
                     var p = document.createElement('p');
                     p.innerHTML = data[i].content;
@@ -107,10 +108,15 @@
                         p[0].style.display = 'none';
                     }
                     title.appendChild(a);
+                    img.onload = function() {
+		                count_complete ++;
+		                if (count_complete == data.length) {
+		                    PBL('wrap','box');
+		                }
+	            	}
                 }
-                PBL('wrap','box');
             }).fail(function(jqXHR,textStatus){
-                console.log('request failed '+textStatus);
+                console.log('request failed '+ textStatus);
             });
 		}
 	}

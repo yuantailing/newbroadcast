@@ -6,12 +6,254 @@
 
 {% block body %}
 <!-- main content -->
-<div class="container">
+{% if request.session.uid %}
+<div class="container bs-docs-container">
 	<div class="row">
+		<div class="col-md-3">
+			<div class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix-top" role="complementary">
+            	<ul class="nav bs-docs-sidenav">
+                	<li>
+                		<a href="#space-person">个人信息管理</a>
+                		<ul class="nav">
+                			<li><a href="#space-picture">头像</a></li>
+                			<li><a href="#space-info">资料</a></li>
+                			<li><a href="#space-change-info">修改资料</a></li>
+                		</ul>
+                	</li>
+                	
+                	{% ifequal request.session.user_power 'user'%}
+                	{% else %}
+                	<li>
+                		<a href="#space-upload-manager">上传资源管理</a>
+                		<ul class="nav">
+                			<li><a href="#space-upload-list">我的上传</a></li>
+                			<li><a href="#space-upload">上传资源</a></li>
+                		</ul>
+                	</li>
+                	{% ifequal request.session.user_power 'worker' %}
+                	{% else %}
+					<li>
+						<a href="#space-member-manager">站内成员管理</a>
+					</li>
+					{% endifequal %}
+					{% endifequal%}
+					
+                </ul>
+            </div>
+		</div>
+		<div class="col-md-9" role="main">
+			<!-- person -->
+			<div class="bs-docs-section" id="space-person">
+				<hr />
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<div class="col-md-8">
+							<img class="image-responsive img-rounded row" width="128" src="/static/images/1.jpg"  id="space-picture"/>
+							<a class="row" href="#">更换头像</a>
+						</div>
+						<h4>Nick Name</h4>
+					</div>
+					<div class="panel-body">
+						<p>example@example.com</p>
+					</div>
+				</div>
+				<div class="panel panel-default" id="space-info">
+					<div class="panel-heading">
+						<h4 clas="col-md-4">个人资料</h4>
+					</div>
+					<table class="panel-body table table-bordered table-hover">
+						<tr><td>#</td><td></td></tr>
+						<tr><td>昵称</td><td>Nick Name</td></tr>
+						<tr><td>邮箱</td><td>example@example.com</td></tr>
+						<tr><td>性别</td><td>1</td></tr>
+						<tr><td>权限</td><td>台员</td></tr>
+						<tr><td>联系方式</td><td>+8687654321</td></tr>
+					</table>
+					<div class="panel-footer" id="space-change-info">
+						<button class="btn btn-primary" data-toggle="modal" data-target="#change-info">修改资料</button>
+						<button class="btn btn-primary" data-toggle="modal" data-target="#change-password">修改密码</button>	
+					</div>
+				</div>
+			</div>
+			{% ifequal request.session.user_power 'user' %}
+			{% else %}
+			<!-- upload manager -->
+			<div class="bs-docs-section" id="space-upload-manager">
+				<hr />
+				<div class="panel panel-default" id="space-upload-list">
+					<div class="panel-heading">
+						<h4>最近上传</h4>
+					</div>
+					<table class="panel-body table table-bordered table-hover">
+						<tr><td>节目1</td><td>Nick Name</td></tr>
+						<tr><td>节目2</td><td>example@example.com</td></tr>
+						<tr><td>节目3</td><td>1</td></tr>
+						<tr><td>节目4</td><td>台员</td></tr>
+						<tr><td>节目5</td><td>+8687654321</td></tr>
+						<tr><td><a href="/mgrres">更多...</a></td></tr>
+					</table>
+					<div class="panel-footer" id="space-upload">
+						<button class="btn btn-primary" data-toggle="modal" data-target="#space-fast-upload">快速上传</button>	
+					</div>
+				</div>
+			</div>
+			{% ifequal request.session.user_power 'worker' %}
+            {% else %}
+			<!-- member manager -->
+			<div class="bs-docs-section" id="space-member-manager">
+				<hr />
+				<div class="panel panel-default" id="space-upload-list">
+					<div class="panel-heading">
+						<h4>成员管理</h4>
+					</div>
+					<div class="panel-body">
+						<a href="/mgruser">全部成员</a>
+					</div>
+				</div>
+			</div>
+			{% endifequal %}
+			{% endifequal %}
+		</div>
 	</div>
 </div>
+
+<div class="modal fade" id="change-info" tabindex="-1" role="dialog" aria-labelledby="change-info-label" aria-hidden="true">
+   <div class="modal-dialog">
+      <div class="modal-content">
+         <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                  &times;
+            </button>
+            <h4 class="modal-title">
+               修改资料
+            </h4>
+         </div>
+         <div class="modal-body">
+            <form class="form-horizontal" role="form">
+                {% csrf_token %}
+				<div class="form-group">
+					<label for="change-nickname" class="col-sm-offset-1 col-sm-2 control-label">昵称</label>
+					<div class="col-sm-6">
+						<input type="text" class="form-control" id="change-nickname" placeholder="请输入新的昵称">
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="change-email" class="col-sm-offset-1 col-sm-2 control-label">邮箱</label>
+					<div class="col-sm-6">
+						<input type="text" class="form-control" id="change-email" placeholder="请输入新的邮箱">
+					</div>
+				</div>
+			</form>
+         </div>
+         <div class="modal-footer">
+            <button type="button" class="btn btn-primary">
+              	提交
+            </button>
+            <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+         </div>
+      </div><!-- /.modal-content -->
+    </div>
+</div><!-- /.modal -->
+
+<div class="modal fade" id="change-password" tabindex="-1" role="dialog" aria-labelledby="change-password-label" aria-hidden="true">
+   <div class="modal-dialog">
+      <div class="modal-content">
+         <div class="modal-header">
+            <button type="button" class="close" 
+               data-dismiss="modal" aria-hidden="true">
+                  &times;
+            </button>
+            <h4 class="modal-title">
+               修改密码
+            </h4>
+         </div>
+         <div class="modal-body">
+            <form class="form-horizontal" role="form">
+                {% csrf_token %}
+				<div class="form-group">
+					<label for="old-password" class="col-sm-offset-1 col-sm-2 control-label">旧密码</label>
+					<div class="col-sm-6">
+						<input type="text" class="form-control" id="old-password" placeholder="请输入旧密码">
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="new-password" class="col-sm-offset-1 col-sm-2 control-label">新密码</label>
+					<div class="col-sm-6">
+						<input type="password" class="form-control" id="new-passwowrd" placeholder="请输入新的密码">
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="check-new-password" class="col-sm-offset-1 col-sm-2 control-label">确认密码</label>
+					<div class="col-sm-6">
+						<input type="password" class="form-control" id="check-new-passwowrd" placeholder="请再次输入新的密码">
+					</div>
+				</div>
+			</form>
+         </div>
+         <div class="modal-footer">
+            <button type="button" class="btn btn-primary">
+              	提交
+            </button>
+            <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+         </div>
+      </div><!-- /.modal-content -->
+    </div>
+</div><!-- /.modal -->
+{% ifequal request.session.user_power 'user' %}
+{% else %}
+<div class="modal fade" id="space-fast-upload" tabindex="-1" role="dialog" aria-labelledby="space-fast-upload-label" aria-hidden="true">
+   <div class="modal-dialog">
+      <div class="modal-content">
+         <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                  &times;
+            </button>
+            <h4 class="modal-title">
+               快速上传
+            </h4>
+         </div>
+         <div class="modal-body">
+            <form class="form-horizontal" role="form">
+                {% csrf_token %}
+				<div class="form-group">
+					<label for="fast-upload-name" class="col-sm-offset-1 col-sm-2 control-label">节目名称</label>
+					<div class="col-sm-6">
+						<input type="text" class="form-control" id="fast-upload-name" placeholder="请输入名称">
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="fast-upload-description" class="col-sm-offset-1 col-sm-2 control-label">内容</label>
+					<div class="col-sm-6">
+						<input type="text" class="form-control" id="fast-upload-description" placeholder="请输入内容">
+					</div>
+				</div>
+			</form>
+         </div>
+         <div class="modal-footer">
+            <button type="button" class="btn btn-primary">
+              	提交
+            </button>
+            <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+         </div>
+      </div><!-- /.modal-content -->
+    </div>
+</div><!-- /.modal -->
+{% endifequal %}
+{% else %}
+{% include "error/forbid-not-user.html"%}
+{% endif %}
 {% endblock %}
 
 {% block script %}
-<script type="text/javascript" src="/static/js/waterflow.js"></script>
+<script>
+{% if request.session.uid %}
+$(document).ready(function() {
+	
+
+
+
+});
+{% endif %}
+</script>
+
 {% endblock %}

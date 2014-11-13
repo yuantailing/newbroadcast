@@ -6,6 +6,7 @@ from django.template.loader import get_template
 from django.db import models
 from django.core import serializers
 import json
+import os
 
 from models import *
 
@@ -42,12 +43,24 @@ def show_program(req, arg):
     medialink = ""
     if pg.audio:
         medialink = Source.objects.get(id=pg.audio).document.url
-    
+
+    doc_links = []
+    if pg.document:
+        doc_arr = json.loads(pg.document)
+        for i in range(0, len(doc_arr)):
+            src = Source.objects.get(id=doc_arr[i])
+            if i == 0:
+                doc_links.append((u"资料下载", src.document.url, u"资料" + str(i + 1) + u": " +
+                                  os.path.split(src.document.file.name)[1]))
+            else:
+                doc_links.append((u"", src.document.url, u"资料" + str(i + 1) + u": " +
+                                  os.path.split(src.document.file.name)[1]))
+
     return render_to_response("program/show.html",
                     {'pgid':pgid, 'title':title,
                      'strong':description[0:1], 'description':description[1:],
                      'medialink':medialink, 'piclink':piclink,
-                     'table':table},
+                     'table':table, 'doc_links':doc_links},
                     context_instance=RequestContext(req));
 
 def play_program(req, arg):
@@ -58,24 +71,4 @@ def play_program(req, arg):
         medialink = Source.objects.get(id=pg.audio).document.url
     return render_to_response("program/player.html",
                               {'medialink':medialink},
-                              context_instance=RequestContext(req));
-
-def list_all(req):
-    res = []
-    for pg in Program.objects.all():
-        res.append(pg.id)
-    return HttpResponse(json.dumps({'pid':res}), content_type='application/json')
-
-def get_arr(req):
-    res = []
-    pid = req.POST.getlist(u'pid[]', [])
-    for i in pid:
-        pg = Program.objects.get(id=int(i))
-        sn = {'title':pg.title, 'group':pg.group.title, 'series':pg.series}
-        res.append(sn)
-    return HttpResponse(json.dumps({'program':res}),
-                        content_type='application/json')
-
-def getarr_test(req):
-    return render_to_response("program/getarr_test.html",
                               context_instance=RequestContext(req));
