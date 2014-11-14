@@ -10,25 +10,40 @@
 	    </div>
 	    <div class="col-md-1"></div>
 	    <div class="col-md-3">
-	      <div class="row" style="float:right">
-	        <a class="btn btn-primary" role="button"><span class="glyphicon glyphicon-thumbs-up"></span>赞</a>
-	        {% if medialink %}
-	        <a class="btn btn-primary" href="/program/play/{{ pgid }}" target="_blank" role="button"><span class="glyphicon glyphicon-play"></span>播放</a>
-	        <a class="btn btn-primary" href="{{ medialink }}" target="_blank" role="button"><span class="glyphicon glyphicon-save"></span>下载</a>
-	        {% else %}
-	        <a class="btn btn-primary disabled" role="button"><span class="glyphicon glyphicon-play"></span>播放</a>
-	        <a class="btn btn-primary disabled" role="button"><span class="glyphicon glyphicon-save"></span>下载</a>
-	        {% endif %}
-	        <br />
-	      </div>	
-	      <div class="row" style="float:right">
+	      <div class="row">
+	        <div style="float:right">
+		        {% if medialink %}
+		        <a class="btn btn-primary" href="/program/play/{{ pgid }}" target="_blank" role="button"><span class="glyphicon glyphicon-play"></span>播放</a>
+		        <a class="btn btn-primary" href="{{ medialink }}" target="_blank" role="button"><span class="glyphicon glyphicon-save"></span>下载</a>
+		        {% else %}
+		        <a class="btn btn-primary disabled" role="button"><span class="glyphicon glyphicon-play"></span>播放</a>
+		        <a class="btn btn-primary disabled" role="button"><span class="glyphicon glyphicon-save"></span>下载</a>
+		        {% endif %}
+	        </div>
+	      </div>
+	      <div class="row">
+	      	<br />
+	      	<div style="float:right">
+	      		{% if have_praised %}
+		      	<a class="btn btn-primary" id="program-praise" role="button" style="color:red"><span id="program-praise-count" class="glyphicon glyphicon-thumbs-up">{{ praise_count}}</span></a>
+		      	{% else %}
+		      	<a class="btn btn-primary" id="program-praise" role="button"><span id="program-praise-count" class="glyphicon glyphicon-thumbs-up">{{praise_count}}</span></a>
+		      	{% endif %}
+		        <a class="btn btn-primary" href="#program-comment" role="button"><span class="glyphicon glyphicon-comment"></span></a>
+		        <a class="btn btn-primary" role="button"><span class="glyphicon glyphicon-heart"></span></a>
+		        <a class="btn btn-primary" role="button"><span class="glyphicon glyphicon-share"></span></a>
+	        </div>
+	      </div>
+	      <div class="row">
 	          <br />
-	          {% for src in piclink %}
-			  <div class="row">
-			    <img src="{{ src }}" class="img-rounded img-responsive center-block" />
+	          <div style="float:right">
+		          {% for src in piclink %}
+				  <div class="row">
+				    <img src="{{ src }}" class="img-rounded img-responsive center-block" />
+				  </div>
+				  <br />
+				  {% endfor %}
 			  </div>
-			  <br />
-			  {% endfor %}
 	      </div>
 	    </div>
 	</div>
@@ -55,7 +70,7 @@
 		</div>
 	</div>
 	<hr class="featurette-divider" />
-	<div class="row featurette">
+	<div class="row featurette" id="program-comment">
 		<div class="panel panel-default">
 			<div class="panel-heading">
 				<h4>评论</h4>
@@ -69,4 +84,25 @@
   
   <hr/>
   
+{% endblock %}
+
+{% block script %}
+<script>
+$('#program-praise').click(function() { 
+	$.ajax({
+        url:'/program/praise/',
+        type:"POST",
+        data:{pid: {{ pgid }} },
+        dataType:"json"
+    }).done(function(msg){
+        if (msg.success) {
+        	alert(msg);
+        	$('#program-praise').css("color", "#f00");
+        	$('#program-praise-count').html({{ msg.count }});
+        }
+    }).fail(function(jqXHR,textStatus){
+        $('#change-info-status').html('与服务器连接中断');
+    });
+});
+</script>
 {% endblock %}
