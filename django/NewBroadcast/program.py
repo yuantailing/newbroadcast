@@ -240,7 +240,7 @@ def modify_audio(req, arg):
 
 def modify_pic(req, arg):
     pgid = int(arg)
-    pg = Program.objects.get(id = pgid)
+    pg = Program.objects.get(id=pgid)
 
     try:
         res = { }
@@ -256,16 +256,16 @@ def modify_pic(req, arg):
     return HttpResponse(json.dumps(res), content_type='application/json')
 
 
-def delete_program(req, arg):
-    res = { }
+def delete_program(req):
     try:
-        prgid = int(arg)
-        prg = Program.objects.get(id = prgid)
-        prg.delete()
-        res['result'] = 'success'
+        pid = req.REQUEST.get('pid', None)
+        pg = Program.objects.get(id=pid)
+        pg.delete()
+        return HttpResponse(json.dumps({'success':True}),
+                            content_type='application/json')
     except Exception, e:
-        res['result'] = 'failed'
-    return HttpResponse(json.dumps(res), content_type='application/json')
+        return HttpResponse(json.dumps({'success':False}),
+                            content_type='application/json')
 
 def recommand_program(req):
     p_id = req.POST.get('id');

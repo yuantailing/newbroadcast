@@ -48,7 +48,7 @@ urlpatterns = patterns('',
     url(r'^program/modify/modifyword/([0-9]*)/$', program.modify_word),
     url(r'^program/modify/modifyaudio/([0-9]*)/$', program.modify_audio),
     url(r'^program/modify/modifypic/([0-9]*)/$', program.modify_pic),
-    url(r'^program/delete/([0-9]*)$', program.delete_program),
+    url(r'^program/delete/$', program.delete_program),
 
     url(r'^login/do/$', login.login),
     url(r'^login/test/$', login.test),

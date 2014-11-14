@@ -23,9 +23,11 @@ def power_trans(power_str):
 
 def show_space(req):
     user = User.objects.get(id=req.session['uid'])
+    ups = Program.objects.filter(uploader=user).order_by('-create_time')[0:5]
     return render_to_response("manager/space.html",
-                              {'user': user,
-                               'power': power_trans(user.power)},
+                              {'user':user,
+                               'power':power_trans(user.power),
+                               'ups':ups, },
                               context_instance=RequestContext(req));
 
 def show_mgrres(req):

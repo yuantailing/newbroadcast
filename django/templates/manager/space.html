@@ -89,11 +89,24 @@
 						<h4>最近上传</h4>
 					</div>
 					<table class="panel-body table table-bordered table-hover">
-						<tr><td>节目1</td><td>Nick Name</td></tr>
-						<tr><td>节目2</td><td>example@example.com</td></tr>
-						<tr><td>节目3</td><td>1</td></tr>
-						<tr><td>节目4</td><td>台员</td></tr>
-						<tr><td>节目5</td><td>+8687654321</td></tr>
+						<tr>
+							<th>标题</th>
+							<th>组别</th>
+							<th>系列</th>
+							<th>上传时间</th>
+							<th>&nbsp;</th>
+							<th>&nbsp;</th>
+						</tr>
+                    {% for up in ups %}
+						<tr>
+							<td><a href="/program/{{ up.id }}">{{ up.title }}</a></td>
+							<td><a href="/source/?gid={{ up.group.id }}">{{ up.group.title }}</a></td>
+							<td><a href="/source/?sid={{ up.series.id }}">{{ up.series.title }}</a></td>
+							<td>{{ up.create_time|date:"Y-m-d" }}</td>
+							<td><a href="/program/modify/{{ up.id }}">修改</a></td>
+							<td><a href="/program/delete/?pid={{ up.id }}">删除</a></td><!-- Todo：以GET或POST发送到这个URI，返回json.success为true或false，然后刷新页面 -->
+						</tr>
+					{% endfor %}
 						<tr><td><a href="/manage/mgrres">更多...</a></td></tr>
 					</table>
 					<div class="panel-footer" id="space-upload">
