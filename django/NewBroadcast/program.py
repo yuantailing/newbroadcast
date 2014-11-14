@@ -67,7 +67,7 @@ def show_program(req, arg):
                      'praise_count': pg.praise.count(),
                      'logined':not (user == None),
                      'have_praised':have_praised,
-                     'comments':pg.comment.all(), },
+                     'comments':pg.comment.order_by('-create_time'), },
                     context_instance=RequestContext(req));
 
 
@@ -97,7 +97,9 @@ def un_praise(req):
     user = User.objects.get(id=req.session['uid'])
     pg = Program.objects.get(id=req.REQUEST.get('pid'))
     try:
-        pr = Praise.objects.get(user=user, program=pg)
+        print user
+        print pg
+        pr = Praise.objects.filter(user=user, program=pg)[0]
         pr.delete()
         return HttpResponse(json.dumps({'success':True, 'info':'success',
                                         'count':Praise.objects.filter(program__id=pg.id).count()}),
