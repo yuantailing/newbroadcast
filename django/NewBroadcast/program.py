@@ -14,10 +14,6 @@ def show_program(req, arg):
     pgid = int(arg)
     pg = Program.objects.get(id=pgid)
 
-    title = ""
-    if pg.title:
-        title = pg.title
-
     description = ""
     if pg.description:
         description = pg.description
@@ -62,16 +58,16 @@ def show_program(req, arg):
         have_praised = Praise.objects.filter(user=user, program=pg).count() > 0
     except Exception, e:
         user = None
-    
 
     return render_to_response("program/show.html",
-                    {'pgid':pgid, 'title':title,
+                    {'pgid':pgid, 'title':pg.title,
                      'strong':description[0:1], 'description':description[1:],
                      'medialink':medialink, 'piclink':piclink,
                      'table':table, 'doc_links':doc_links,
                      'praise_count': pg.praise.count(),
                      'logined':not (user == None),
-                     'have_praised':have_praised,},
+                     'have_praised':have_praised,
+                     'comments':pg.comment.all(), },
                     context_instance=RequestContext(req));
 
 
