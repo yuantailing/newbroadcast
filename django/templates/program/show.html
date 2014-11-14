@@ -30,9 +30,9 @@
 	      	<div style="float:right">
 				{% if logined %}
 	      		{% if have_praised %}
-		      	<a class="btn btn-primary" id="program-praise" role="button" style="color:red"><span id="program-praise-count" class="glyphicon glyphicon-thumbs-up">{{ praise_count}}</span></a>
+		      	<a class="btn btn-primary" id="program-praise" role="button" style="color:red" praised="true"><span id="program-praise-count" class="glyphicon glyphicon-thumbs-up">{{ praise_count}}</span></a>
 		      	{% else %}
-		      	<a class="btn btn-primary" id="program-praise" role="button"><span id="program-praise-count" class="glyphicon glyphicon-thumbs-up">{{praise_count}}</span></a>
+		      	<a class="btn btn-primary" id="program-praise" role="button" praised="false"><span id="program-praise-count" class="glyphicon glyphicon-thumbs-up">{{praise_count}}</span></a>
 		      	{% endif %}
 				{% else %}
 				<a class="btn btn-primary disabled" id="program-praise" role="button"><span id="program-praise-count" class="glyphicon glyphicon-thumbs-up">{{ praise_count}}</span></a>
@@ -126,7 +126,6 @@ $('#program-praise').click(function() {
 	        $('#change-info-status').html('与服务器连接中断');
 	    });
     } else { 
-    	alert($('#program-praise').attr("praised"));
     	$.ajax({
 	        url:'/program/praise/',
 	        type:"POST",
