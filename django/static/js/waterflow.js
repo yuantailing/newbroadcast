@@ -34,7 +34,12 @@
             var a = document.createElement('div');
             a.innerHTML = data[i].title;
             var p = document.createElement('p');
-            p.innerHTML = data[i].content;
+            if (data[i].content.length > 100) { 
+            	p.innerHTML = data[i].content.substring(0, 100) + "...";
+            } else { 
+            	p.innerHTML = data[i].content;
+            }
+            
             p.style.display = 'none';
             a.appendChild(p);
             info.onmouseover = function () {
