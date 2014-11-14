@@ -8,6 +8,7 @@ from django.core import serializers
 from django import forms
 import json
 import os
+import thread
 from models import *
 
 def show_program(req, arg):
@@ -81,6 +82,7 @@ def play_program(req, arg):
                               {'medialink':medialink},
                               context_instance=RequestContext(req));
 
+praise_lock = thread.allocate_lock()
 def praise(req):
     user = User.objects.get(id=req.session['uid'])
     pg = Program.objects.get(id=req.REQUEST.get('pid'))
@@ -88,7 +90,12 @@ def praise(req):
     if ft.count() > 0:
         return HttpResponse(json.dumps({'success':False, 'info':'repeated'}),
                             content_type='application/json')
-    Praise(user=user, program=pg).save()
+    praise_lock.acquire()
+    try:
+        Praise(user=user, program=pg).save()
+        praise_lock.release()
+    except Exception, e:
+        praise_lock.release()
     return HttpResponse(json.dumps({'success':True, 'info':'success',
                                     'count':Praise.objects.filter(program__id=pg.id).count()}),
                         content_type='application/json')
@@ -97,8 +104,6 @@ def un_praise(req):
     user = User.objects.get(id=req.session['uid'])
     pg = Program.objects.get(id=req.REQUEST.get('pid'))
     try:
-        print user
-        print pg
         pr = Praise.objects.filter(user=user, program=pg)[0]
         pr.delete()
         return HttpResponse(json.dumps({'success':True, 'info':'success',
