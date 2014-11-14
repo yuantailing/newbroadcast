@@ -74,6 +74,48 @@ def play_program(req, arg):
                               {'medialink':medialink},
                               context_instance=RequestContext(req));
 
+def praise(req):
+    user = User.objects.get(id=req.session['uid'])
+    pg = Program.objects.get(id=req.REQUEST.get('pid'))
+    ft = Praise.objects.filter(user=user, program=pg)
+    if ft.count() > 0:
+        return HttpResponse(json.dumps({'success':False, 'info':'repeated'}),
+                            content_type='application/json')
+    Praise(user=user, program=pg).save()
+    return HttpResponse(json.dumps({'success':True, 'info':'success'}),
+                        content_type='application/json')
+
+def un_praise(req):
+    user = User.objects.get(id=req.session['uid'])
+    pg = Program.objects.get(id=req.REQUEST.get('pid'))
+    try:
+        pr = Praise.objects.get(user=user, program=pg)
+        pr.delete()
+        return HttpResponse(json.dumps({'success':True, 'info':'success'}),
+                            content_type='application/json')
+    except Exception, e:
+        return HttpResponse(json.dumps({'success':False, 'info':'not found'}),
+                            content_type='application/json')
+
+def add_comment(req):
+    user = User.objects.get(id=req.session['uid'])
+    pg = Program.objects.get(id=req.REQUEST.get('pid'))
+    comment = req.REQUEST.get('comment')
+    Comment(user=user, program=pg, content=comment).save()
+    return HttpResponse(json.dumps({'success':True, 'info':'success'}),
+                        content_type='application/json')
+
+def del_comment(req):
+    user = User.objects.get(id=req.session['uid'])
+    try:
+        cm = Comment.objects.get(id=req.REQUEST.get('cid'))
+        cm.delete()
+        return HttpResponse(json.dumps({'success':True, 'info':'success'}),
+                            content_type='application/json')
+    except Exception, e:
+        return HttpResponse(json.dumps({'success':False, 'info':'not found'}),
+                            content_type='application/json')
+
 def show_upload(req):
     result = req.GET.get('result', None)
     if result == 'success':
