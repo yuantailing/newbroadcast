@@ -74,8 +74,6 @@ class Program(models.Model):
     title = models.TextField(blank=False, default=None)
     description = models.TextField(null=True, blank=True, default=None)
     weight = models.IntegerField(blank=False, default=0)
-    click = models.IntegerField(blank=False, default=0)
-    praised = models.IntegerField(blank=False, default=0)
     recorder = models.TextField(null=True, blank=True, default=None)
     contributor = models.TextField(null=True, blank=True, default=None)
     workers = models.TextField(null=True, blank=True, default=None)

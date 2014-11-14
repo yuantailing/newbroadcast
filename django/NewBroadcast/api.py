@@ -46,15 +46,15 @@ class ProgramLocalImporter:
         def size(self):
             return self.file_size
     def __init__(self):
-        self.title = None
-        self.group_id = None
+        self.pro = Program()
         self.picture_arr = []
-        self.audio_id = None
         self.document_arr = []
     def set_title(self, title):
-        self.title = title
+        self.pro.title = title
+    def set_description(self, description):
+        self.pro.description = description
     def set_group(self, group_id):
-        self.group_id = group_id
+        self.pro.group = ProgramGroup.objects.get(id=group_id)
     def add_picture(self, name):
         src = Source()
         src.document.save(os.path.split(name)[1],
@@ -66,7 +66,7 @@ class ProgramLocalImporter:
         src.document.save(os.path.split(name)[1],
                           ProgramLocalImporter.SizeFile(name), save=False)
         src.save()
-        self.audio = src.id
+        self.pro.audio = src.id
     def add_document(self, name):
         src = Source()
         src.document.save(os.path.split(name)[1],
@@ -74,13 +74,9 @@ class ProgramLocalImporter:
         src.save()
         self.document_arr.append(src.id)
     def save(self):
-        pro = Program()
-        pro.title = self.title
-        pro.group = ProgramGroup.objects.get(id=self.group_id)
-        pro.picture = json.dumps(self.picture_arr)
-        pro.audio = self.audio_id
-        pro.document = json.dumps(self.document_arr)
-        pro.save()
+        self.pro.picture = json.dumps(self.picture_arr)
+        self.pro.document = json.dumps(self.document_arr)
+        self.pro.save()
 
 
 '''
@@ -97,8 +93,9 @@ pp.save()
 from NewBroadcast.api import ProgramLocalImporter
 for i in range(1,11):
     pp = ProgramLocalImporter()
-    pp.set_title('importer title here')
-    pp.set_group(2) # 假设存在group 2
+    pp.set_title('import title here')
+    pp.set_description('在这叫喊声里——充满着对暴风雨的渴望！在这叫喊声里，乌云听出了愤怒的力量、热情的火焰和胜利的信心。海鸥在暴风雨来临之前呻吟着')
+    pp.set_group(1) # 假设存在group 1
     pp.add_picture('static/images/' + str(i) + '.jpg')
     pp.save()
 '''

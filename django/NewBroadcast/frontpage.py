@@ -14,7 +14,7 @@ def show_index(req):
 def waterflow_data(req):
     s_w = req.GET.get('s_w');
     e_w = req.GET.get('e_w');
-    obj = Program.objects.order_by("-weight", "-click")[s_w: e_w];
+    obj = Program.objects.order_by("-weight")[s_w: e_w];
     ret = [];
     for o in obj:
         tmpret = {};
@@ -28,12 +28,3 @@ def waterflow_data(req):
         tmpret['content'] = o.description;
         ret.append(tmpret);
     return HttpResponse(json.dumps(ret), content_type = "application/json");
-
-def click(req):
-    p_id = req.POST.get('id');
-    p_click = req.POST.get('click');
-    if p_click == '1':
-        obj = Program.objects.get(id = p_id);
-        obj.click += 1;
-        obj.save();
-    return HttpResponse(json.dumps([{"success":1}]), content_type = "application/json");
