@@ -43,7 +43,7 @@
             pic.appendChild(img);
             var title = document.createElement('div');
             title.className = 'title';
-            info.appendChild(title);
+            pic.appendChild(title);
             var a = document.createElement('div');
             a.innerHTML = data[i].title;
             var p = document.createElement('p');
@@ -120,7 +120,7 @@
                     pic.appendChild(img);
                     var title = document.createElement('div');
                     title.className = 'title';
-                    info.appendChild(title);
+                    pic.appendChild(title);
                     var a = document.createElement('div');
                     a.innerHTML = data[i].title;
                     var p = document.createElement('p');
