@@ -28,10 +28,14 @@
 	      <div class="row">
 	      	<br />
 	      	<div style="float:right">
+				{% if logined %}
 	      		{% if have_praised %}
 		      	<a class="btn btn-primary" id="program-praise" role="button" style="color:red"><span id="program-praise-count" class="glyphicon glyphicon-thumbs-up">{{ praise_count}}</span></a>
 		      	{% else %}
 		      	<a class="btn btn-primary" id="program-praise" role="button"><span id="program-praise-count" class="glyphicon glyphicon-thumbs-up">{{praise_count}}</span></a>
+		      	{% endif %}
+				{% else %}
+				<a class="btn btn-primary disabled" id="program-praise" role="button"><span id="program-praise-count" class="glyphicon glyphicon-thumbs-up">{{ praise_count}}</span></a>
 		      	{% endif %}
 		        <a class="btn btn-primary" href="#program-comment" role="button"><span class="glyphicon glyphicon-comment"></span></a>
 		        <a class="btn btn-primary" role="button"><span class="glyphicon glyphicon-heart"></span></a>
