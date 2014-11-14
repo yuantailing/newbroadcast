@@ -303,6 +303,7 @@ $(document).ready(function(){
             dataType:"json"
         }).done(function(msg){
             $('#change-info-status').text(msg.info).show();
+            if (msg.success) location.reload();
         }).fail(function(jqXHR,textStatus){
             $('#change-info-status').html('与服务器连接中断');
         });
