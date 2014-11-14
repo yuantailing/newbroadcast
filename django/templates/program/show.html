@@ -96,21 +96,40 @@
 
 {% block script %}
 <script>
-$('#program-praise').click(function() { 
-	$.ajax({
-        url:'/program/praise/',
-        type:"POST",
-        data:{pid: {{ pgid }} },
-        dataType:"json"
-    }).done(function(msg){
-        if (msg.success) {
-        	alert(msg);
-        	$('#program-praise').css("color", "#f00");
-        	$('#program-praise-count').html({{ msg.count }});
-        }
-    }).fail(function(jqXHR,textStatus){
-        $('#change-info-status').html('与服务器连接中断');
-    });
+$('#program-praise').click(function() {
+	var praise_button = $('#program-praise');
+	if (praise_button.attr("praised") == "true") { 
+		$.ajax({
+	        url:'/program/unpraise/',
+	        type:"POST",
+	        data:{pid: {{ pgid }} },
+	        dataType:"json"
+	    }).done(function(msg){
+	        if (msg.success) {
+	        	praise_button.css("color", "#fff");
+	        	praise_button.attr("praised", "false");
+	        	$('#program-praise-count').html(msg.count);
+	        }
+	    }).fail(function(jqXHR,textStatus){
+	        $('#change-info-status').html('与服务器连接中断');
+	    });
+    } else { 
+    	alert($('#program-praise').attr("praised"));
+    	$.ajax({
+	        url:'/program/praise/',
+	        type:"POST",
+	        data:{pid: {{ pgid }} },
+	        dataType:"json"
+	    }).done(function(msg){
+	        if (msg.success) {
+	        	praise_button.css("color", "#f00");
+	        	praise_button.attr("praised", "true");
+	        	$('#program-praise-count').html(msg.count);
+	        }
+	    }).fail(function(jqXHR,textStatus){
+	        $('#change-info-status').html('与服务器连接中断');
+	    });
+    }
 });
 </script>
 {% endblock %}
