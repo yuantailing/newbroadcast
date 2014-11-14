@@ -56,11 +56,22 @@ def show_program(req, arg):
                 doc_links.append((u"", src.document.url, u"资料" + str(i + 1) + u": " +
                                   os.path.split(src.document.file.name)[1]))
 
+    have_praised = False
+    try:
+        user = User.objects.get(id=req.session['uid'])
+        have_praised = Praise.objects.filter(user=user, program=pg).count() > 0
+    except Exception, e:
+        user = None
+    
+
     return render_to_response("program/show.html",
                     {'pgid':pgid, 'title':title,
                      'strong':description[0:1], 'description':description[1:],
                      'medialink':medialink, 'piclink':piclink,
-                     'table':table, 'doc_links':doc_links},
+                     'table':table, 'doc_links':doc_links,
+                     'praise_count': pg.praise.count(),
+                     'logined':not (user == None),
+                     'have_praised':have_praised,},
                     context_instance=RequestContext(req));
 
 
