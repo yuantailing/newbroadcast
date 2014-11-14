@@ -83,6 +83,18 @@
 			<div class="panel-heading">
 				<h4>评论</h4>
 			</div>
+			<table class="table table-striped table-hover">
+			{% for cm in comments %}
+				<tr>
+					<td>{{ cm.content }}</td>
+					<td>{{ cm.user.nickname }}</td>
+				</tr><!-- Todo: 确定评论的显示样式 -->
+			{% endfor %}
+			</table>
+			{% if logined %}
+			<div><textarea></textarea></div>
+			<button id="add-comment">发表</button><!-- Todo: 将评论内容以GET或POST方式发送到program/comment/add/，参数（键）为comment -->
+			{% endif %}
 		</div>
 	</div>
 </div>
