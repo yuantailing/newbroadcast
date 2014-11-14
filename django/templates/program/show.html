@@ -13,8 +13,8 @@
 	      <div class="row" style="float:right">
 	        <a class="btn btn-primary" role="button"><span class="glyphicon glyphicon-thumbs-up"></span>赞</a>
 	        {% if medialink %}
-	        <a class="btn btn-primary" href="/program/play/{{ pgid }}" target="_blank" role="button">播放</a>
-	        <a class="btn btn-primary" href="{{ medialink }}" target="_blank" role="button">下载</a>
+	        <a class="btn btn-primary" href="/program/play/{{ pgid }}" target="_blank" role="button"><span class="glyphicon glyphicon-play"></span>播放</a>
+	        <a class="btn btn-primary" href="{{ medialink }}" target="_blank" role="button"><span class="glyphicon glyphicon-save"></span>下载</a>
 	        {% else %}
 	        <a class="btn btn-primary disabled" role="button"><span class="glyphicon glyphicon-play"></span>播放</a>
 	        <a class="btn btn-primary disabled" role="button"><span class="glyphicon glyphicon-save"></span>下载</a>
