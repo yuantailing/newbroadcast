@@ -82,7 +82,8 @@ def praise(req):
         return HttpResponse(json.dumps({'success':False, 'info':'repeated'}),
                             content_type='application/json')
     Praise(user=user, program=pg).save()
-    return HttpResponse(json.dumps({'success':True, 'info':'success'}),
+    return HttpResponse(json.dumps({'success':True, 'info':'success',
+                                    'count':Praise.objects.filter(program=pg).count()}),
                         content_type='application/json')
 
 def un_praise(req):
@@ -91,7 +92,8 @@ def un_praise(req):
     try:
         pr = Praise.objects.get(user=user, program=pg)
         pr.delete()
-        return HttpResponse(json.dumps({'success':True, 'info':'success'}),
+        return HttpResponse(json.dumps({'success':True, 'info':'success',
+                                        'count':Praise.objects.filter(program=pg).count()}),
                             content_type='application/json')
     except Exception, e:
         return HttpResponse(json.dumps({'success':False, 'info':'not found'}),
