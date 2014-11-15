@@ -53,9 +53,11 @@ def show_program(req, arg):
                                   os.path.split(src.document.file.name)[1]))
 
     have_praised = False
+    have_favorited = False
     try:
         user = User.objects.get(id=req.session['uid'])
         have_praised = Praise.objects.filter(user=user, program=pg).count() > 0
+        have_favorited = Favorite.objects.filter(user=user, program=pg).count() > 0
     except Exception, e:
         user = None
 
@@ -65,8 +67,10 @@ def show_program(req, arg):
                      'medialink':medialink, 'piclink':piclink,
                      'table':table, 'doc_links':doc_links,
                      'praise_count': pg.praise.count(),
+                     'favorite_count': pg.favorite.count(),
                      'logined':not (user == None),
                      'have_praised':have_praised,
+                     'have_favorited':have_favorited,
                      'comments':pg.comment.order_by('-create_time'), },
                     context_instance=RequestContext(req));
 
@@ -81,30 +85,42 @@ def play_program(req, arg):
                               {'medialink':medialink},
                               context_instance=RequestContext(req));
 
-def praise(req):
+def add_user_program_only_item(OnlyClassName, req):
     try:
         user = User.objects.get(id=req.session['uid'])
         pg = Program.objects.get(id=req.REQUEST.get('pid'))
-        Praise(user=user, program=pg).save()
+        OnlyClassName(user=user, program=pg).save()
         return HttpResponse(json.dumps({'success':True, 'info':'success',
-                                        'count':Praise.objects.filter(program__id=pg.id).count()}),
+                                        'count':OnlyClassName.objects.filter(program__id=pg.id).count()}),
                             content_type='application/json')
     except Exception, e:
         return HttpResponse(json.dumps({'success':False, 'info':'repeated'}),
                             content_type='application/json')
 
-def un_praise(req):
+def del_user_program_item(OnlyClassName, req):
     try:
         pid = req.REQUEST.get('pid')
-        pr = Praise.objects.filter(user__id=req.session['uid'],
-                                   program__id=req.REQUEST.get('pid'))[0]
+        pr = OnlyClassName.objects.filter(user__id=req.session['uid'],
+                                   program__id=req.REQUEST.get('pid'))
         pr.delete()
         return HttpResponse(json.dumps({'success':True, 'info':'success',
-                                        'count':Praise.objects.filter(program__id=pid).count()}),
+                                        'count':OnlyClassName.objects.filter(program__id=pid).count()}),
                             content_type='application/json')
     except Exception, e:
         return HttpResponse(json.dumps({'success':False, 'info':'not found'}),
                             content_type='application/json')
+
+def praise(req):
+    return add_user_program_only_item(Praise, req)
+
+def un_praise(req):
+    return del_user_program_item(Praise, req)
+
+def favorite(req):
+    return add_user_program_only_item(Favorite, req)
+
+def un_favorite(req):
+    return del_user_program_itrm(Favorite, req)
 
 def add_comment(req):
     user = User.objects.get(id=req.session['uid'])

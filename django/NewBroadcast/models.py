@@ -184,3 +184,31 @@ class Praise(models.Model):
             praise_lock.release()
             raise e
 
+
+favorite_lock = thread.allocate_lock()
+class Favorite(models.Model):
+    user = models.ForeignKey(User, related_name="favorite",
+                              null=False, blank=False, default=None,
+                              on_delete=models.CASCADE)
+    program = models.ForeignKey(Program, related_name="favorite",
+                              null=False, blank=False, default=None,
+                              on_delete=models.CASCADE)
+    # in Program filter: annotate(num_favorite=Count('favorite'))
+    update_time = models.DateTimeField(auto_now_add=True, auto_now=True)
+    create_time = models.DateTimeField(auto_now_add=True)
+
+    def __unicode__(self):
+        return '[' + str(self.id) + '] ' + self.program.title + ' | ' + self.user.nickname
+
+    def save(self):
+        try:
+            favorite_lock.acquire()
+            ft = Favorite.objects.filter(user=self.user, program=self.program)
+            if ft.count() > 0:
+                raise Exception
+            super(Favorite, self).save()
+            favorite_lock.release()
+        except Exception, e:
+            favorite_lock.release()
+            raise e
+
