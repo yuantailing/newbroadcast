@@ -33,6 +33,7 @@ def show_mgrres(req):
     return render_to_response("manager/mgrres.html",
                               context_instance=RequestContext(req))
 
+@power_required([None])
 def show_mgruser(req):
     obj_list = User.objects.all()
     if req.REQUEST.get('wd', None):

@@ -1,0 +1,6 @@
+{% extends "base.html" %}
+{% block body %}
+<div class="alert alert-warning" role="alert">Access forbidden for this page</div>
+<div class="alert alert-warning" role="alert">需要权限：{{ power_required }}</div>
+<div class="alert alert-warning" role="alert">你的权限：{{ power_got }}</div>
+{% endblock %}

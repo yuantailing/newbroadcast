@@ -212,3 +212,40 @@ class Favorite(models.Model):
             favorite_lock.release()
             raise e
 
+from django.http import HttpResponse
+from django.shortcuts import *
+def power_required(power_list):
+    if None in power_list:
+        power_list.append('')
+    if '' in power_list:
+        power_list.append('guest')
+    if 'guest' in power_list:
+        power_list.append('user')
+    if 'user' in power_list:
+        power_list.append('worker')
+    if 'worker' in power_list:
+        power_list.append('admin')
+    if 'admin' in power_list:
+        power_list.append('superadmin')
+        
+    def decorator(req_fun):
+        def required_req(*args, **kwargs):
+            req = args[0]
+            power = req.session['user_power']
+            accessed = False
+            for allowed in power_list:
+                if power == allowed:
+                    accessed = True
+                    break
+                if not allowed and not power:
+                    accessed = True
+                    break
+            if accessed:
+                return req_fun(*args, **kwargs)
+            else:
+                return render_to_response("error/forbid-power-required.html",
+                                          {'power_required':repr(power_list),
+                                           'power_got':repr(power), },
+                                          context_instance=RequestContext(req))
+        return required_req
+    return decorator
