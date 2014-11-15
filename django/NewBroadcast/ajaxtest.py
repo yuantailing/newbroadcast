@@ -43,30 +43,7 @@ from django.core.paginator import Paginator, InvalidPage, EmptyPage
 
 def list_program(req):
     obj_list = Program.objects.all()
-    perpage = 4;
-    paginator = Paginator(obj_list, perpage)
-    try:
-        page = int(req.REQUEST.get('page', '1'))
-    except ValueError:
-        page = 1
-    if page < 1 or page > paginator.num_pages:
-        if page < 1:
-            page = 1
-        else:
-            page = paginator.num_pages
-        s = ''
-        for arg in req.REQUEST:
-            if not s:
-                s += '?'
-            else:
-                s += '&'
-            if arg == 'page':
-                s += 'page=' + str(page)
-            else:
-                s += arg + '=' + req.REQUEST[arg]
-        return HttpResponseRedirect(s)
     return render_to_response("ajaxtest/listprogram.html",
-                              {'obj_list':obj_list,
-                               'perpage':perpage, },
+                              {'obj_list':obj_list, },
                               context_instance=RequestContext(req))
 

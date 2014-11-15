@@ -57,7 +57,7 @@ class AutoPaginateNode(template.Node):
     Emits the required objects to allow for Digg-style pagination.
     
     First, it looks in the current context for the variable specified, and using
-    that object, it emits a simple ``Paginator`` and the current page object 
+    that object, it emits a simple ``paginator`` and the current page object 
     into the context names ``paginator`` and ``page_obj``, respectively.
     
     It will then replace the variable specified with only the objects for the
@@ -93,9 +93,14 @@ class AutoPaginateNode(template.Node):
             if INVALID_PAGE_RAISES_404:
                 raise Http404('Invalid page requested.  If DEBUG were set to ' +
                     'False, an HTTP 404 page would have been shown instead.')
-            context[key] = []
-            context['invalid_page'] = True
-            return u''
+            if context['request'].page > paginator.num_pages:
+                page_obj = paginator.page(paginator.num_pages)
+            elif context['request'].page < 1:
+                page_obj = paginator.page(1)
+            else:
+                context[key] = []
+                context['invalid_page'] = True
+                return u''
         if self.context_var is not None:
             context[self.context_var] = page_obj.object_list
         else:
@@ -211,7 +216,7 @@ def paginate(context, window=DEFAULT_WINDOW, hashtag=''):
             'page_obj': page_obj,
             'paginator': paginator,
             'hashtag': hashtag,
-            'is_paginated': paginator.count > paginator.per_page,
+            'is_paginated': True,
         }
         if 'request' in context:
             getvars = context['request'].GET.copy()
