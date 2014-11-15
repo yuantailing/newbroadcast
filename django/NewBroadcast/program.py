@@ -23,7 +23,7 @@ def show_program(req, arg):
     if pg.group:
         table.append((u"节目组别", pg.group.title))
     if pg.series:
-        table.append((u"节目系列", pg.series))
+        table.append((u"节目系列", pg.series.title))
     if pg.recorder:
         table.append((u"录音/播音人员名单", pg.recorder))
     if pg.contributor:
