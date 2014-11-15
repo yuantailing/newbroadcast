@@ -1,6 +1,4 @@
 <div id="user_access">
   {% csrf_token %}
   <input type="hidden" id="user_id" value="{{ request.session.uid }}" />
-  <input type="hidden" id="user_nickname" value="{{ request.session.user_nickname }}" />
-  <input type="hidden" id="user_power" value="{{ request.session.user_power }}" />
 </div>

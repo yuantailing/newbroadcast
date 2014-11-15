@@ -10,7 +10,6 @@ from models import *
 import json
 
 def power_trans(power_str):
-    print(power_str)
     power_dic = {'user':u'普通用户',
                  'worker':u'台员',
                  'admin':u'管理员',

@@ -22,8 +22,6 @@ def login(req):
                 res['success'] = True
                 res['info'] = u'登录成功'
                 req.session['uid'] = user.id
-                req.session['user_nickname'] = user.nickname
-                req.session['user_power'] = user.power
             else:
                 res['success'] = False
                 res['info'] = u'密码错误'

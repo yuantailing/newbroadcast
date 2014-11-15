@@ -35,7 +35,6 @@ def get_arr(req):
     for i in range(0, len(pid)):
         pid[i] = int(pid[i])
     pgs = Program.objects.filter(id__in=pid)
-    print pgs
     for pg in pgs:
         group_title = None
         if (pg.group):

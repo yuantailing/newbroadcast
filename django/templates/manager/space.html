@@ -10,7 +10,6 @@
 
 {% block body %}
 <!-- main content -->
-{% if request.session.uid %}
 <div class="container bs-docs-container">
 	<div class="row">
 		<div class="col-md-3">
@@ -25,8 +24,7 @@
                 		</ul>
                 	</li>
                 	
-                	{% ifequal request.session.user_power 'user'%}
-                	{% else %}
+                	{% if user.power == 'worker' or user.power == 'admin' or user.power == 'superadmin' %}
                 	<li>
                 		<a href="#space-upload-manager">上传资源管理</a>
                 		<ul class="nav">
@@ -34,13 +32,12 @@
                 			<li><a href="#space-upload">上传资源</a></li>
                 		</ul>
                 	</li>
-                	{% ifequal request.session.user_power 'worker' %}
-                	{% else %}
+					{% endif %}
+                	{% if user.power == 'superadmin' %}
 					<li>
 						<a href="#space-member-manager">站内成员管理</a>
 					</li>
-					{% endifequal %}
-					{% endifequal%}
+					{% endif%}
 					
                 </ul>
             </div>
@@ -79,8 +76,7 @@
 					</div>
 				</div>
 			</div>
-			{% ifequal request.session.user_power 'user' %}
-			{% else %}
+			{% if user.power == 'worker' or user.power == 'admin' or user.power == 'superadmin'%}
 			<!-- upload manager -->
 			<div class="bs-docs-section" id="space-upload-manager">
 				<hr />
@@ -114,8 +110,8 @@
 					</div>
 				</div>
 			</div>
-			{% ifequal request.session.user_power 'worker' %}
-            {% else %}
+			{% endif %}
+			{% if user.power == 'superadmin' %}
 			<!-- member manager -->
 			<div class="bs-docs-section" id="space-member-manager">
 				<hr />
@@ -128,8 +124,7 @@
 					</div>
 				</div>
 			</div>
-			{% endifequal %}
-			{% endifequal %}
+			{% endif %}
 		</div>
 	</div>
 </div>
@@ -208,7 +203,6 @@
          </div>
          <div class="modal-body">
             <form class="form-horizontal" role="form">
-                {% csrf_token %}
 				<div class="form-group">
 					<label for="old-password" class="col-sm-offset-1 col-sm-2 control-label">旧密码</label>
 					<div class="col-sm-6">
@@ -238,8 +232,7 @@
       </div><!-- /.modal-content -->
     </div>
 </div><!-- /.modal -->
-{% ifequal request.session.user_power 'user' %}
-{% else %}
+
 <div class="modal fade" id="space-fast-upload" tabindex="-1" role="dialog" aria-labelledby="space-fast-upload-label" aria-hidden="true">
    <div class="modal-dialog">
       <div class="modal-content">
@@ -253,7 +246,6 @@
          </div>
          <div class="modal-body">
             <form class="form-horizontal" role="form">
-                {% csrf_token %}
 				<div class="form-group">
 					<label for="fast-upload-name" class="col-sm-offset-1 col-sm-2 control-label">节目名称</label>
 					<div class="col-sm-6">
@@ -277,10 +269,6 @@
       </div><!-- /.modal-content -->
     </div>
 </div><!-- /.modal -->
-{% endifequal %}
-{% else %}
-{% include "error/forbid-not-user.html"%}
-{% endif %}
 {% endblock %}
 
 {% block script %}
