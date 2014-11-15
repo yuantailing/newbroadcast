@@ -22,6 +22,7 @@ def login(req):
                 res['success'] = True
                 res['info'] = u'登录成功'
                 req.session['uid'] = user.id
+                req.session['user_power'] = user.power
             else:
                 res['success'] = False
                 res['info'] = u'密码错误'
@@ -45,7 +46,7 @@ def test(req):
         res['login'] = False
     return HttpResponse(json.dumps(res), content_type='application/json')
 
-@power_required(['user'])
+@power_required([None])
 def logout(req):
     req.session.clear()
     return HttpResponseRedirect('/')
