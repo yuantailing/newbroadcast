@@ -35,6 +35,14 @@ def show_mgrres(req):
 
 def show_mgruser(req):
     obj_list = User.objects.all()
+    if req.REQUEST.get('wd', None):
+        search = req.REQUEST.get('wd', None)
+        g1 = obj_list.filter(email__contains=search)
+        g2 = obj_list.filter(nickname__contains=search)
+        g3 = obj_list.filter(power__contains=search)
+        g4 = obj_list.filter(birthday__contains=search)
+        g5 = obj_list.filter(phone_number__contains=search)
+        obj_list = g1 | g2 | g3 | g4 | g5
     return render_to_response("manager/mgruser.html",
                               {'obj_list':obj_list, },
                               context_instance=RequestContext(req))

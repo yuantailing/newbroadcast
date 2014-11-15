@@ -39,10 +39,14 @@ def htmlresponse(req):
                                'power':power_trans(user.power)},
                               context_instance=RequestContext(req))
 
-from django.core.paginator import Paginator, InvalidPage, EmptyPage
+
+import codecs
 
 def list_program(req):
     obj_list = Program.objects.all()
+    if req.REQUEST.get('wd', None):
+        search = req.REQUEST.get('wd', None)
+        obj_list = obj_list.filter(keyword__contains=search)
     return render_to_response("ajaxtest/listprogram.html",
                               {'obj_list':obj_list, },
                               context_instance=RequestContext(req))
