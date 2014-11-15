@@ -1,6 +1,6 @@
-{% for pg in pgs %}
-{{ pg.title }}<br/>
-{% endfor %}
 {% load pagination_tags %}
-{% autopaginate all 4 %}
+{% autopaginate obj_list perpage %}
+{% for obj in obj_list %}
+{{ obj }}<br/>
+{% endfor %}
 {% paginate %}

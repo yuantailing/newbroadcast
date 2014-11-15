@@ -42,21 +42,19 @@ def htmlresponse(req):
 from django.core.paginator import Paginator, InvalidPage, EmptyPage
 
 def list_program(req):
-    paginator = Paginator(Program.objects.all(), 4) # Show 25 contacts per page
-    # Make sure page request is an int. If not, deliver first page.
+    obj_list = Program.objects.all()
+    perpage = 4;
+    paginator = Paginator(obj_list, perpage)
     try:
-        page = int(req.GET.get('page', '1'))
+        page = int(req.REQUEST.get('page', '1'))
     except ValueError:
         page = 1
-
-    # If page request (9999) is out of range, deliver last page of results.
-    try:
-        pgs = paginator.page(page)
-    except (EmptyPage, InvalidPage):
-        pgs = paginator.page(paginator.num_pages)
-
+    if page > paginator.num_pages:
+        return HttpResponseRedirect('?page=' + str(paginator.num_pages))
+    if page < 1:
+        return HttpResponseRedirect('?page=' + str(1))
     return render_to_response("ajaxtest/listprogram.html",
-                              {'all':Program.objects.all(),
-                               'pgs':pgs, },
+                              {'obj_list':obj_list,
+                               'perpage':perpage, },
                               context_instance=RequestContext(req))
 
