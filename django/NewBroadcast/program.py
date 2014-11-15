@@ -10,6 +10,7 @@ import json
 import os
 from models import *
 
+@power_required([None])
 def show_program(req, arg):
     pgid = int(arg)
     pg = Program.objects.get(id=pgid)
@@ -74,7 +75,7 @@ def show_program(req, arg):
                      'comments':pg.comment.order_by('-create_time'), },
                     context_instance=RequestContext(req));
 
-
+@power_required([None])
 def play_program(req, arg):
     pgid = int(arg)
     pg = Program.objects.get(id=pgid)
@@ -110,18 +111,23 @@ def del_user_program_item(OnlyClassName, req):
         return HttpResponse(json.dumps({'success':False, 'info':'not found'}),
                             content_type='application/json')
 
+@power_required(['user'])
 def praise(req):
     return add_user_program_only_item(Praise, req)
 
+@power_required(['user'])
 def un_praise(req):
     return del_user_program_item(Praise, req)
 
+@power_required(['user'])
 def favorite(req):
     return add_user_program_only_item(Favorite, req)
 
+@power_required(['user'])
 def un_favorite(req):
     return del_user_program_itrm(Favorite, req)
 
+@power_required(['user'])
 def add_comment(req):
     user = User.objects.get(id=req.session['uid'])
     pg = Program.objects.get(id=req.REQUEST.get('pid'))
@@ -130,6 +136,7 @@ def add_comment(req):
     return HttpResponse(json.dumps({'success':True, 'info':'success'}),
                         content_type='application/json')
 
+@power_required(['superadmin'])
 def del_comment(req):
     user = User.objects.get(id=req.session['uid'])
     try:
@@ -141,6 +148,7 @@ def del_comment(req):
         return HttpResponse(json.dumps({'success':False, 'info':'not found'}),
                             content_type='application/json')
 
+@power_required(['worker'])
 def show_upload(req):
     result = req.GET.get('result', None)
     if result == 'success':
@@ -151,7 +159,7 @@ def show_upload(req):
                               {'result':result},
                               context_instance=RequestContext(req))
 
-
+@power_required(['worker'])
 def upload_program(req):
     res = { }
     try:
@@ -196,7 +204,7 @@ def upload_program(req):
         res['result'] = 'failed'
     return HttpResponseRedirect('/program/upload/?result=' + res['result'])
 
-
+@power_required(['worker'])
 def show_modify(req, arg):
     pgid = int(arg)
     pg = Program.objects.get(id=pgid)
@@ -225,7 +233,7 @@ def show_modify(req, arg):
                      'medialink':medialink, 'piclink':piclink}, 
                      context_instance=RequestContext(req));
 
-
+@power_required(['worker'])
 def modify_word(req, arg):
     pgid = int(arg)
     pg = Program.objects.get(id = pgid)
@@ -244,7 +252,7 @@ def modify_word(req, arg):
         res['result'] = 'failed'
     return HttpResponse(json.dumps(res), content_type='application/json')
 
-
+@power_required(['worker'])
 def modify_audio(req, arg):
     pgid = int(arg)
     pg = Program.objects.get(id = pgid)
@@ -262,7 +270,7 @@ def modify_audio(req, arg):
         res['result'] = 'failed'
     return HttpResponse(json.dumps(res), content_type='application/json')
 
-
+@power_required(['worker'])
 def modify_pic(req, arg):
     pgid = int(arg)
     pg = Program.objects.get(id=pgid)
@@ -280,7 +288,7 @@ def modify_pic(req, arg):
         res['result'] = 'failed'
     return HttpResponse(json.dumps(res), content_type='application/json')
 
-
+@power_required(['worker'])
 def delete_program(req):
     try:
         pid = req.REQUEST.get('pid', None)
@@ -291,7 +299,8 @@ def delete_program(req):
     except Exception, e:
         return HttpResponse(json.dumps({'success':False}),
                             content_type='application/json')
-
+    
+@power_required(['admin'])
 def recommand_program(req):
     p_id = req.POST.get('id');
     p_weight = req.POST.get('weight');

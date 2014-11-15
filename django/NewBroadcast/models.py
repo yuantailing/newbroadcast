@@ -227,11 +227,13 @@ def power_required(power_list):
         power_list.append('admin')
     if 'admin' in power_list:
         power_list.append('superadmin')
-        
     def decorator(req_fun):
         def required_req(*args, **kwargs):
             req = args[0]
-            power = req.session['user_power']
+            power = req.session.get('user_power', None)
+            if not power:
+                req.session['user_power'] = 'guest'
+                power = 'guest'
             accessed = False
             for allowed in power_list:
                 if power == allowed:

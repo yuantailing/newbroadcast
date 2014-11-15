@@ -11,6 +11,7 @@ import json
 from models import *
 
 
+@power_required([None])
 def change_power(req, arg):
     user = User.objects.get(id=int(req.session['uid']))
     req.session['user_power'] = arg
@@ -18,6 +19,7 @@ def change_power(req, arg):
     user.save()
     return HttpResponse(arg)
 
+@power_required([None])
 def test(req):
     res = { }
     try:
@@ -29,6 +31,7 @@ def test(req):
         res['result'] = 'not_login'
     return HttpResponse(json.dumps(res), content_type='application/json')
 
+@power_required(['user'])
 def logout(req):
     req.session.clear()
     return HttpResponseRedirect('/')

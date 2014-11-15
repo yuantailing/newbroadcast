@@ -8,6 +8,8 @@ from django.core import serializers
 import json
 
 from models import *
+
+@power_required([None])
 def show(req):
     groups = []
     for gp in ProgramGroup.objects.order_by("order"):
@@ -17,18 +19,21 @@ def show(req):
                               {'groups':groups, 'liwidth': liwidth},
                               context_instance=RequestContext(req));
 
+@power_required([None])
 def list_all(req):
     res = []
     for pg in Program.objects.order_by('-weight'):
         res.append(pg.id)
     return HttpResponse(json.dumps({'pid':res}), content_type='application/json')
 
+@power_required([None])
 def group_filter(req, arg):
     res = []
     for pg in ProgramGroup.objects.get(id=int(arg)).program.all().order_by('-weight'):
         res.append(pg.id)
     return HttpResponse(json.dumps({'pid':res}), content_type='application/json')
 
+@power_required([None])
 def get_arr(req):
     res = []
     pid = req.POST.getlist(u'pid[]', [])
@@ -43,10 +48,12 @@ def get_arr(req):
     return HttpResponse(json.dumps({'program':res}),
                         content_type='application/json')
 
+@power_required([None])
 def getarr_test(req):
     return render_to_response("resource/getarr_test.html",
                               context_instance=RequestContext(req));
 
+@power_required([None])
 def result(req):
     wd = req.POST.get('wd', None)
     res = []

@@ -9,7 +9,8 @@ import json
 import os
 
 from models import *
-    
+
+@power_required(['superadmin'])
 def add_program_group(req):
     res = { }
     try:
@@ -33,7 +34,8 @@ def add_program_group(req):
         res['success'] = False
         res['info'] = u'未知错误'
     return HttpResponse(json.dumps(res), content_type='application/json')
-    
+
+@power_required(['superadmin'])
 def delete_program_group(req):
     p_id = req.POST.get('id');
     p_click = req.POST.get('click');
@@ -41,7 +43,8 @@ def delete_program_group(req):
     obj = Program.objects.get(id = p_id);
     obj.weight = p_weight;
     return HttpResponse(json.dumps([{"success":1}]), content_type = "application/json");
-    
+
+@power_required(['superadmin'])
 def change_program_group(req):
     p_id = req.POST.get('id');
     p_click = req.POST.get('click');

@@ -10,7 +10,7 @@ import json
 
 from models import *
 
-
+@power_required([None])
 def login(req):
     res = { }
     try:
@@ -33,6 +33,7 @@ def login(req):
         res['info'] = u'未知错误'
     return HttpResponse(json.dumps(res), content_type='application/json')
 
+@power_required([None])
 def test(req):
     res = { }
     try:
@@ -44,10 +45,12 @@ def test(req):
         res['login'] = False
     return HttpResponse(json.dumps(res), content_type='application/json')
 
+@power_required(['user'])
 def logout(req):
     req.session.clear()
     return HttpResponseRedirect('/')
 
+@power_required([None])
 def exist_judge(req):
     res = { }
     try:
@@ -62,6 +65,7 @@ def exist_judge(req):
         res['exist'] = 'false'
     return HttpResponse(json.dumps(res), content_type='application/json')
 
+@power_required([None])
 def signin(req):
     res = { }
     try:

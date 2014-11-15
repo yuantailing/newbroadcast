@@ -20,6 +20,7 @@ def power_trans(power_str):
     else:
         return u'未知权限'
 
+@power_required(['user'])
 def show_space(req):
     user = User.objects.get(id=req.session['uid'])
     ups = Program.objects.filter(uploader=user).order_by('-create_time')[0:5]
@@ -29,11 +30,12 @@ def show_space(req):
                                'ups':ups, },
                               context_instance=RequestContext(req));
 
+@power_required(['worker'])
 def show_mgrres(req):
     return render_to_response("manager/mgrres.html",
                               context_instance=RequestContext(req))
 
-@power_required([None])
+@power_required(['superadmin'])
 def show_mgruser(req):
     obj_list = User.objects.all()
     if req.REQUEST.get('wd', None):
@@ -48,6 +50,7 @@ def show_mgruser(req):
                               {'obj_list':obj_list, },
                               context_instance=RequestContext(req))
 
+@power_required(['user'])
 def change_password(req):
     res = {}
     psw_old = req.POST.get('old_password', None)
@@ -72,6 +75,7 @@ def change_password(req):
             res['info'] = u'未知错误'
     return HttpResponse(json.dumps(res), content_type='application/json')
 
+@power_required(['user'])
 def change_info(req):
     res = {}
     nick = req.POST.get('nickname', None)
