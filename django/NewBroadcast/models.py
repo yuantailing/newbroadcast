@@ -1,4 +1,5 @@
 from django.db import models
+import thread
 import os
 
 # Create your models here.
@@ -156,6 +157,7 @@ class Comment(models.Model):
         super(Comment, self).save()
 
 
+praise_lock = thread.allocate_lock()
 class Praise(models.Model):
     user = models.ForeignKey(User, related_name="praise",
                               null=False, blank=False, default=None,
@@ -169,4 +171,16 @@ class Praise(models.Model):
 
     def __unicode__(self):
         return '[' + str(self.id) + '] ' + self.program.title + ' | ' + self.user.nickname
+    
+    def save(self):
+        try:
+            praise_lock.acquire()
+            ft = Praise.objects.filter(user=self.user, program=self.program)
+            if ft.count() > 0:
+                raise Exception
+            super(Praise, self).save()
+            praise_lock.release()
+        except Exception, e:
+            praise_lock.release()
+            raise e
 

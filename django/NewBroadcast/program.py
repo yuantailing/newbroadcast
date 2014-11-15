@@ -8,7 +8,6 @@ from django.core import serializers
 from django import forms
 import json
 import os
-import thread
 from models import *
 
 def show_program(req, arg):
@@ -82,32 +81,26 @@ def play_program(req, arg):
                               {'medialink':medialink},
                               context_instance=RequestContext(req));
 
-praise_lock = thread.allocate_lock()
 def praise(req):
-    user = User.objects.get(id=req.session['uid'])
-    pg = Program.objects.get(id=req.REQUEST.get('pid'))
-    ft = Praise.objects.filter(user=user, program=pg)
-    if ft.count() > 0:
-        return HttpResponse(json.dumps({'success':False, 'info':'repeated'}),
-                            content_type='application/json')
-    praise_lock.acquire()
     try:
+        user = User.objects.get(id=req.session['uid'])
+        pg = Program.objects.get(id=req.REQUEST.get('pid'))
         Praise(user=user, program=pg).save()
-        praise_lock.release()
-    except Exception, e:
-        praise_lock.release()
-    return HttpResponse(json.dumps({'success':True, 'info':'success',
-                                    'count':Praise.objects.filter(program__id=pg.id).count()}),
-                        content_type='application/json')
-
-def un_praise(req):
-    user = User.objects.get(id=req.session['uid'])
-    pg = Program.objects.get(id=req.REQUEST.get('pid'))
-    try:
-        pr = Praise.objects.filter(user=user, program=pg)[0]
-        pr.delete()
         return HttpResponse(json.dumps({'success':True, 'info':'success',
                                         'count':Praise.objects.filter(program__id=pg.id).count()}),
+                            content_type='application/json')
+    except Exception, e:
+        return HttpResponse(json.dumps({'success':False, 'info':'repeated'}),
+                            content_type='application/json')
+
+def un_praise(req):
+    try:
+        pid = req.REQUEST.get('pid')
+        pr = Praise.objects.filter(user__id=req.session['uid'],
+                                   program__id=req.REQUEST.get('pid'))[0]
+        pr.delete()
+        return HttpResponse(json.dumps({'success':True, 'info':'success',
+                                        'count':Praise.objects.filter(program__id=pid).count()}),
                             content_type='application/json')
     except Exception, e:
         return HttpResponse(json.dumps({'success':False, 'info':'not found'}),
