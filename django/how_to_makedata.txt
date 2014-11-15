@@ -1,0 +1,81 @@
+# del db.sqlite3
+# manage.py syncdb
+# manage.py shell
+
+from NewBroadcast.api import ProgramLocalImporter
+from NewBroadcast.models import *
+import random
+
+def make_group(v, l):
+    s = ''
+    for i in range(0, l):
+        s += v[random.randint(0,len(v) - 1)]
+    return s
+
+def rlg(v, l, h): # random_length_group
+    return make_group(v, random.randint(l, h))
+
+name_char_set = 'a b c d e f g h i j k l m n o p q r s t u v w x y z'.split(' ')
+mail_set = u'@126.com @163.com @sina.com'.split(' ')
+name_set = u'雷 声 轰 响 波 浪 在 愤 怒 的 飞 沫 中 呼 叫 跟 狂 风 争 鸣 看 吧 狂 风 紧 紧 抱 起 这 是 勇 敢 的 海 燕 在 怒 吼 的 大 海 上 在 闪 电 中 间 高 傲 地 飞 翔 这 是 胜 利 的 预 言 家 在 叫 喊'.split(' ')
+words = u'此文 按 海面 景象 的 发展 变化 分成 三部分 ， 描绘了 海燕 面临 狂风 暴雨 和 波涛 翻腾 的 大海 时 的 壮丽 图画 。 在这篇 文章中 ， 作者 通过对 海燕 在 暴风雨 来临之际 勇敢 欢乐 的 形象 的 描写 ， 深刻 反映了 1905年 俄国 革命 前夕 急剧 发展 的 革命 形势 ， 热情 歌颂 了 俄国 无产阶级 革命先驱 坚强 无畏的 战斗 精神 ， 预言 沙皇的 黑暗统治 必将崩溃 ， 预示 无产 阶级 革命 即将 到来 并 必 将 取得 胜利 的 前景 。 并且 号召 广大 劳动 人民 积极 行动 起来 ， 迎接 伟大的 革命 斗争 。'.split(' ')
+
+
+ProgramGroup(title=u'读书').save()
+ProgramGroup(title=u'时评').save()
+ProgramGroup(title=u'资讯').save()
+ProgramGroup(title=u'访谈').save()
+ProgramGroup(title=u'音乐').save()
+ProgramGroup(title=u'体育').save()
+ProgramGroup(title=u'广播剧').save()
+ProgramSeries(title=u'校庆纪实').save()
+ProgramSeries(title=u'清韵烛光').save()
+User(email='admin', password='admin', nickname=u'广播台台长', power='superadmin').save()
+
+for i in range(0, 50):
+    s = make_group(name_char_set, random.randint(3, 8))
+    try:
+        User(email=s+rlg(mail_set,1,1), password=s, nickname=rlg(name_set,2,3)).save()
+    except Exception, e:
+        pass
+
+n_group = ProgramGroup.objects.all().count()
+n_series = ProgramSeries.objects.all().count()
+for i in range(0,27):
+    pp = ProgramLocalImporter()
+    pp.set_title(rlg(name_set, 3, 9))
+    pp.set_description(rlg(words,10,30))
+    pp.set_group(random.randint(1, n_group))
+    pp.add_picture('static/images/' + str(random.randint(1,10)) + '.jpg')
+    if (random.randint(1, 5)==1):
+        pp.add_picture('static/images/' + str(random.randint(1,10)) + '.jpg')
+    if (random.randint(1, 5)==1):
+        pp.add_picture('static/images/' + str(random.randint(1,10)) + '.jpg')
+    if (random.randint(1, 2)==1):
+        pp.set_recorder(rlg(name_set, 2, 3))
+    if (random.randint(1, 2)==1):
+        pp.set_contributor(rlg(name_set, 2, 3))
+    if (random.randint(1, 2)==1):
+        pp.set_worker(rlg(name_set, 2, 3))
+    if (random.randint(1, 5)==1):
+        pp.set_series(random.randint(1, n_series))
+    pp.save()
+
+n_program = Program.objects.all().count()
+n_user = User.objects.all().count()
+for i in range(0, 100):
+    user = User.objects.get(id=random.randint(1, n_user))
+    program = Program.objects.get(id=random.randint(1, n_program))
+    try:
+        Praise(user=user, program=program).save()
+    except Exception, e:
+        pass
+
+for i in range(0, 100):
+    user = User.objects.get(id=random.randint(1, n_user))
+    program = Program.objects.get(id=random.randint(1, n_program))
+    try:
+        Favorite(user=user, program=program).save()
+    except Exception, e:
+        pass
+

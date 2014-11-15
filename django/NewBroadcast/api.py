@@ -61,6 +61,14 @@ class ProgramLocalImporter:
         self.pro.description = description
     def set_group(self, group_id):
         self.pro.group = ProgramGroup.objects.get(id=group_id)
+    def set_series(self, group_id):
+        self.pro.series = ProgramSeries.objects.get(id=group_id)
+    def set_recorder(self, recorder):
+        self.pro.recorder = recorder
+    def set_contributor(self, contributor):
+        self.pro.contributor = contributor
+    def set_worker(self, worker):
+        self.pro.worker = worker
     def add_picture(self, name):
         src = Source()
         src.document.save(os.path.split(name)[1],

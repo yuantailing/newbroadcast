@@ -44,7 +44,10 @@ def get_arr(req):
         group_title = None
         if (pg.group):
             group_title = pg.group.title
-        res.append({'title':pg.title, 'group':group_title, 'series':pg.series})
+        series_title = None
+        if (pg.series):
+            series_title = pg.series.title
+        res.append({'title':pg.title, 'group':group_title, 'series':series_title})
     return HttpResponse(json.dumps({'program':res}),
                         content_type='application/json')
 
