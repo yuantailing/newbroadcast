@@ -30,10 +30,14 @@ def show_space(req):
                               context_instance=RequestContext(req));
 
 def show_mgrres(req):
-    return render_to_response("manager/mgrres.html", context_instance=RequestContext(req));
+    return render_to_response("manager/mgrres.html",
+                              context_instance=RequestContext(req))
 
 def show_mgruser(req):
-    return render_to_response("manager/mgruser.html", context_instance=RequestContext(req));
+    obj_list = User.objects.all()
+    return render_to_response("manager/mgruser.html",
+                              {'obj_list':obj_list, },
+                              context_instance=RequestContext(req))
 
 def change_password(req):
     res = {}
