@@ -24,6 +24,7 @@ urlpatterns = patterns('',
     url(r'^ajaxtest/getresult/$', ajaxtest.getresult),
     url(r'^ajaxtest/htmltest/$', ajaxtest.htmltest),
     url(r'^ajaxtest/htmlresponse/$', ajaxtest.htmlresponse),
+    url(r'^ajaxtest/listprogram/$', ajaxtest.list_program),
                        
 
     url(r'^index/$', frontpage.show_index),

@@ -1,0 +1,6 @@
+{% for pg in pgs %}
+{{ pg.title }}<br/>
+{% endfor %}
+{% load pagination_tags %}
+{% autopaginate all 4 %}
+{% paginate %}

@@ -38,3 +38,25 @@ def htmlresponse(req):
                               {'user':user,
                                'power':power_trans(user.power)},
                               context_instance=RequestContext(req))
+
+from django.core.paginator import Paginator, InvalidPage, EmptyPage
+
+def list_program(req):
+    paginator = Paginator(Program.objects.all(), 4) # Show 25 contacts per page
+    # Make sure page request is an int. If not, deliver first page.
+    try:
+        page = int(req.GET.get('page', '1'))
+    except ValueError:
+        page = 1
+
+    # If page request (9999) is out of range, deliver last page of results.
+    try:
+        pgs = paginator.page(page)
+    except (EmptyPage, InvalidPage):
+        pgs = paginator.page(paginator.num_pages)
+
+    return render_to_response("ajaxtest/listprogram.html",
+                              {'all':Program.objects.all(),
+                               'pgs':pgs, },
+                              context_instance=RequestContext(req))
+

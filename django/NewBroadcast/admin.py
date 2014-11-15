@@ -26,4 +26,4 @@ admin.site.register(Program, ProgramAdmin)
 '''
 
 admin.site.register((User, ProgramGroup, ProgramSeries, Program,
-                     Source, Comment, Praise))
+                     Source, Comment, Praise, Favorite))
