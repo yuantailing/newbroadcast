@@ -90,21 +90,8 @@
                     box.appendChild(info);
                     var pic = document.createElement('a');
                     pic.className = 'pic';
-                    pic.setAttribute("href", "javascript:;");
+                    pic.setAttribute("href", "/program/" + data[i].id);
                     pic.id = data[i].id;
-                    pic.onclick = function() {
-                        p_id = this.id;
-                        console.log(p_id);
-                        $.ajax({
-                            url:'/index/click',
-                            type:"POST",
-                            data:{click:1, id:p_id},
-                        }).done(function(result){
-                            window.location.href = "/program/" + p_id;
-                        }).fail(function(jqXHR,textStatus){
-                            console.log('request failed '+ textStatus);
-                        });
-                    }
                     info.appendChild(pic);
                     var img = document.createElement('img');
                     img.src = data[i].src;

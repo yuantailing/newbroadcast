@@ -2,14 +2,36 @@
 {% block title %}{{ title }} - 清华大学广播站{% endblock %}
 {% block body %}
 <div class="col-sm-offset-5">
-{% if result %}
-<p>{{ result }}</p>
-{% endif %}
-<h1>添加新节目</h1>
-</br>
+    {% if result %}
+    <p>{{ result }}</p>
+    {% endif %}
+    <h1>添加新节目</h1>
+    </br>
 </div>
-<form class="form-horizontal" action="dealupload/" method="post" role="form" enctype="multipart/form-data">
+<form class="form-horizontal" id="upload-form" action="dealupload/" method="post" role="form" enctype="multipart/form-data">
     {% csrf_token %}
+    <div class="form-group">
+        <label for="group" class="col-sm-offset-1 col-sm-2 control-label">节目组别</label>
+        <div class="col-sm-6">
+            <select name="group" class="form-control">
+                <option value="" selected="selected">---------</option>
+                {% for item in group_title %}
+                <option>{{ item }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="series" class="col-sm-offset-1 col-sm-2 control-label">节目系列</label>
+        <div class="col-sm-6">
+            <select name="series" class="form-control">
+                <option value="" selected="selected">---------</option>
+                {% for item in series_title %}
+                <option>{{ item }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
     <div class="form-group">
         <label for="title" class="col-sm-offset-1 col-sm-2 control-label">节目标题</label>
         <div class="col-sm-6">
@@ -23,20 +45,109 @@
         </div>
     </div>
     <div class="form-group">
+        <label for="recorder" class="col-sm-offset-1 col-sm-2 control-label">录音/播音人员</label>
+        <div class="col-sm-6">
+            <input type="text" class="form-control" name="recorder" id="recorder" placeholder="请输入录音/播音人员">
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="contributor" class="col-sm-offset-1 col-sm-2 control-label">稿件来源</label>
+        <div class="col-sm-6">
+            <input type="text" class="form-control" name="contributor" id="contributor" placeholder="请输入稿件来源">
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="workers" class="col-sm-offset-1 col-sm-2 control-label">机务人员</label>
+        <div class="col-sm-6">
+            <input type="text" class="form-control" name="workers" id="workers" placeholder="请输入机务人员">
+        </div>
+    </div>
+    <div class="form-group">
         <label for="audio" class="col-sm-offset-1 col-sm-2 control-label">音频文件</label>
         <div class="col-sm-6">
             <input type="file" class="form-control" name="audio" id="audio" placeholder="请选择音频文件">
         </div>
     </div>
     <div class="form-group">
-        <label for="picture" class="col-sm-offset-1 col-sm-2 control-label">图片文件</label>
+        <label for="picture0" class="col-sm-offset-1 col-sm-2 control-label">图片文件</label>
         <div class="col-sm-6">
-            <input type="file" class="form-control" name="picture" id="picture" placeholder="请选择图片文件">
+            <input type="file" class="form-control" multiple="true" name="picture" id="picture0" placeholder="请选择图片文件">
         </div>
+    </div>
+    <div class="form-group" id="add-pic-div">
+        <button type="button" class="btn btn-info col-sm-offset-5" id="add-pic" onclick="addPicture(this)">
+            <span class="glyphicon glyphicon-plus"></span> 添加更多图片
+        </button>
+    </div>
+    <div class="form-group">
+        <label for="document0" class="col-sm-offset-1 col-sm-2 control-label">文稿文件</label>
+        <div class="col-sm-6">
+            <input type="file" class="form-control" multiple="true" name="document" id="document0" placeholder="请选择文稿文件">
+        </div>
+    </div> 
+    <div class="form-group" id="add-doc-div">
+        <button type="button" class="btn btn-info col-sm-offset-5" id="add-doc" onclick="addDocument(this)">
+            <span class="glyphicon glyphicon-plus"></span> 添加更多文稿
+        </button>
     </div>
     <div class="form-group">
         <input class="btn btn-primary btn-lg col-sm-offset-5" type="submit" value="确定上传"\>
     </div>
 </form>
 {% endblock %}
-
+{% block script %}
+<script>
+var pictureIndex = 1;
+var docIndex = 1;
+function addPicture(x) {
+    var fdiv=document.createElement("div");
+    fdiv.setAttribute("class", "form-group");
+    document.getElementById("upload-form").insertBefore(fdiv, document.getElementById("add-pic-div"));
+    var plabel=document.createElement("label");
+    plabel.setAttribute("for", "picture"+pictureIndex);
+    plabel.setAttribute("class", "col-sm-offset-1 col-sm-2 control-label");
+    plabel.innerHTML="图片文件";
+    fdiv.appendChild(plabel);
+    var pdiv=document.createElement("div");
+    pdiv.setAttribute("class", "col-sm-6");
+    fdiv.appendChild(pdiv);
+    var pinput=document.createElement("input");
+    pinput.setAttribute("type", "file");
+    pinput.setAttribute("class", "form-control");
+    pinput.setAttribute("multiple", "true");
+    pinput.setAttribute("name", "picture");
+    pinput.setAttribute("id", "picture"+pictureIndex);
+    pdiv.appendChild(pinput);
+    pictureIndex=pictureIndex+1;
+}
+function delPicture(x) {
+    if (pictureIndex>1) {
+        pictureIndex=pictureIndex-1;
+        var parent=document.getElementById("modify-form");
+        var node=document.getElementById("adddiv"+pictureIndex);
+        parent.removeChild(node);
+    }
+}
+function addDocument(x) {
+    var fdiv=document.createElement("div");
+    fdiv.setAttribute("class", "form-group");
+    document.getElementById("upload-form").insertBefore(fdiv, document.getElementById("add-doc-div"));
+    var plabel=document.createElement("label");
+    plabel.setAttribute("for", "document"+docIndex);
+    plabel.setAttribute("class", "col-sm-offset-1 col-sm-2 control-label");
+    plabel.innerHTML="文稿文件";
+    fdiv.appendChild(plabel);
+    var pdiv=document.createElement("div");
+    pdiv.setAttribute("class", "col-sm-6");
+    fdiv.appendChild(pdiv);
+    var pinput=document.createElement("input");
+    pinput.setAttribute("type", "file");
+    pinput.setAttribute("class", "form-control");
+    pinput.setAttribute("multiple", "true");
+    pinput.setAttribute("name", "document");
+    pinput.setAttribute("id", "document"+docIndex);
+    pdiv.appendChild(pinput);
+    docIndex=docIndex+1;
+}
+</script>
+{% endblock %}
