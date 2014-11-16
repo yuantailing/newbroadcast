@@ -18,11 +18,20 @@ function change_modal_id(id) {
 		<hr />
 		<div class="panel panel-default">
 			<div class="panel-heading">
-				<h4>用户管理</h4>
-				<form style="float:right" method="get">
-					<input type="text" name="wd" />
-					<button type="submit">搜索</button>
-				</form>
+				<h4>用户管理
+					<form style="float:right" method="get" class="navbar-form navbar-right" >
+						<div class="form-group">
+							<div class="input-group input-group-rounded">
+								<span class="input-group-btn">
+									<button type="submit" class="btn" style="margin-left:0px;"><span class="fui-search"></span></button>
+								</span>
+								<input class="form-control" id="navbarInput-01" name="wd" type="search" placeholder="Search">
+							</div>
+						</div>
+					</form>
+				</h4>
+
+				
 			</div>
 			{% load pagination_tags %}
 			{% autopaginate obj_list 10 %}
@@ -34,7 +43,10 @@ function change_modal_id(id) {
 					<div class="col-md-9">
 						<ul id="page-list" class="pagination-plain" style="float:right"><li class="previous"><a class="fui-arrow-left" onclick="prePage(this)"></a></li><li><a onclick="selectPage(this)">1</a></li><li><a onclick="selectPage(this)">2</a></li><li class="previous"><a class="fui-arrow-right" onclick="nextPage(this)"></a></li></ul>
 					</div-->
+					
 				</div>
+
+
 				<tr>
 					<th>ID</th>
 					<th>Email</th>

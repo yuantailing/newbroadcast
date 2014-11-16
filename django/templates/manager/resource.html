@@ -4,27 +4,16 @@
 {% endblock %}
 
 {% block body %}
-{% if request.session.uid %}
 <!-- main content -->
-{% ifequal request.session.user_power 'user' %}
-{% include 'error/forbid-not-worker.html' %}
-{% else %}
 <div class="container">
 	<div class="row">
 		<hr />
 		<iframe src="/manage/myresource" width="100%" scrolling="no" frameborder="0">
 		</iframe>
-		{% ifequal request.session.user_power 'worker' %}
-		{% else %}
 		<hr />
 		<iframe src="/manage/allresources" width="100%" scrolling="no" frameborder="0">
-		{% endifequal %}
 	</div>
 </div>
-{% endifequal %}
-{% else %}
-{% include "error/forbid-not-user.html"%}
-{% endif %}
 {% endblock %}
 
 {% block script %}
