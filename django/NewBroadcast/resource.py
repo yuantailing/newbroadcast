@@ -14,9 +14,12 @@ def show(req):
     groups = []
     for gp in ProgramGroup.objects.order_by("order"):
         groups.append({'id':gp.id, 'title':gp.title})
+    series = []
+    for gs in ProgramSeries.objects.order_by("order"):
+        series.append({'id':gs.id, 'title':gs.title})
     liwidth = 99 / len(groups)
     return render_to_response("resource/resource.html",
-                              {'groups':groups, 'liwidth': liwidth},
+                              {'groups':groups, 'series': series, 'liwidth': liwidth},
                               context_instance=RequestContext(req));
 
 @power_required([None])

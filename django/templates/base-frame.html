@@ -5,7 +5,7 @@
 <title>{% block title %}清华大学广播站{% endblock %}</title>
 <!-- Loading Bootstrap -->
 <link href="/static/dist/css/bootstrap.min.css" rel="stylesheet" />
-<link href="/static/dist/css/flat-ui.min.css" rel="stylesheet" />
+<link href="/static/dist/css/flat-ui.css" rel="stylesheet" />
 <link href="/static/dist/css/docs.min.css" rel="stylesheet" />
 <link href="/static/css/waterflow.css" rel="stylesheet" />
 {% block header %}{% endblock %}
@@ -13,11 +13,6 @@
 <body>
 <!-- main content -->
 {% include "useraccess.html" %}
-{% if not request.session.uid %}
-{% include "login/loginmodal.html" %}
-{% include "login/signinmodal.html" %}
-{% endif %}
-{% include "navigation.html" %}
 {% block body %}<span>&lt;empty&gt;</span>{% endblock %}
 {% block footer %}{% endblock %}
 <!-- jQuery (necessary for Flat UI's JavaScript plugins) -->
