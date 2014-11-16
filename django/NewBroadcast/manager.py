@@ -115,3 +115,27 @@ def change_info(req):
         res['info'] = u'未知错误'
     return HttpResponse(json.dumps(res), content_type='application/json')
 
+@power_required(['superadmin'])
+def change_power(req):
+    res = {}
+    try:
+        new_user = User.objects.get(id=int(req.POST.get('uid', None)))
+        new_power = req.POST.get('new_power', None)
+        print new_user
+        print new_power
+        if new_user.id == req.session['uid']:
+            return HttpResponse(json.dumps({'success':False, 'info':'不能修改自己的权限'}),
+                                content_type='application/json')
+        else:
+            if not new_power in ['user', 'worker', 'admin', 'superadmin']:
+                return HttpResponse(json.dumps({'success':False, 'info':'权限的选择有误'}),
+                                    content_type='application/json')
+            else:
+                new_user.power = new_power
+                new_user.save()
+                return HttpResponse(json.dumps({'success':True, 'info':'修改成功'}),
+                                    content_type='application/json')
+    except Exception, e:
+        return HttpResponse(json.dumps({'success':False, 'info':'未知错误'}),
+                            content_type='application/json')
+

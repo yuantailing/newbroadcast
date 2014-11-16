@@ -73,6 +73,8 @@ urlpatterns = patterns('',
     url(r'^manage/user/$', manager.show_mgruser),
     url(r'^manager/changepassword/$', manager.change_password),
     url(r'^manager/changeinfo/$', manager.change_info),
+    url(r'^manage/changepower/$', manager.change_power),
+    
 
     url(r'^mgrdebug/changepower/(.*)$', mgrdebug.change_power),
 
