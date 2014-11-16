@@ -3,7 +3,7 @@
     <!-- /.container -->
 	  <div id="listall_show"></div>
   <div id="getarr_show"></div>
-	<div style="height:100%; width:100%" class="text-center">
+	<div style="height:100%; width:100%" class="container">
 		<!-- 组别 -->
 		<div style="height:100%; width:100%" class="pagination text-center">
 			<ul style="height:100%; width:80%">
@@ -20,10 +20,42 @@
 		<div style="height:10px"></div>
 		<div class="row" style="height:80%; width:80%; margin:auto">
 			<!-- 系列 -->
+			<div style="height:100%; width:100%">
+				<div class="btn-group">
+					<button id="group-button" type="button" class="btn btn-primary dropdown-toggle" 
+						data-toggle="dropdown">类型
+						<span class="caret"></span>
+					</button>
+					<ul class="dropdown-menu" role="menu">
+						<li><a onclick="selectActiveIt(this)">全部</a></li>
+						<li class="divider"></li>
+						{% for pg in groups %}
+						<li>
+							<a onclick="selectActiveIt(this)">{{ pg.title }}</a>
+							<input type="hidden" id="groupid" value="{{ pg.id }}" />
+						</li>
+						{% endfor %}
+					</ul>
+				</div>
+			</div>
 			<!-- 节目 -->
-			<div style="height:100%; width:100%; float:right">
+			<div class="panel panel-default" style="height:100%; width:100%">
 				<ul id="res-list" class="list-group" style="height:100%; width:100%">
 				</ul>
+				<div class="panel panel-head">
+				</div>
+				<table id="res-table" class="panel-body table table-striped table-hover">
+					<thead id="res-thead">
+						<tr>
+							<th><u>名称</u></th>
+							<th><u>类型</u></th>
+							<th><u>系列</u></th>
+							<th></th>
+						</tr>
+					</thead>
+					<tbody id="res-tbody">
+					</tbody>
+				</table>
 			</div>
 		</div>
 		
@@ -179,9 +211,39 @@
 			  data:{'pid':subpids},
 				dataType:"json"
 			}).done(function(msg){
-				document.getElementById("res-list").innerHTML="";
+//				document.getElementById("res-list").innerHTML="";
+				document.getElementById("res-tbody").innerHTML="";
 			  	for (var i=0;i<len;i++) {
-					var anode=document.createElement("a");
+					var tr=document.createElement("tr");
+					tr.setAttribute("value", pids[i+index]);
+					document.getElementById("res-tbody").appendChild(tr);
+					var td_title=document.createElement("td");
+					tr.appendChild(td_title);
+					var a=document.createElement("a");
+					a.innerHTML=msg.program[i].title;
+					a.href="/program/"+pids[i+index];
+					td_title.appendChild(a);
+					var td_group=document.createElement("td");
+					td_group.innerHTML=msg.program[i].group;
+					tr.appendChild(td_group);
+					var td_series=document.createElement("td");
+					td_series.innerHTML=msg.program[i].series;
+					tr.appendChild(td_series);
+					var td=document.createElement("td");
+					tr.appendChild(td);
+					var tddiv=document.createElement("div")
+					tddiv.setAttribute("class", "btn-group");
+					td.appendChild(tddiv);
+					var zanbutton=document.createElement("button");
+					zanbutton.setAttribute("class", "btn btn-primary");
+					zanbutton.innerHTML="赞";
+					tddiv.appendChild(zanbutton);
+					var sharebutton=document.createElement("button");
+					sharebutton.setAttribute("class", "btn btn-primary");
+					sharebutton.innerHTML="分享";
+					tddiv.appendChild(sharebutton);
+					
+/*					var anode=document.createElement("a");
 					anode.style.color="black";
 					anode.href="/program/"+pids[i+index];
 					var linode=document.createElement("li");
@@ -200,6 +262,7 @@
 					table.appendChild(td1);
 					table.appendChild(td2);
 					anode.appendChild(table); //
+					document.getElementById("res-list").appendChild(linode);
 					if ($("#user_power").attr("value")=="admin" || $("#user_power").attr("value")=="administrator") {
 					//	linode.style.height="100%";
 					//	linode.style.width="100%";
@@ -234,8 +297,7 @@
 					//	dbutton.style.width="10%";
 						dbutton.style.float="right";
 						linode.appendChild(dbutton);
-					}
-					document.getElementById("res-list").appendChild(linode);
+					}*/
 				}
 			}).fail(function(jqXHR,textStatus){
 			  $('#getarr_show').html('request failed '+ textStatus);
@@ -265,7 +327,7 @@
 				x.className = xClassName.replace((new RegExp("(^|\\s)" + "active" + "(\\s|$)")),""); 
 		}
 		function selectActiveIt(x) {
-			var y=x.parentNode;
+/*			var y=x.parentNode;
 			if (!y) return;
 			var yClassName = y.className;
 			if (!yClassName.match(new RegExp("(^|\\s)" + "active" + "(\\s|$)")))
@@ -273,6 +335,12 @@
 			var lists = $(x).parent().siblings();
 			for (var i=0; i<lists.length; i++) {
 				deactiveIt(lists[i]);
+			}
+*/
+			if (x.innerHTML=="全部") {
+				document.getElementById("group-button").innerHTML="类型<span class='caret'></span>";
+			} else {
+				document.getElementById("group-button").innerHTML=x.innerHTML+"<span class='caret'></span>";
 			}
 			$.ajax({
 			  url:'/resource/groupfilter/'+$(x).next().attr("value"),
