@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+{% block title %}
+用户管理
+{% endblock %}
+
+{% block header%}
+<script>
+function change_modal_id(id) {
+	$('#mgr-change-power-userid').val(id);
+}
+</script>
+{% endblock %}
+
+{% block body %}
+<!-- main content -->
+<div class="container">
+	<div class="row">
+		<hr />
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h4>用户管理</h4>
+				<form style="float:right" method="get">
+					<input type="text" name="wd" />
+					<button type="submit">搜索</button>
+				</form>
+			</div>
+			{% load pagination_tags %}
+			{% autopaginate obj_list 10 %}
+			<table class="panel-body table table-bordered table-striped table-hover">
+				<div>
+			{% paginate %}
+					<!--div class="col-md-3">
+					</div>
+					<div class="col-md-9">
+						<ul id="page-list" class="pagination-plain" style="float:right"><li class="previous"><a class="fui-arrow-left" onclick="prePage(this)"></a></li><li><a onclick="selectPage(this)">1</a></li><li><a onclick="selectPage(this)">2</a></li><li class="previous"><a class="fui-arrow-right" onclick="nextPage(this)"></a></li></ul>
+					</div-->
+				</div>
+				<tr>
+					<th>ID</th>
+					<th>Email</th>
+					<th>昵称</th>
+					<th>生日</th>
+					<th>电话</th>
+					<th>权限</th>
+					<th>创建日期</th>
+					<th>&nbsp;</th>
+				</tr>
+			{% for obj in obj_list %}
+				<tr>
+					<td>{{ obj.id }}</td>
+					<td>{{ obj.email }}</td>
+					<td>{{ obj.nickname }}</td>
+					<td>{{ obj.birthday|date:"Y-m-d" }}</td>
+					<td>{% if obj.phone_number %}{{ obj.phone_number }}{% else %}&nbsp;{% endif %}</td>
+					<td>{{ obj.power }}</td>
+					<td>{{ obj.create_time|date:"Y-m-d" }}</td>
+					<td><button type="button" id="mgr-change-power-button" class="btn btn-primary" data-toggle="modal" data-target="#mgr-change-power-modal" onclick="change_modal_id({{ obj.id }})">修改权限</button></td>
+				</tr>
+			{% endfor %}
+			</table>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="mgr-change-power-modal" tabindex="-1" role="dialog" aria-labelledby="mgr-change-power-status" aria-hidden="true">
+	<input id="mgr-change-power-userid" type="hidden" value="" />
+    <div class="modal-dialog">
+      <div class="modal-content">
+         <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <p>修改权限</p>
+         </div>
+         <div class="modal-body">
+			<form class="form-horizontal" role="form">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label id="mgr-change-power-status" class="col-sm-6 control-label"></label>
+                </div>
+				<div class="form-group">
+					<label for="mgr-change-power-list" class="col-sm-offset-1 col-sm-2 control-label">权限</label>
+					<div class="col-sm-6">
+						<select class="form-control" id="mgr-change-power-list">
+							<option>用户</option>
+							<option>台员</option>
+							<option>管理员</option>
+							<option>超级管理员</option>
+						</select>
+					</div>
+				</div>
+			</form>
+         </div>
+         <div class="modal-footer">
+            <button type="button" class="btn btn-primary" id="mgr-change-power-submit">修改</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+         </div>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div>
+
+{% endblock %}
+
+{% block script %}
+<script>
+$(document).ready(function() {
+	$('#mgr-change-power-submit').click(function() {
+		$.ajax({
+            url:'/manager/changepower/',
+            type:"POST",
+            data:{uid:$('#mgr-change-power-userid').val(), new_power:$("#new-password").val()},
+            dataType:"json"
+        }).done(function(msg){
+        	if (msg.success) { 
+        		$('#mgr-change-power-status').text(msg.info).show();
+        	} else { 
+        		$('#change-password-status').text(msg.info).show();
+        	}
+        }).fail(function(jqXHR,textStatus){   	
+            $('#mgr-change-power-status').html('与服务器连接中断');
+        });
+	});
+});
+</script>
+{% endblock %}

@@ -32,7 +32,17 @@ def show_space(req):
 
 @power_required(['worker'])
 def show_mgrres(req):
-    return render_to_response("manager/mgrres.html",
+    return render_to_response("manager/resource.html",
+                              context_instance=RequestContext(req))
+
+@power_required(['worker'])
+def show_mgrmyres(req):
+    return render_to_response("manager/myresource.html",
+                              context_instance=RequestContext(req))
+
+@power_required(['admin'])
+def show_mgrallres(req):
+    return render_to_response("manager/allresources.html",
                               context_instance=RequestContext(req))
 
 @power_required(['superadmin'])
@@ -46,7 +56,7 @@ def show_mgruser(req):
         g4 = obj_list.filter(birthday__contains=search)
         g5 = obj_list.filter(phone_number__contains=search)
         obj_list = g1 | g2 | g3 | g4 | g5
-    return render_to_response("manager/mgruser.html",
+    return render_to_response("manager/user.html",
                               {'obj_list':obj_list, },
                               context_instance=RequestContext(req))
 
