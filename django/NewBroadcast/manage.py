@@ -24,7 +24,7 @@ def power_trans(power_str):
 def show_space(req):
     user = User.objects.get(id=req.session['uid'])
     ups = Program.objects.filter(uploader=user).order_by('-create_time')[0:5]
-    return render_to_response("manager/space.html",
+    return render_to_response("manage/space.html",
                               {'user':user,
                                'power':power_trans(user.power),
                                'ups':ups, },
@@ -32,17 +32,17 @@ def show_space(req):
 
 @power_required(['worker'])
 def show_mgrres(req):
-    return render_to_response("manager/resource.html",
+    return render_to_response("manage/resource.html",
                               context_instance=RequestContext(req))
 
 @power_required(['worker'])
 def show_mgrmyres(req):
-    return render_to_response("manager/myresource.html",
+    return render_to_response("manage/myresource.html",
                               context_instance=RequestContext(req))
 
 @power_required(['admin'])
 def show_mgrallres(req):
-    return render_to_response("manager/allresources.html",
+    return render_to_response("manage/allresources.html",
                               context_instance=RequestContext(req))
 
 @power_required(['superadmin'])
@@ -56,7 +56,7 @@ def show_mgruser(req):
         g4 = obj_list.filter(birthday__contains=search)
         g5 = obj_list.filter(phone_number__contains=search)
         obj_list = g1 | g2 | g3 | g4 | g5
-    return render_to_response("manager/user.html",
+    return render_to_response("manage/user.html",
                               {'obj_list':obj_list, },
                               context_instance=RequestContext(req))
 
