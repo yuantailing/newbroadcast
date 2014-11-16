@@ -31,8 +31,24 @@
 						<li class="divider"></li>
 						{% for pg in groups %}
 						<li>
-							<a onclick="selectActiveIt(this)">{{ pg.title }}</a>
+							<a id="groupstitle" onclick="selectActiveIt(this)">{{ pg.title }}</a>
 							<input type="hidden" id="groupid" value="{{ pg.id }}" />
+						</li>
+						{% endfor %}
+					</ul>
+				</div>
+				<div class="btn-group">
+					<button id="series-button" type="button" class="btn btn-primary dropdown-toggle" 
+						data-toggle="dropdown">系列
+						<span class="caret"></span>
+					</button>
+					<ul class="dropdown-menu" role="menu">
+						<li><a onclick="selectActiveIt(this)">全部</a></li>
+						<li class="divider"></li>
+						{% for se in series %}
+						<li>
+							<a id="seriestitle" onclick="selectActiveIt(this)">{{ se.title }}</a>
+							<input type="hidden" id="seriesid" value="{{ se.id }}" />
 						</li>
 						{% endfor %}
 					</ul>
@@ -137,6 +153,7 @@
 	var index = 0;
 	var pictureIndex=1;
 		$(document).ready(function(){
+			alert(pids);
 			$.ajax({
 			  url:'/resource/listall/',
 			  type:"GET",
@@ -144,6 +161,7 @@
 				dataType:"json"
 			}).done(function(msg){
 				pids = msg.pid;
+				alert(pids);
 				var count=parseInt(pids.length/10+1);
 				document.getElementById("page-list").innerHTML="";
 				if (count>1) {
@@ -337,10 +355,18 @@
 				deactiveIt(lists[i]);
 			}
 */
-			if (x.innerHTML=="全部") {
-				document.getElementById("group-button").innerHTML="类型<span class='caret'></span>";
-			} else {
-				document.getElementById("group-button").innerHTML=x.innerHTML+"<span class='caret'></span>";
+			if (x.id=="groupstitle") {
+				if (x.innerHTML=="全部") {
+					document.getElementById("group-button").innerHTML="类型<span class='caret'></span>";
+				} else {
+					document.getElementById("group-button").innerHTML=x.innerHTML+"<span class='caret'></span>";
+				}
+			} else if (x.id=="seriestitle") {
+				if (x.innerHTML=="全部") {
+					document.getElementById("series-button").innerHTML="类型<span class='caret'></span>";
+				} else {
+					document.getElementById("series-button").innerHTML=x.innerHTML+"<span class='caret'></span>";
+				}
 			}
 			$.ajax({
 			  url:'/resource/groupfilter/'+$(x).next().attr("value"),
