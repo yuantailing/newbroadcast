@@ -116,15 +116,16 @@ function change_modal_id(id) {
 $(document).ready(function() {
 	$('#mgr-change-power-submit').click(function() {
 		$.ajax({
-            url:'/manager/changepower/',
+            url:'/manage/changepower/',
             type:"POST",
             data:{uid:$('#mgr-change-power-userid').val(), new_power:$("#mgr-change-power-list").val()},
             dataType:"json"
         }).done(function(msg){
-        	if (msg.success) { 
-        		$('#mgr-change-power-status').text(msg.info).show();
-        	} else { 
-        		$('#change-password-status').text(msg.info).show();
+        	if (msg.success) {
+        		$('#mgr-change-power-status').html(msg.info);
+				location.reload();
+        	} else {
+        		$('#mgr-change-power-status').html(msg.info);
         	}
         }).fail(function(jqXHR,textStatus){   	
             $('#mgr-change-power-status').html('与服务器连接中断');

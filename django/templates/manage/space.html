@@ -277,7 +277,7 @@
 $(document).ready(function(){
     $('#change-password-button').click(function(){
         $.ajax({
-            url:'/manager/changepassword/',
+            url:'/manage/changepassword/',
             type:"POST",
             data:{old_password:$("#old-password").val(), new_password:$("#new-password").val(), check_password:$("#check-new-password").val()},
             dataType:"json"
@@ -298,7 +298,7 @@ $(document).ready(function(){
 $(document).ready(function(){
     $('#change-info-button').click(function(){
         $.ajax({
-            url:'/manager/changeinfo/',
+            url:'/manage/changeinfo/',
             type:"POST",
             data:{nickname:$("#change-nickname").val(), birth:$("#change-birthday").val(), phone:$("#change-phone").val()},
             dataType:"json"
