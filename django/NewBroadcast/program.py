@@ -155,8 +155,20 @@ def show_upload(req):
         result = u'上传成功'
     elif result == 'failed':
         result = u'操作失败'
+
+    group_title = []
+    group_list = ProgramGroup.objects.all()
+    for item in group_list:
+        group_title.append(item.title)
+
+    series_title = []
+    series_list = ProgramSeries.objects.all()
+    for item in series_list:
+        series_title.append(item.title)
     return render_to_response("program/upload.html",
-                              {'result':result},
+                              {'result':result,
+                               'group_title':group_title,
+                               'series_title':series_title},
                               context_instance=RequestContext(req))
 
 @power_required(['worker'])
@@ -171,13 +183,17 @@ def upload_program(req):
         tdescription = req.POST.get('description', None)
         tweight = req.POST.get('weight', None)
         trecorder = req.POST.get('recorder', None)
-        tpicture = req.FILES.get('picture', None) # json of list
+        tworkers = req.POST.get('workers', None)
+        tcontributor = req.POST.get('contributor', None)
+        tpicture = req.FILES.getlist('picture', None) # json of list
         taudio = req.FILES.get('audio', None)
-        tdocument = req.POST.get('document', None) # json of list
+        tdocument = req.FILES.getlist('document', None) # json of list
         if (tgroup != None):
-            prg.group = tgroup
+            pgroup = ProgramGroup.objects.get(title = tgroup)
+            prg.group = pgroup
         if (tseries != None):
-            prg.series = tseries
+            pseries = ProgramSeries.objects.get(title = tseries)
+            prg.series = pseries
         if (ttitle != None):
             prg.title = ttitle
         if (tdescription != None):
@@ -186,18 +202,31 @@ def upload_program(req):
             prg.weight = tweight
         if (trecorder != None):
             prg.recorder = trecorder
+        if (tworkers != None):
+            prg.workers = tworkers
+        if (tcontributor != None):
+            prg.contributor = tcontributor
         if (tpicture != None):
-            pic = Source()
-            pic.document = tpicture
-            pic.save()
-            prg.picture = json.dumps([pic.id])
+            pics = []
+            for ele in tpicture:
+                pic = Source()
+                pic.document = ele
+                pic.save()
+                pics.append(pic.id)   
+            prg.picture = json.dumps(pics)
         if (taudio != None):
             ad = Source()
             ad.document = taudio
             ad.save()
             prg.audio = ad.id
         if (tdocument != None):
-            prg.document = tdocument
+            docs = []
+            for ele in tdocument:
+                doc = Source()
+                doc.document = ele
+                doc.save()
+                docs.append(doc.id)   
+            prg.document = json.dumps(docs)
         prg.save()
         res['result'] = 'success'
     except Exception, e:
