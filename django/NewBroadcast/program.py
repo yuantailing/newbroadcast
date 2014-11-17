@@ -366,19 +366,45 @@ def modify_audio(req, arg):
 def modify_pic(req, arg):
     pgid = int(arg)
     pg = Program.objects.get(id=pgid)
-
+    pic_arr = json.loads(pg.picture)
     try:
         res = { }
-        tpic = req.FILES.get('picture', None)
-        pic = Source()
-        pic.document = tpic
-        pic.save()
-        pg.picture = json.dumps([pic.id])
+        tpic = req.FILES.getlist('picture', None)
+        if (len(tpic) > 0):
+            for ele in tpic:
+                pic = Source()
+                pic.document = ele
+                pic.save()
+                pic_arr.append(pic.id)
+        pg.picture = json.dumps(pic_arr)
         pg.save()
         res['result'] = 'success'
     except Exception, e:
         res['result'] = 'failed'
     return HttpResponse(json.dumps(res), content_type='application/json')
+
+
+@power_required(['worker'])
+def modify_doc(req, arg):
+    pgid = int(arg)
+    pg = Program.objects.get(id=pgid)
+    doc_arr = json.loads(pg.document)
+    try:
+        res = { }
+        tdoc = req.FILES.getlist('document', None)
+        if (len(tdoc) > 0):
+            for ele in tdoc:
+                doc = Source()
+                doc.document = ele
+                doc.save()
+                doc_arr.append(doc.id)
+        pg.document = json.dumps(doc_arr)
+        pg.save()
+        res['result'] = 'success'
+    except Exception, e:
+        res['result'] = 'failed'
+    return HttpResponse(json.dumps(res), content_type='application/json')
+
 
 @power_required(['worker'])
 def delete_program(req):

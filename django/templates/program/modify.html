@@ -82,10 +82,7 @@
     {% for item in pictitle %}
     <div class="form-group">
         <label for="picture" class="col-sm-offset-1 col-sm-2 control-label">图片文件</label>
-        <div class="col-sm-3">
-            <input type="file" class="form-control" name="picture" id="picture">
-        </div>
-        <label class="col-sm-3">{{ item }}</label>
+        <label class="col-sm-6">{{ item }}</label>
         <button type="button" class="btn btn-danger" onclick="delPicture(this)">
             <span class="glyphicon glyphicon-minus"> 删除</span>
         </button>
@@ -104,10 +101,7 @@
     {% for item in doctitle %}
     <div class="form-group">
         <label for="document" class="col-sm-offset-1 col-sm-2 control-label">文稿文件</label>
-        <div class="col-sm-3">
-            <input type="file" class="form-control" name="document" id="document">
-        </div>
-        <label class="col-sm-3">{{ item }}</label>
+        <label class="col-sm-6">{{ item }}</label>
         <button type="button" class="btn btn-danger" onclick="delDocument(this)">
             <span class="glyphicon glyphicon-minus"> 删除</span>
         </button>
@@ -135,7 +129,7 @@ function addPicture(x) {
     plabel.innerHTML="图片文件";
     fdiv.appendChild(plabel);
     var pdiv=document.createElement("div");
-    pdiv.setAttribute("class", "col-sm-3");
+    pdiv.setAttribute("class", "col-sm-6");
     fdiv.appendChild(pdiv);
     var pinput=document.createElement("input");
     pinput.setAttribute("type", "file");
@@ -144,9 +138,6 @@ function addPicture(x) {
     pinput.setAttribute("name", "picture");
     pinput.setAttribute("id", "picture"+pictureIndex);
     pdiv.appendChild(pinput);
-    var plabel=document.createElement("label");
-    plabel.setAttribute("class", "col-sm-3");
-    fdiv.appendChild(plabel);
     var pbutton=document.createElement("button");
     pbutton.setAttribute("type", "button");
     pbutton.setAttribute("class", "btn btn-danger");
@@ -173,7 +164,7 @@ function addDocument(x) {
     plabel.innerHTML="文稿文件";
     fdiv.appendChild(plabel);
     var pdiv=document.createElement("div");
-    pdiv.setAttribute("class", "col-sm-3");
+    pdiv.setAttribute("class", "col-sm-6");
     fdiv.appendChild(pdiv);
     var pinput=document.createElement("input");
     pinput.setAttribute("type", "file");
@@ -182,9 +173,6 @@ function addDocument(x) {
     pinput.setAttribute("name", "document");
     pinput.setAttribute("id", "document"+docIndex);
     pdiv.appendChild(pinput);
-    var plabel=document.createElement("label");
-    plabel.setAttribute("class", "col-sm-3");
-    fdiv.appendChild(plabel);
     var pbutton=document.createElement("button");
     pbutton.setAttribute("type", "button");
     pbutton.setAttribute("class", "btn btn-danger");
