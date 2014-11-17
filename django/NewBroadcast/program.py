@@ -158,14 +158,18 @@ def show_upload(req):
         result = u'操作失败'
 
     group_title = []
+    #group_id = []
     group_list = ProgramGroup.objects.all()
     for item in group_list:
         group_title.append('[' + str(item.id) + '] ' + item.title)
+        #group_id.append(item.id)
 
     series_title = []
+    #series_id = []
     series_list = ProgramSeries.objects.all()
     for item in series_list:
         series_title.append('[' + str(item.id) + '] ' + item.title)
+        #series_id.append(item.id)
     return render_to_response("program/upload.html",
                               {'result':result,
                                'group_title':group_title,
@@ -191,10 +195,10 @@ def upload_program(req):
         taudio = req.FILES.get('audio', None)
         tdocument = req.FILES.getlist('document', None) # json of list
         user = User.objects.get(id=req.session['uid'])
-        if (pattern.search(tgroup).group() != None):
+        if (pattern.search(tgroup) != None):
             pgroup = ProgramGroup.objects.get(id = pattern.search(tgroup).group())
             prg.group = pgroup
-        if (pattern.search(tseries).group() != None):
+        if (pattern.search(tseries) != None):
             pseries = ProgramSeries.objects.get(id = pattern.search(tseries).group())
             prg.series = pseries
         if (ttitle != None):
@@ -243,28 +247,65 @@ def show_modify(req, arg):
     pgid = int(arg)
     pg = Program.objects.get(id=pgid)
 
+    groups = []
+    group_list = ProgramGroup.objects.all()
+    for item in group_list:
+        gp = {}
+        gp['title'] = '[' + str(item.id) + '] ' + item.title
+        gp['id'] = item.id
+        groups.append(gp)
+
+    series_all = []
+    series_list = ProgramSeries.objects.all()
+    for item in series_list:
+        srs = {}
+        srs['title'] = '[' + str(item.id) + '] ' + item.title
+        srs['id'] = item.id
+        series_all.append(srs)
+    group = 0
+    if pg.group:
+        group = pg.group.id
+    series = 0
+    if pg.series:
+        series = pg.series.id
     title = ""
     if pg.title:
         title = pg.title
-
     description = ""
     if pg.description:
         description = pg.description
+    recorder = ""
+    if pg.recorder:
+        recorder = pg.recorder
+    contributor = ""
+    if pg.contributor:
+        contributor = pg.contributor
+    workers = ""
+    if pg.workers:
+        workers = pg.workers
 
-    piclink = []
+    pictitle = []
     if pg.picture:
         pic_arr = json.loads(pg.picture)
         for i in pic_arr:
-            piclink.append(Source.objects.get(id=i).document.url)
-    
-    medialink = ""
+            pictitle.append(os.path.split(Source.objects.get(id=i).document.file.name)[1])
+    mediatitle = ""
     if pg.audio:
-        medialink = Source.objects.get(id=pg.audio).document.url
+        mediatitle = os.path.split(Source.objects.get(id=pg.audio).document.file.name)[1]
+    doctitle = []
+    if pg.document:
+        doc_arr = json.loads(pg.document)
+        for i in doc_arr:
+            doctitle.append(os.path.split(Source.objects.get(id=i).document.file.name)[1])
 
     return render_to_response("program/modify.html",
-                    {'pgid':pgid, 'title':title,
-                     'description':description,
-                     'medialink':medialink, 'piclink':piclink}, 
+                    {'pgid':pgid, 'group':group,
+                     'series':series, 'title':title,
+                     'description':description, 'recorder':recorder,
+                     'contributor':contributor, 'workers':workers,
+                     'mediatitle':mediatitle, 'pictitle':pictitle,
+                     'doctitle':doctitle, 'groups':groups,
+                     'series_all':series_all},
                      context_instance=RequestContext(req));
 
 @power_required(['worker'])
@@ -274,12 +315,29 @@ def modify_word(req, arg):
 
     try:
         res = { }
+        tgroup = req.POST.get('group', None)
+        tseries = req.POST.get('series', None)
         ttitle = req.POST.get('title', None)
         tdescription = req.POST.get('description', None)
+        trecorder = req.POST.get('recorder', None)
+        tcontributor = req.POST.get('contributor', None)
+        tworkers = req.POST.get('workers', None)
+        if (tgroup != ""):
+            group = ProgramGroup.objects.get(id = int(tgroup))
+            pg.group = group
+        if (tseries != ""):
+            series = ProgramSeries.objects.get(id = int(tseries))
+            pg.series = series
         if (ttitle != None):
             pg.title = ttitle
         if (tdescription != None):
             pg.description = tdescription
+        if (trecorder != None):
+            pg.recorder = trecorder
+        if (tcontributor != None):
+            pg.contributor = tcontributor
+        if (tworkers != None):
+            pg.workers = tworkers
         pg.save()
         res['result'] = 'success'
     except Exception, e:

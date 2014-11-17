@@ -14,7 +14,7 @@
         <label for="group" class="col-sm-offset-1 col-sm-2 control-label">节目组别</label>
         <div class="col-sm-6">
             <select name="group" class="form-control">
-                <option value="" selected="selected">---------</option>
+                <option selected="selected">---------</option>
                 {% for item in group_title %}
                 <option>{{ item }}</option>
                 {% endfor %}
@@ -25,7 +25,7 @@
         <label for="series" class="col-sm-offset-1 col-sm-2 control-label">节目系列</label>
         <div class="col-sm-6">
             <select name="series" class="form-control">
-                <option value="" selected="selected">---------</option>
+                <option selected="selected">---------</option>
                 {% for item in series_title %}
                 <option>{{ item }}</option>
                 {% endfor %}
@@ -65,13 +65,13 @@
     <div class="form-group">
         <label for="audio" class="col-sm-offset-1 col-sm-2 control-label">音频文件</label>
         <div class="col-sm-6">
-            <input type="file" class="form-control" name="audio" id="audio" placeholder="请选择音频文件">
+            <input type="file" class="form-control" name="audio" id="audio" title="请选择音频文件" data-filename-placement="inside">
         </div>
     </div>
     <div class="form-group">
         <label for="picture0" class="col-sm-offset-1 col-sm-2 control-label">图片文件</label>
         <div class="col-sm-6">
-            <input type="file" class="form-control" multiple="true" name="picture" id="picture0" placeholder="请选择图片文件">
+            <input type="file" class="form-control" multiple="true" name="picture" id="picture0" title="请选择图片文件">
         </div>
         <button type="button" class="btn btn-danger" onclick="delPicture(this)">
             <span class="glyphicon glyphicon-minus">删除</span>
@@ -85,7 +85,7 @@
     <div class="form-group">
         <label for="document0" class="col-sm-offset-1 col-sm-2 control-label">文稿文件</label>
         <div class="col-sm-6">
-            <input type="file" class="form-control" multiple="true" name="document" id="document0" placeholder="请选择文稿文件">
+            <input type="file" class="form-control" multiple="true" name="document" id="document0" title="请选择文稿文件">
         </div>
         <button type="button" class="btn btn-danger" onclick="delDocument(this)">
             <span class="glyphicon glyphicon-minus">删除</span>
@@ -102,6 +102,7 @@
 </form>
 {% endblock %}
 {% block script %}
+<script src="http://www.gregpike.net/demos/bootstrap-file-input/bootstrap.file-input.js"></script>
 <script>
 var pictureIndex = 1;
 var docIndex = 1;
