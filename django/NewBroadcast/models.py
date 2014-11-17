@@ -7,7 +7,7 @@ import os
 class User(models.Model):
     email = models.EmailField(blank=False, default=None, unique=True)
     password = models.TextField(blank=False, default=None)
-    nickname = models.TextField(blank=False, default=None, unique=True)
+    nickname = models.CharField(blank=False, default=None, unique=True, max_length=128)
     power = models.CharField(blank=False, default='user', max_length=32,
                              choices=(('user', 'user'), ('worker', 'worker'),
                                       ('admin', 'admin'),
