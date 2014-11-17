@@ -8,6 +8,7 @@ from django.core import serializers
 from django import forms
 import json
 import os
+import re
 from models import *
 
 @power_required([None])
@@ -159,12 +160,12 @@ def show_upload(req):
     group_title = []
     group_list = ProgramGroup.objects.all()
     for item in group_list:
-        group_title.append(item.title)
+        group_title.append('[' + str(item.id) + '] ' + item.title)
 
     series_title = []
     series_list = ProgramSeries.objects.all()
     for item in series_list:
-        series_title.append(item.title)
+        series_title.append('[' + str(item.id) + '] ' + item.title)
     return render_to_response("program/upload.html",
                               {'result':result,
                                'group_title':group_title,
@@ -176,9 +177,10 @@ def upload_program(req):
     res = { }
     try:
         prg = Program()
+        pattern = re.compile(r'\d+')
 
         tgroup = req.POST.get('group', None)
-        tseries = req.POST.get('series', None)
+        tseries = req.POST.get('series', None)        
         ttitle = req.POST.get('title', None)
         tdescription = req.POST.get('description', None)
         tweight = req.POST.get('weight', None)
@@ -188,11 +190,12 @@ def upload_program(req):
         tpicture = req.FILES.getlist('picture', None) # json of list
         taudio = req.FILES.get('audio', None)
         tdocument = req.FILES.getlist('document', None) # json of list
-        if (tgroup != None):
-            pgroup = ProgramGroup.objects.get(title = tgroup)
+        user = User.objects.get(id=req.session['uid'])
+        if (pattern.search(tgroup).group() != None):
+            pgroup = ProgramGroup.objects.get(id = pattern.search(tgroup).group())
             prg.group = pgroup
-        if (tseries != None):
-            pseries = ProgramSeries.objects.get(title = tseries)
+        if (pattern.search(tseries).group() != None):
+            pseries = ProgramSeries.objects.get(id = pattern.search(tseries).group())
             prg.series = pseries
         if (ttitle != None):
             prg.title = ttitle
@@ -227,6 +230,8 @@ def upload_program(req):
                 doc.save()
                 docs.append(doc.id)   
             prg.document = json.dumps(docs)
+        if (user != None):
+            prg.uploader = user
         prg.save()
         res['result'] = 'success'
     except Exception, e:
