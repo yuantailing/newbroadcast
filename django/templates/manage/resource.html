@@ -8,10 +8,10 @@
 <div class="container">
 	<div class="row">
 		<hr />
-		<iframe src="/manage/myresource" width="100%" scrolling="no" frameborder="0">
+		<iframe src="/manage/myresource" width="100%" scrolling="no" frameborder="0" onload="this.height=this.contentWindow.document.documentElement.scrollHeight">
 		</iframe>
 		<hr />
-		<iframe src="/manage/allresources" width="100%" scrolling="no" frameborder="0">
+		<iframe src="/manage/allresources" width="100%" scrolling="no" frameborder="0" onload="this.height=this.contentWindow.document.documentElement.scrollHeight">
 	</div>
 </div>
 {% endblock %}

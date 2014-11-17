@@ -2,15 +2,13 @@
 {% block body %}
 <div class="panel panel-default">
 	<div class="panel-heading">
-		<h4>所有上传</h4>
+		<h4>{{ title }}</h4>
 	</div>
+	{% load pagination_tags %}
+	{% autopaginate obj_list 10 %}
 	<table class="panel-body table table-bordered table-striped table-hover">
 		<div>
-			<div class="col-md-3">
-			</div>
-			<div class="col-md-9">
-				<ul id="page-list" class="pagination-plain" style="float:right"><li class="previous"><a class="fui-arrow-left" onclick="prePage(this)"></a></li><li><a onclick="selectPage(this)">1</a></li><li><a onclick="selectPage(this)">2</a></li><li class="previous"><a class="fui-arrow-right" onclick="nextPage(this)"></a></li></ul>
-			</div>
+		{% paginate %}
 		</div>
 		{% for pg in groups %}
 			<thead>

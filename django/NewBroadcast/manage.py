@@ -37,12 +37,18 @@ def show_mgrres(req):
 
 @power_required(['worker'])
 def show_mgrmyres(req):
+    obj_list = Program.objects.filter(uploader__id=req.session['uid'])
     return render_to_response("manage/myresource.html",
+                              {'title':u'我的上传',
+                               'obj_list':obj_list, },
                               context_instance=RequestContext(req))
 
 @power_required(['admin'])
 def show_mgrallres(req):
-    return render_to_response("manage/allresources.html",
+    obj_list = Program.objects.all()
+    return render_to_response("manage/myresource.html",
+                              {'title':u'所有上传',
+                               'obj_list':obj_list, },
                               context_instance=RequestContext(req))
 
 @power_required(['superadmin'])
