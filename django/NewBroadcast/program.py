@@ -176,6 +176,71 @@ def show_upload(req):
                                'series_title':series_title},
                               context_instance=RequestContext(req))
 
+def ajax_upload(req):
+    try:
+        prg = Program()
+        pattern = re.compile(r'\d+')
+
+        tgroup = req.POST.get('group', None)
+        tseries = req.POST.get('series', None)
+        ttitle = req.POST.get('title', None)
+        tdescription = req.POST.get('description', None)
+        tweight = req.POST.get('weight', None)
+        trecorder = req.POST.get('recorder', None)
+        tworkers = req.POST.get('workers', None)
+        tcontributor = req.POST.get('contributor', None)
+        tpicture = req.FILES.getlist('picture', None) # json of list
+        taudio = req.FILES.get('audio', None)
+        tdocument = req.FILES.getlist('document', None) # json of list
+        user = User.objects.get(id=req.session['uid'])
+        if (pattern.search(tgroup).group() != None):
+            pgroup = ProgramGroup.objects.get(id = pattern.search(tgroup).group())
+            prg.group = pgroup
+        if (pattern.search(tseries).group() != None):
+            pseries = ProgramSeries.objects.get(id = pattern.search(tseries).group())
+            prg.series = pseries
+        if (ttitle != None):
+            prg.title = ttitle
+        if (tdescription != None):
+            prg.description = tdescription
+        if (tweight != None):
+            prg.weight = tweight
+        if (trecorder != None):
+            prg.recorder = trecorder
+        if (tworkers != None):
+            prg.workers = tworkers
+        if (tcontributor != None):
+            prg.contributor = tcontributor
+        if (tpicture != None):
+            pics = []
+            for ele in tpicture:
+                pic = Source()
+                pic.document = ele
+                pic.save()
+                pics.append(pic.id)
+            prg.picture = json.dumps(pics)
+        if (taudio != None):
+            ad = Source()
+            ad.document = taudio
+            ad.save()
+            prg.audio = ad.id
+        if (tdocument != None):
+            docs = []
+            for ele in tdocument:
+                doc = Source()
+                doc.document = ele
+                doc.save()
+                docs.append(doc.id)
+            prg.document = json.dumps(docs)
+        if (user != None):
+            prg.uploader = user
+        prg.save()
+        success = True
+    except Exception, e:
+        success = False
+    return HttpResponse(json.dumps({'success':success, 'info':'test info'}),
+                        content_type='application/json')
+
 @power_required(['worker'])
 def upload_program(req):
     res = { }
@@ -184,7 +249,7 @@ def upload_program(req):
         pattern = re.compile(r'\d+')
 
         tgroup = req.POST.get('group', None)
-        tseries = req.POST.get('series', None)        
+        tseries = req.POST.get('series', None)
         ttitle = req.POST.get('title', None)
         tdescription = req.POST.get('description', None)
         tweight = req.POST.get('weight', None)
@@ -219,7 +284,7 @@ def upload_program(req):
                 pic = Source()
                 pic.document = ele
                 pic.save()
-                pics.append(pic.id)   
+                pics.append(pic.id)
             prg.picture = json.dumps(pics)
         if (taudio != None):
             ad = Source()
@@ -232,7 +297,7 @@ def upload_program(req):
                 doc = Source()
                 doc.document = ele
                 doc.save()
-                docs.append(doc.id)   
+                docs.append(doc.id)
             prg.document = json.dumps(docs)
         if (user != None):
             prg.uploader = user
