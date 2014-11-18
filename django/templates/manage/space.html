@@ -23,7 +23,9 @@
                 			<li><a href="#space-change-info">修改资料</a></li>
                 		</ul>
                 	</li>
-                	
+                	<li>
+                		<a href="#space-favorites-manager">我的收藏</a>
+                	</li>
                 	{% if user.power == 'worker' or user.power == 'admin' or user.power == 'superadmin' %}
                 	<li>
                 		<a href="#space-upload-manager">上传资源管理</a>
@@ -74,6 +76,36 @@
 						<button class="btn btn-primary" data-toggle="modal" data-target="#change-info">修改资料</button>
 						<button class="btn btn-primary" data-toggle="modal" data-target="#change-password">修改密码</button>	
 					</div>
+				</div>
+			</div>
+			<!-- favorites manager -->
+			<div class="bs-docs-section" id="space-favorites-manager">
+				<hr />
+				<div class="panel panel-default" id="space-favorites-list">
+					<div class="panel-heading">
+						<h4>我的收藏</h4>
+					</div>
+					<table class="panel-body table table-bordered table-hover">
+						<tr>
+							<th>标题</th>
+							<th>组别</th>
+							<th>系列</th>
+							<th>上传时间</th>
+							<th>&nbsp;</th>
+							<th>&nbsp;</th>
+						</tr>
+                    {% for up in ups %}
+						<tr>
+							<td><a href="/program/{{ up.id }}">{{ up.title }}</a></td>
+							<td><a href="/source/?gid={{ up.group.id }}">{{ up.group.title }}</a></td>
+							<td><a href="/source/?sid={{ up.series.id }}">{{ up.series.title }}</a></td>
+							<td>{{ up.create_time|date:"Y-m-d" }}</td>
+							<td><a href="/program/modify/{{ up.id }}">修改</a></td>
+							<td><a href="/program/delete/?pid={{ up.id }}">删除</a></td><!-- Todo：以GET或POST发送到这个URI，返回json.success为true或false，然后刷新页面 -->
+						</tr>
+					{% endfor %}
+						<tr><td><a href="/manage/favorites">更多...</a></td></tr>
+					</table>
 				</div>
 			</div>
 			{% if user.power == 'worker' or user.power == 'admin' or user.power == 'superadmin'%}
