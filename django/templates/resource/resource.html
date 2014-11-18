@@ -26,13 +26,17 @@
 						data-toggle="dropdown">类型
 						<span class="caret"></span>
 					</button>
+					<input type="hidden" id="groupid" value="-" />
 					<ul id="group-dropdown" class="dropdown-menu" role="menu">
-						<li><a onclick="selectActiveIt(this)">全部</a></li>
+						<li>
+							<a onclick="selectActiveIt(this)">全部</a>
+							<input type="hidden" value="-" />
+						</li>
 						<li class="divider"></li>
 						{% for pg in groups %}
 						<li>
 							<a id="groupstitle" onclick="selectActiveIt(this)">{{ pg.title }}</a>
-							<input type="hidden" id="groupid" value="{{ pg.id }}" />
+							<input type="hidden" value="{{ pg.id }}" />
 						</li>
 						{% endfor %}
 					</ul>
@@ -42,13 +46,17 @@
 						data-toggle="dropdown">系列
 						<span class="caret"></span>
 					</button>
+					<input type="hidden" id="seriesid" value="-" />
 					<ul id="series-dropdown" class="dropdown-menu" role="menu">
-						<li><a onclick="selectActiveIt(this)">全部</a></li>
+						<li>
+							<a onclick="selectActiveIt(this)">全部</a>
+							<input type="hidden" value="-" />
+						</li>
 						<li class="divider"></li>
 						{% for se in series %}
 						<li>
 							<a id="seriestitle" onclick="selectActiveIt(this)">{{ se.title }}</a>
-							<input type="hidden" id="seriesid" value="{{ se.id }}" />
+							<input type="hidden" value="{{ se.id }}" />
 						</li>
 						{% endfor %}
 					</ul>
@@ -145,9 +153,9 @@
 
 
     <!-- jQuery (necessary for Flat UI's JavaScript plugins) -->
-    <script src="js/vendor/jquery.min.js"></script>
+    <script src="static/dist/js/vendor/jquery.min.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
-    <script src="js/flat-ui.min.js"></script>
+    <script src="static/dist/js/flat-ui.min.js"></script>
 {% endblock %}
 {% block script %}
 	<script>
@@ -306,24 +314,34 @@
 			}
 */
 			alert(x.innerHTML);
+			var groupid;
+			var seriesid;
 			if (x.id=="groupstitle") {
 				alert(x.innerHTML);
+				groupid=$(x).next().attr("value");
+				seriesid="-";
 				if (x.innerHTML=="全部") {
 					document.getElementById("group-button").innerHTML="类型<span class='caret'></span>";
+					document.getElementById("groupid").setAttribute("value", "-");
 				} else {
 					document.getElementById("group-button").innerHTML=x.innerHTML+"<span class='caret'></span>";
+					document.getElementById("groupid").setAttribute("value", groupid);
 				}
 			} else if (x.id=="seriestitle") {
+				groupid=$("#groupid").attr("value");
+				seriesid=$(x).next().attr("value");
 				if (x.innerHTML=="全部") {
 					document.getElementById("series-button").innerHTML="类型<span class='caret'></span>";
+					document.getElementById("seriesid").setAttribute("value", "-");
 				} else {
 					document.getElementById("series-button").innerHTML=x.innerHTML+"<span class='caret'></span>";
+					document.getElementById("seriesid").setAttribute("value", seriesid);
 				}
 			}
 			$.ajax({
-			  url:'/resource/groupfilter/'+$(x).next().attr("value"),
+			  url:'/resource/filter/',
 			  type:"GET",
-			  data:{},
+			  data:{'groupid':groupid, 'seriesid':seriesid},
 				dataType:"json"
 			}).done(function(msg){
 				pids = msg.pid;
