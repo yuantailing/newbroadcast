@@ -4,18 +4,6 @@
 	  <div id="listall_show"></div>
   <div id="getarr_show"></div>
 	<div style="height:100%; width:100%" class="container">
-		<!-- 组别 -->
-		<div style="height:100%; width:100%" class="pagination text-center">
-			<ul style="height:100%; width:80%">
-				<!-- Make dropdown appear above pagination -->
-                {% for pg in groups %}
-				<li style="height:100%; width:{{ liwidth }}%">
-					<a onclick="selectActiveIt(this)" style="height:100%; width:100%">{{ pg.title }}</a>
-					<input type="hidden" id="groupid" value="{{ pg.id }}" />
-				</li>
-                {% endfor %}
-			</ul>
-		</div>
 
 		<div style="height:10px"></div>
 		<div class="row" style="height:80%; width:80%; margin:auto">
@@ -27,7 +15,7 @@
 						<span class="caret"></span>
 					</button>
 					<input type="hidden" id="groupid" value="-" />
-					<ul id="group-dropdown" class="dropdown-menu" role="menu">
+					<ul id="group-dropdown" class="dropdown-menu dropdown-menu-inverse" role="menu">
 						<li>
 							<a id="groupstitle" onclick="selectActiveIt(this)">全部</a>
 							<input type="hidden" value="-" />
@@ -47,31 +35,26 @@
 						<span class="caret"></span>
 					</button>
 					<input type="hidden" id="seriesid" value="-" />
-					<ul id="series-dropdown" class="dropdown-menu" role="menu">
+					<ul id="series-dropdown" class="dropdown-menu dropdown-menu-inverse" role="menu">
 						<li>
 							<a id="seriestitle" onclick="selectActiveIt(this)">全部</a>
 							<input type="hidden" value="-" />
 						</li>
 						<li class="divider"></li>
-						{% for se in series %}
-						<li>
-							<a id="seriestitle" onclick="selectActiveIt(this)">{{ se.title }}</a>
-							<input type="hidden" value="{{ se.id }}" />
-						</li>
-						{% endfor %}
 					</ul>
 				</div>
 			</div>
+			<br/>
 			<!-- 节目 -->
 			<div class="panel panel-default" style="height:100%; width:100%">
 				<ul id="res-list" class="list-group" style="height:100%; width:100%">
 				</ul>
 				<div class="panel panel-head">
 				</div>
-				<table id="res-table" class="panel-body table table-striped table-hover">
+				<table id="res-table" class="panel-body table table-striped table-bordered table-hover">
 					<thead id="res-thead">
 						<tr>
-							<th id="th-title" onclick="sort(this)"><u>名称</u></th>
+							<th id="th-title" onclick="sort(this)"><u>名称（点击可排序）</u></th>
 							<th id="th-group" onclick="sort(this)"><u>类型</u></th>
 							<th id="th-series" onclick="sort(this)"><u>系列</u></th>
 							<th id="th-recorder" onclick="sort(this)"><u>播音人</u></th>
@@ -91,66 +74,6 @@
 			</ul>
 		</div>
 	</div>
-<div class="modal fade" id="modifyModal" tabindex="-1" role="dialog" aria-labelledby="modifyModalLabel">
-    <div class="modal-dialog">
-      <div class="modal-content">
-         <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-            <p>修改节目信息</p>
-         </div>
-         <div class="modal-body">
-			<form id="modify-form" class="form-horizontal" role="form">
-                {% csrf_token %}
-                <div class="form-group">
-                    <label id="modify_status" class="col-sm-6 control-label"></label>
-                    <br/>
-                    <label id="modify-show" class="col-sm-6 control-label"></label>
-                </div>
-				<div class="form-group">
-					<label for="modify-group" class="col-sm-offset-1 col-sm-2 control-label">组别</label>
-					<div class="col-sm-6">
-						<input type="text" class="form-control" id="modify-group" placeholder="请输入组别">
-					</div>
-				</div>
-				<div class="form-group">
-					<label for="modify-series" class="col-sm-offset-1 col-sm-2 control-label">系列</label>
-					<div class="col-sm-6">
-						<input type="text" class="form-control" id="modify-series" placeholder="请输入系列">
-					</div>
-				</div>
-				<div class="form-group">
-					<label for="modify-title" class="col-sm-offset-1 col-sm-2 control-label">名称</label>
-					<div class="col-sm-6">
-						<input type="text" class="form-control" id="modify-title" placeholder="请输入名称">
-					</div>
-				</div>
-				<div class="form-group">
-					<label for="modify-description" class="col-sm-offset-1 col-sm-2 control-label">描述</label>
-					<div class="col-sm-6">
-						<input type="text" class="form-control" id="modify-description" placeholder="请输入描述">
-					</div>
-				</div>
-				<div class="form-group">
-					<label for="modify-picture0" class="col-sm-offset-1 col-sm-2 control-label">图片</label>
-					<div class="col-sm-6">
-						<input type="file" class="form-control" id="modify-picture0">
-					</div>
-				</div>
-			</form>
-			<div class="col-sm-2" style="float:right">
-				<button class="btn btn-xs btn-primary" id="add-picture" onclick="addPicture(this)">+</button>
-				<button class="btn btn-xs btn-primary" id="del-picture" onclick="delPicture(this)">-</button>
-			</div>
-			<br/>
-         </div>
-         <div class="modal-footer">
-            <button type="button" class="btn btn-primary" id="modify-submit">修改</button>
-            <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-         </div>
-      </div><!-- /.modal-content -->
-    </div><!-- /.modal-dialog -->
-</div>
-
 
     <!-- jQuery (necessary for Flat UI's JavaScript plugins) -->
     <script src="static/dist/js/vendor/jquery.min.js"></script>
@@ -162,14 +85,42 @@
 	var pids = new Array();
 	var index = 0;
 	var pictureIndex=1;
+	var srs = new Array();
 		$(document).ready(function(){
 			$.ajax({
-			  url:'/resource/listall/',
+			  url:'/resource/filter/',
 			  type:"GET",
-			  data:{},
+			  data:{'groupid':"-", 'seriesid':"-"},
 				dataType:"json"
 			}).done(function(msg){
 				pids = msg.pid;
+				srs = msg.srs;
+				var x=document.getElementById("series-dropdown");
+				x.innerHTML="";
+				var xli=document.createElement("li");
+				x.appendChild(xli);
+				var xa=document.createElement("a");
+				xa.setAttribute("id", "seriestitle");
+				xa.setAttribute("onclick", "selectActiveIt(this)");
+				xa.innerHTML="全部";
+				xli.appendChild(xa);
+				var xinput=document.createElement("input");
+				xinput.setAttribute("type", "hidden");
+				xinput.setAttribute("value", "-");
+				xli.appendChild(xinput);
+				for (var i=0;i<srs.length;i++) {
+					var li=document.createElement("li");
+					x.appendChild(li);
+					var a=document.createElement("a");
+					a.setAttribute("id", "seriestitle");
+					a.setAttribute("onclick", "selectActiveIt(this)");
+					a.innerHTML=srs[i].title;
+					li.appendChild(a);
+					var input=document.createElement("input");
+					input.setAttribute("type", "hidden");
+					input.setAttribute("value", srs[i].id);
+					li.appendChild(input);
+				}
 				var count=parseInt(pids.length/10+1);
 				document.getElementById("page-list").innerHTML="";
 				if (count>1) {
@@ -200,26 +151,6 @@
 			}).fail(function(jqXHR,textStatus){
 			});
 		});
-/*			$('#modify-submit').click(function(){
-				$.ajax({
-					url:'/resource/modify/',
-					type:"POST",
-					data:{group:$("#modify-group").val(), series:$("#modify-series").val(), title:$("#modify-title").val(), description:$("#modify-description").val(), picture:$("#modify-picture").val()},
-					dataType:"json"
-				}).done(function(msg){
-				}).fail(function(jqXHR,textStatus){
-				});
-			});
-			$('#delete').click(function(){
-				$.ajax({
-					url:'resource/delete/',
-					type:"POST",
-					data:{pid:$("#delete").parent().attr("value")},
-				}).done(function(msg){
-					location.reload(true);
-				}).fail(function(jqXHR，textStatus){
-				});
-			});*/
 		function showResource() {
 			var subpids = new Array();
 			var len;
@@ -266,14 +197,12 @@
 					var tddiv=document.createElement("div")
 					tddiv.setAttribute("class", "btn-group");
 					td.appendChild(tddiv);
-					var zanbutton=document.createElement("button");
-					zanbutton.setAttribute("class", "btn btn-primary");
-					zanbutton.innerHTML="赞";
-					tddiv.appendChild(zanbutton);
-					var sharebutton=document.createElement("button");
-					sharebutton.setAttribute("class", "btn btn-primary");
-					sharebutton.innerHTML="分享";
-					tddiv.appendChild(sharebutton);
+					var playbutton=document.createElement("a");
+					playbutton.setAttribute("class", "btn btn-primary");
+					playbutton.setAttribute("target", "_blank");
+					playbutton.setAttribute("href", "/program/play/"+pids[i+index]);
+					playbutton.innerHTML="播放";
+					tddiv.appendChild(playbutton);
 				}
 			}).fail(function(jqXHR,textStatus){
 			  $('#getarr_show').html('request failed '+ textStatus);
@@ -313,7 +242,6 @@
 				deactiveIt(lists[i]);
 			}
 */
-			alert(x.innerHTML);
 			var groupid;
 			var seriesid;
 			if (x.id=="groupstitle") {
@@ -339,8 +267,6 @@
 					document.getElementById("seriesid").setAttribute("value", seriesid);
 				}
 			}
-			alert(groupid);
-			alert(seriesid);
 			$.ajax({
 			  url:'/resource/filter/',
 			  type:"GET",
@@ -348,6 +274,33 @@
 				dataType:"json"
 			}).done(function(msg){
 				pids = msg.pid;
+				srs = msg.srs;
+				var x=document.getElementById("series-dropdown");
+				x.innerHTML="";
+				var xli=document.createElement("li");
+				x.appendChild(xli);
+				var xa=document.createElement("a");
+				xa.setAttribute("id", "seriestitle");
+				xa.setAttribute("onclick", "selectActiveIt(this)");
+				xa.innerHTML="全部";
+				xli.appendChild(xa);
+				var xinput=document.createElement("input");
+				xinput.setAttribute("type", "hidden");
+				xinput.setAttribute("value", "-");
+				xli.appendChild(xinput);
+				for (var i=0;i<srs.length;i++) {
+					var li=document.createElement("li");
+					x.appendChild(li);
+					var a=document.createElement("a");
+					a.setAttribute("id", "seriestitle");
+					a.setAttribute("onclick", "selectActiveIt(this)");
+					a.innerHTML=srs[i].title;
+					li.appendChild(a);
+					var input=document.createElement("input");
+					input.setAttribute("type", "hidden");
+					input.setAttribute("value", srs[i].id);
+					li.appendChild(input);
+				}
 				var count=parseInt(pids.length/10+1);
 				document.getElementById("page-list").innerHTML="";
 				if (count>1) {
@@ -374,6 +327,7 @@
 					linode.appendChild(anode);
 					document.getElementById("page-list").appendChild(linode);
 				}
+				index=0;
 				showResource();
 			}).fail(function(jqXHR,textStatus){
 			});
@@ -432,7 +386,6 @@
 				newid=xid.replace((new RegExp("th")), "th-");
 			}
 			x.setAttribute("id", newid);
-			alert(sortarg);
 			$.ajax({
 				url:'/resource/sort/',
 				type:"GET",
@@ -440,12 +393,9 @@
 				dataType:"json"
 			}).done(function(msg) {
 				pids = msg.pid;
-				alert(pids);
 				showResource();
 			}).fail(function(jqXHR, textStatus) {
-				alert(0);
 			});
-			alert(1);
 		}
 		function filter(x) {
 		}
