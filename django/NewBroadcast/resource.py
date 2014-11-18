@@ -44,13 +44,30 @@ def get_arr(req):
         pid[i] = int(pid[i])
     pgs = Program.objects.filter(id__in=pid)
     for pg in pgs:
-        group_title = None
+        tmp = {}
+        tmp['title'] = pg.title;
+        tmp['description'] = None;
+        tmp['group'] = None;
+        tmp['series'] = None;
+        tmp['recorder'] = None;
+        tmp['contributor'] = None;
+        tmp['workers'] = None;
+        tmp['keyword'] = None;
         if (pg.group):
-            group_title = pg.group.title
-        series_title = None
+            tmp['group'] = pg.group.title
         if (pg.series):
-            series_title = pg.series.title
-        res.append({'title':pg.title, 'group':group_title, 'series':series_title})
+            tmp['series'] = pg.series.title
+        if (pg.description):
+            tmp['description'] = pg.description
+        if (pg.recorder):
+            tmp['recorder'] = pg.recorder
+        if (pg.contributor):
+            tmp['contributor'] = pg.contributor
+        if (pg.workers):
+            tmp['workers'] = pg.workers
+        if (pg.keyword):
+            tmp['keyword'] = pg.keyword
+        res.append(tmp)
     return HttpResponse(json.dumps({'program':res}),
                         content_type='application/json')
 
