@@ -53,6 +53,7 @@ def get_arr(req):
         tmp['contributor'] = None;
         tmp['workers'] = None;
         tmp['keyword'] = None;
+        tmp['create_time'] = pg.create_time.strftime("%Y-%m-%d %H:%I:%S");
         if (pg.group):
             tmp['group'] = pg.group.title
         if (pg.series):
@@ -85,4 +86,24 @@ def result(req):
     return render_to_response("resource/result.html",
                               {'pid':json.dumps(res)},
                               context_instance=RequestContext(req));
-
+                              
+@power_required([None])
+def sort(req):
+    pids = req.GET.get('pid')
+    sort = req.GET.get('sort')
+    res = Program.objects.filter(id in pids).order_by(sort).values('id');
+    return HttpResponse(json.dumps({'pid':res}),
+                        content_type='application/json')
+                        
+@power_required([None])
+def filter(req):
+    gids = req.GET.get('groupid')
+    if gids == '-':
+        gids = ProgramGroup.objects.order_by("order").values('id');
+    sids = req.GET.get('seriesid')
+    if sids == '-':
+        sids = ProgramSeries.objects.order_by("order").values('id');
+    pgs = Program.objects.filter(group__id in gids, series__id in sids).values('id');
+    srs = Program.objects.filter(group__id in gids).values('series').distinct();
+    return HttpResponse(json.dumps({'pgs':pgs, 'srs':srs}),
+                        content_type='application/json')
