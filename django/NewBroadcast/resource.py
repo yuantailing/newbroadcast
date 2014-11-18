@@ -39,10 +39,10 @@ def group_filter(req, arg):
 @power_required([None])
 def get_arr(req):
     res = []
-    pid = req.POST.getlist(u'pid[]', [])
-    for i in range(0, len(pid)):
-        pid[i] = int(pid[i])
-    pgs = Program.objects.filter(id__in=pid)
+    pids = req.POST.getlist(u'pid[]', [])
+    pgs = []
+    for pid in pids:
+        pgs.append(Program.objects.get(id=int(pid)))
     for pg in pgs:
         tmp = {}
         tmp['title'] = pg.title;
@@ -95,27 +95,37 @@ def sort(req):
         id = int(id)
         pids_i.append(id)
     sort = req.GET.get('sort')
-    print pids
-    pgs = Program.objects.filter(id__in=pids).order_by(sort);
     res = []
-    for pg in pgs:
+    for pg in Program.objects.filter(id__in=pids).order_by(sort):
         res.append(pg.id);
     return HttpResponse(json.dumps({'pid':res}),
                         content_type='application/json')
                         
 @power_required([None])
 def filter(req):
-    gids = req.GET.get('groupid')
-    if gids == '-':
-        gids = ProgramGroup.objects.order_by("order").values('id');
-    sids = req.GET.get('seriesid')
-    if sids == '-':
-        sids = ProgramSeries.objects.order_by("order").values('id');
-    pgids = [];
-    pgs = Program.objects.filter(group__id in gids, series__id in sids).values('id');
+    gid = req.GET.get('groupid')
+    groups = []
+    if gid == '-':
+        groups = ProgramGroup.objects.order_by("order");
+    else:
+        groups.append(ProgramGroup.objects.get(id=gid));
+    sid = req.GET.get('seriesid')
+    series = []
+    if sid == '-':
+        series = ProgramSeries.objects.order_by("order");
+    else:
+        series.append(ProgramSeries.objects.get(id=sid));
+    pgids = []
+    pgs = Program.objects.filter(group__in=groups, series__in=series);
     for pg in pgs:
         pgids.append(pg.id);
-    srs = Program.objects.filter(group__id in gids).values('series').distinct();
-    print pgids
-    return HttpResponse(json.dumps({'pgs':pgids, 'srs':srs}),
+    srres = []
+    srs = Program.objects.filter(group__in=groups).exclude(series=None).values('series').distinct();
+    for sr in srs:
+        srobj = ProgramSeries.objects.get(id=sr['series']);
+        tmp = {};
+        tmp['id'] = srobj.id;
+        tmp['title'] = srobj.title;
+        srres.append(tmp);
+    return HttpResponse(json.dumps({'pgs':pgids, 'srs':srres}),
                         content_type='application/json')
