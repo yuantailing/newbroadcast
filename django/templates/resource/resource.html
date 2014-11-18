@@ -26,7 +26,7 @@
 						data-toggle="dropdown">类型
 						<span class="caret"></span>
 					</button>
-					<ul class="dropdown-menu" role="menu">
+					<ul id="group-dropdown" class="dropdown-menu" role="menu">
 						<li><a onclick="selectActiveIt(this)">全部</a></li>
 						<li class="divider"></li>
 						{% for pg in groups %}
@@ -42,7 +42,7 @@
 						data-toggle="dropdown">系列
 						<span class="caret"></span>
 					</button>
-					<ul class="dropdown-menu" role="menu">
+					<ul id="series-dropdown" class="dropdown-menu" role="menu">
 						<li><a onclick="selectActiveIt(this)">全部</a></li>
 						<li class="divider"></li>
 						{% for se in series %}
@@ -66,6 +66,8 @@
 							<th id="th-title" onclick="sort(this)"><u>名称</u></th>
 							<th id="th-group"><u>类型</u></th>
 							<th id="th-series"><u>系列</u></th>
+							<th id="th-recorder" onclick="sort(this)"><u>播音人</u></th>
+							<th id="th-create_time" onclick="sort(this)"><u>上传时间</u></th>
 							<th></th>
 						</tr>
 					</thead>
@@ -245,6 +247,12 @@
 					var td_series=document.createElement("td");
 					td_series.innerHTML=msg.program[i].series;
 					tr.appendChild(td_series);
+					var td_recorder=document.createElement("td");
+					td_recorder.innerHTML=msg.program[i].recorder;
+					tr.appendChild(td_recorder);
+					var td_create_time=document.createElement("td");
+					td_create_time.innerHTML=msg.program[i].create_time;
+					tr.appendChild(td_create_time);
 					var td=document.createElement("td");
 					tr.appendChild(td);
 					var tddiv=document.createElement("div")
@@ -403,15 +411,22 @@
 				newid=xid.replace((new RegExp("th")), "th-");
 			}
 			x.setAttribute("id", newid);
-			alert($(x).attr("id"));
-		/*	$.ajax({
-				url:'/resource/sort',
+			alert(sortarg);
+			$.ajax({
+				url:'/resource/sort/',
 				type:"GET",
 				data:{'pid':pids, 'sort':sortarg},
 				dataType:"json"
 			}).done(function(msg) {
+				pids = msg.pid;
+				alert(pids);
+				showResource();
 			}).fail(function(jqXHR, textStatus) {
-			});*/
+				alert(0);
+			});
+			alert(1);
+		}
+		function filter(x) {
 		}
 	</script>
 
