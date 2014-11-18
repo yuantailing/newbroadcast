@@ -354,7 +354,10 @@ def show_modify(req, arg):
     if pg.picture:
         pic_arr = json.loads(pg.picture)
         for i in pic_arr:
-            pictitle.append(os.path.split(Source.objects.get(id=i).document.file.name)[1])
+            pic = {}
+            pic['title'] = os.path.split(Source.objects.get(id=i).document.file.name)[1]
+            pic['id'] = i
+            pictitle.append(pic)
     mediatitle = ""
     if pg.audio:
         mediatitle = os.path.split(Source.objects.get(id=pg.audio).document.file.name)[1]
@@ -362,7 +365,10 @@ def show_modify(req, arg):
     if pg.document:
         doc_arr = json.loads(pg.document)
         for i in doc_arr:
-            doctitle.append(os.path.split(Source.objects.get(id=i).document.file.name)[1])
+            doc = {}
+            doc['title'] = os.path.split(Source.objects.get(id=i).document.file.name)[1]
+            doc['id'] = i
+            doctitle.append(doc)
 
     return render_to_response("program/modify.html",
                     {'pgid':pgid, 'group':group,
@@ -451,6 +457,21 @@ def modify_pic(req, arg):
 
 
 @power_required(['worker'])
+def del_pic(req):
+    prgid = req.GET.get('prgid', None)
+    picid = req.GET.get('picid', None)
+    pg = Program.objects.get(id=prgid)
+    pic_arr = json.loads(pg.picture)
+    try:
+        pic_arr.remove(int(picid))
+        pg.picture = json.dumps(pic_arr)
+        pg.save()
+        success = True
+    except Exception, e:
+        success = False
+    return HttpResponse(json.dumps({'success':success}), content_type='application/json')
+
+@power_required(['worker'])
 def modify_doc(req, arg):
     pgid = int(arg)
     pg = Program.objects.get(id=pgid)
@@ -471,6 +492,20 @@ def modify_doc(req, arg):
         res['result'] = 'failed'
     return HttpResponse(json.dumps(res), content_type='application/json')
 
+@power_required(['worker'])
+def del_doc(req):
+    prgid = req.GET.get('prgid', None)
+    docid = req.GET.get('docid', None)
+    pg = Program.objects.get(id=prgid)
+    doc_arr = json.loads(pg.document)
+    try:
+        doc_arr.remove(int(docid))
+        pg.document = json.dumps(doc_arr)
+        pg.save()
+        success = True
+    except Exception, e:
+        success = False
+    return HttpResponse(json.dumps({'success':success}), content_type='application/json')
 
 @power_required(['worker'])
 def delete_program(req):

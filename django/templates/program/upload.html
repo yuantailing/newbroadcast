@@ -111,10 +111,10 @@ $('#upload-ajax-button').click(function saveReport() {
 		url: '/program/upload/ajaxupload/',
 		dataType: 'json',
 		success: function(data) {
-			if (data.success)
+            if (data.success){
                 alert("上传成功！");
 				location.reload();
-			else
+            }else
 				alert("上传失败，请检查输入");
 		}
 	};
