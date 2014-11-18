@@ -265,7 +265,7 @@ def upload_program(req):
             pgroup = ProgramGroup.objects.get(id = int(tgroup))
             prg.group = pgroup
         if (tseries != ""):
-            pseries = ProgramSeries.objects.get(id = int(tseries)
+            pseries = ProgramSeries.objects.get(id = int(tseries))
             prg.series = pseries
         if (ttitle != None):
             prg.title = ttitle
