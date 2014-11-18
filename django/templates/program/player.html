@@ -1,8 +1,46 @@
 {% extends "base.html" %}
 {% block title %}Hello world! - 清华大学广播站{% endblock %}
+{% block header %}
+<style>
+#program-audio-player {
+	position: fixed;
+	bottom:0;
+	width:100%;
+
+	background:#eeecf4;
+}
+
+.progress { 
+	background: #fff;
+}
+</style>
+<script>
+var audio;
+window.onload = function() { 
+	audio = document.getElementById('audio');
+}
+</script>
+{% endblock%}
 {% block body %}
-<div style="text-align: center">
-  <br/>
-  <span class="preview"><audio autoplay="true" src="{{ medialink }}" controls=""></audio></span>
+
+<audio src="{{ medialink }}" id="audio"></audio>
+
+<div id="program-audio-player">
+	<div class="col-md-2" >
+		<span class="btn glyphicon glyphicon-backward"></span>
+		<span class="btn glyphicon glyphicon-play" id="program-audio-play"></span>
+		<span class="btn glyphicon glyphicon-stop"></span>
+		<span class="btn glyphicon glyphicon-forward"></span>
+	</div>
+	<div class="col-md-8" style="padding-top:1%">
+		<div class="progress">
+			 <div class="progress-bar" style="width: 40%;"></div>
+		</div>	
+	</div>
+	<div class="col-md-2">
+	</div>
+	
 </div>
+
+	
 {% endblock %}
