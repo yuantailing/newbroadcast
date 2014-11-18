@@ -117,8 +117,11 @@ def filter(req):
     for pg in pgs:
         pgids.append(pg.id);
     srres = []
+    srs = []
     if gid == '-':
-        srs = ProgramSeries.objects.values("id").distinct();
+        tmp = ProgramSeries.objects.all()
+        for i in tmp:
+            srs.append({'series':i.id})
     else:
         srs = Program.objects.filter(group__id=gid).exclude(series=None).values('series').distinct();
     for sr in srs:
