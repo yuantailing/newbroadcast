@@ -26,13 +26,17 @@
 						data-toggle="dropdown">类型
 						<span class="caret"></span>
 					</button>
-					<ul class="dropdown-menu" role="menu">
-						<li><a onclick="selectActiveIt(this)">全部</a></li>
+					<input type="hidden" id="groupid" value="-" />
+					<ul id="group-dropdown" class="dropdown-menu" role="menu">
+						<li>
+							<a id="groupstitle" onclick="selectActiveIt(this)">全部</a>
+							<input type="hidden" value="-" />
+						</li>
 						<li class="divider"></li>
 						{% for pg in groups %}
 						<li>
 							<a id="groupstitle" onclick="selectActiveIt(this)">{{ pg.title }}</a>
-							<input type="hidden" id="groupid" value="{{ pg.id }}" />
+							<input type="hidden" value="{{ pg.id }}" />
 						</li>
 						{% endfor %}
 					</ul>
@@ -42,13 +46,17 @@
 						data-toggle="dropdown">系列
 						<span class="caret"></span>
 					</button>
-					<ul class="dropdown-menu" role="menu">
-						<li><a onclick="selectActiveIt(this)">全部</a></li>
+					<input type="hidden" id="seriesid" value="-" />
+					<ul id="series-dropdown" class="dropdown-menu" role="menu">
+						<li>
+							<a id="seriestitle" onclick="selectActiveIt(this)">全部</a>
+							<input type="hidden" value="-" />
+						</li>
 						<li class="divider"></li>
 						{% for se in series %}
 						<li>
 							<a id="seriestitle" onclick="selectActiveIt(this)">{{ se.title }}</a>
-							<input type="hidden" id="seriesid" value="{{ se.id }}" />
+							<input type="hidden" value="{{ se.id }}" />
 						</li>
 						{% endfor %}
 					</ul>
@@ -63,9 +71,11 @@
 				<table id="res-table" class="panel-body table table-striped table-hover">
 					<thead id="res-thead">
 						<tr>
-							<th><u>名称</u></th>
-							<th><u>类型</u></th>
-							<th><u>系列</u></th>
+							<th id="th-title" onclick="sort(this)"><u>名称</u></th>
+							<th id="th-group" onclick="sort(this)"><u>类型</u></th>
+							<th id="th-series" onclick="sort(this)"><u>系列</u></th>
+							<th id="th-recorder" onclick="sort(this)"><u>播音人</u></th>
+							<th id="th-create_time" onclick="sort(this)"><u>上传时间</u></th>
 							<th></th>
 						</tr>
 					</thead>
@@ -143,9 +153,9 @@
 
 
     <!-- jQuery (necessary for Flat UI's JavaScript plugins) -->
-    <script src="js/vendor/jquery.min.js"></script>
+    <script src="static/dist/js/vendor/jquery.min.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
-    <script src="js/flat-ui.min.js"></script>
+    <script src="static/dist/js/flat-ui.min.js"></script>
 {% endblock %}
 {% block script %}
 	<script>
@@ -153,7 +163,6 @@
 	var index = 0;
 	var pictureIndex=1;
 		$(document).ready(function(){
-			alert(pids);
 			$.ajax({
 			  url:'/resource/listall/',
 			  type:"GET",
@@ -161,7 +170,6 @@
 				dataType:"json"
 			}).done(function(msg){
 				pids = msg.pid;
-				alert(pids);
 				var count=parseInt(pids.length/10+1);
 				document.getElementById("page-list").innerHTML="";
 				if (count>1) {
@@ -247,6 +255,12 @@
 					var td_series=document.createElement("td");
 					td_series.innerHTML=msg.program[i].series;
 					tr.appendChild(td_series);
+					var td_recorder=document.createElement("td");
+					td_recorder.innerHTML=msg.program[i].recorder;
+					tr.appendChild(td_recorder);
+					var td_create_time=document.createElement("td");
+					td_create_time.innerHTML=msg.program[i].create_time;
+					tr.appendChild(td_create_time);
 					var td=document.createElement("td");
 					tr.appendChild(td);
 					var tddiv=document.createElement("div")
@@ -260,62 +274,6 @@
 					sharebutton.setAttribute("class", "btn btn-primary");
 					sharebutton.innerHTML="分享";
 					tddiv.appendChild(sharebutton);
-					
-/*					var anode=document.createElement("a");
-					anode.style.color="black";
-					anode.href="/program/"+pids[i+index];
-					var linode=document.createElement("li");
-					linode.className="list-group-item";
-					linode.setAttribute("onmouseover", "activeIt(this)");
-					linode.setAttribute("onmouseout", "deactiveIt(this)");
-					linode.setAttribute("value", pids[i+index]);
-					linode.appendChild(anode); //
-					var table=document.createElement("table");
-					table.setAttribute("class", "table");
-					table.setAttribute("cellspacing", "10");
-					var td1=document.createElement("td");
-					td1.innerHTML=msg.program[i].title;
-					var td2=document.createElement("td");
-					td2.innerHTML=msg.program[i].group+"/"+msg.program[i].series;
-					table.appendChild(td1);
-					table.appendChild(td2);
-					anode.appendChild(table); //
-					document.getElementById("res-list").appendChild(linode);
-					if ($("#user_power").attr("value")=="admin" || $("#user_power").attr("value")=="administrator") {
-					//	linode.style.height="100%";
-					//	linode.style.width="100%";
-					//	anode.style.height="100%";
-					//	anode.style.width="80%";
-					//	table.style.height="100%";
-					//	table.style.width="60%";
-						var tbutton=document.createElement("button");
-						tbutton.setAttribute("type", "button");
-						tbutton.setAttribute("id", "recommend");
-						tbutton.setAttribute("class", "btn btn-primary");
-						tbutton.innerHTML="推荐";
-						tbutton.style.float="right";
-						linode.appendChild(tbutton);
-						var mbutton=document.createElement("button");
-						mbutton.setAttribute("type", "button");
-						mbutton.setAttribute("id", "modify");
-						mbutton.setAttribute("class", "btn btn-primary");
-						mbutton.setAttribute("data-toggle", "modal");
-						mbutton.setAttribute("data-target", "#modifyModal");
-						mbutton.innerHTML="修改";
-					//	mbutton.style.height="100%";
-					//	mbutton.style.width="10%";
-						mbutton.style.float="right";
-						linode.appendChild(mbutton);
-						var dbutton=document.createElement("button");
-						dbutton.setAttribute("type", "button");
-						dbutton.setAttribute("id", "delete");
-						dbutton.setAttribute("class", "btn btn-primary");
-						dbutton.innerHTML="删除";
-					//	dbutton.style.height="100%";
-					//	dbutton.style.width="10%";
-						dbutton.style.float="right";
-						linode.appendChild(dbutton);
-					}*/
 				}
 			}).fail(function(jqXHR,textStatus){
 			  $('#getarr_show').html('request failed '+ textStatus);
@@ -355,23 +313,38 @@
 				deactiveIt(lists[i]);
 			}
 */
+			alert(x.innerHTML);
+			var groupid;
+			var seriesid;
 			if (x.id=="groupstitle") {
+				groupid=$(x).next().attr("value");
+				seriesid="-";
 				if (x.innerHTML=="全部") {
 					document.getElementById("group-button").innerHTML="类型<span class='caret'></span>";
+					document.getElementById("groupid").setAttribute("value", "-");
+					document.getElementById("series-button").innerHTML="系列<span class='caret'></span>";
+					document.getElementById("seriesid").setAttribute("value", "-");
 				} else {
 					document.getElementById("group-button").innerHTML=x.innerHTML+"<span class='caret'></span>";
+					document.getElementById("groupid").setAttribute("value", groupid);
 				}
 			} else if (x.id=="seriestitle") {
+				groupid=$("#groupid").attr("value");
+				seriesid=$(x).next().attr("value");
 				if (x.innerHTML=="全部") {
-					document.getElementById("series-button").innerHTML="类型<span class='caret'></span>";
+					document.getElementById("series-button").innerHTML="系列<span class='caret'></span>";
+					document.getElementById("seriesid").setAttribute("value", "-");
 				} else {
 					document.getElementById("series-button").innerHTML=x.innerHTML+"<span class='caret'></span>";
+					document.getElementById("seriesid").setAttribute("value", seriesid);
 				}
 			}
+			alert(groupid);
+			alert(seriesid);
 			$.ajax({
-			  url:'/resource/groupfilter/'+$(x).next().attr("value"),
+			  url:'/resource/filter/',
 			  type:"GET",
-			  data:{},
+			  data:{'groupid':groupid, 'seriesid':seriesid},
 				dataType:"json"
 			}).done(function(msg){
 				pids = msg.pid;
@@ -448,6 +421,33 @@
 				var node=document.getElementById("adddiv"+pictureIndex);
 				parent.removeChild(node);
 			}
+		}
+		function sort(x) {
+			var xid=$(x).attr("id");
+			var sortarg=xid.replace((new RegExp("th")), "");
+			var newid;
+			if (xid.match(new RegExp("th-"))) {
+				newid=xid.replace((new RegExp("th-")), "th");
+			} else {
+				newid=xid.replace((new RegExp("th")), "th-");
+			}
+			x.setAttribute("id", newid);
+			alert(sortarg);
+			$.ajax({
+				url:'/resource/sort/',
+				type:"GET",
+				data:{'pid':pids, 'sort':sortarg},
+				dataType:"json"
+			}).done(function(msg) {
+				pids = msg.pid;
+				alert(pids);
+				showResource();
+			}).fail(function(jqXHR, textStatus) {
+				alert(0);
+			});
+			alert(1);
+		}
+		function filter(x) {
 		}
 	</script>
 

@@ -1,4 +1,4 @@
 <div id="user_access">
   {% csrf_token %}
-  <input type="hidden" id="user_id" value="{{ request.session.uid }}" />
+  <input type="hidden" name="user_id" id="user_id" value="{{ request.session.uid }}" />
 </div>
