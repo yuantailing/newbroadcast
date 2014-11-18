@@ -29,7 +29,7 @@
 					<input type="hidden" id="groupid" value="-" />
 					<ul id="group-dropdown" class="dropdown-menu" role="menu">
 						<li>
-							<a onclick="selectActiveIt(this)">全部</a>
+							<a id="groupstitle" onclick="selectActiveIt(this)">全部</a>
 							<input type="hidden" value="-" />
 						</li>
 						<li class="divider"></li>
@@ -49,7 +49,7 @@
 					<input type="hidden" id="seriesid" value="-" />
 					<ul id="series-dropdown" class="dropdown-menu" role="menu">
 						<li>
-							<a onclick="selectActiveIt(this)">全部</a>
+							<a id="seriestitle" onclick="selectActiveIt(this)">全部</a>
 							<input type="hidden" value="-" />
 						</li>
 						<li class="divider"></li>
@@ -72,8 +72,8 @@
 					<thead id="res-thead">
 						<tr>
 							<th id="th-title" onclick="sort(this)"><u>名称</u></th>
-							<th id="th-group"><u>类型</u></th>
-							<th id="th-series"><u>系列</u></th>
+							<th id="th-group" onclick="sort(this)"><u>类型</u></th>
+							<th id="th-series" onclick="sort(this)"><u>系列</u></th>
 							<th id="th-recorder" onclick="sort(this)"><u>播音人</u></th>
 							<th id="th-create_time" onclick="sort(this)"><u>上传时间</u></th>
 							<th></th>
@@ -317,12 +317,13 @@
 			var groupid;
 			var seriesid;
 			if (x.id=="groupstitle") {
-				alert(x.innerHTML);
 				groupid=$(x).next().attr("value");
 				seriesid="-";
 				if (x.innerHTML=="全部") {
 					document.getElementById("group-button").innerHTML="类型<span class='caret'></span>";
 					document.getElementById("groupid").setAttribute("value", "-");
+					document.getElementById("series-button").innerHTML="系列<span class='caret'></span>";
+					document.getElementById("seriesid").setAttribute("value", "-");
 				} else {
 					document.getElementById("group-button").innerHTML=x.innerHTML+"<span class='caret'></span>";
 					document.getElementById("groupid").setAttribute("value", groupid);
@@ -331,13 +332,15 @@
 				groupid=$("#groupid").attr("value");
 				seriesid=$(x).next().attr("value");
 				if (x.innerHTML=="全部") {
-					document.getElementById("series-button").innerHTML="类型<span class='caret'></span>";
+					document.getElementById("series-button").innerHTML="系列<span class='caret'></span>";
 					document.getElementById("seriesid").setAttribute("value", "-");
 				} else {
 					document.getElementById("series-button").innerHTML=x.innerHTML+"<span class='caret'></span>";
 					document.getElementById("seriesid").setAttribute("value", seriesid);
 				}
 			}
+			alert(groupid);
+			alert(seriesid);
 			$.ajax({
 			  url:'/resource/filter/',
 			  type:"GET",
