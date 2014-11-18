@@ -111,12 +111,10 @@ def filter(req):
         groups.append(ProgramGroup.objects.get(id=gid));
     sid = req.GET.get('seriesid')
     series = []
-    if sid == '-':
-        series = ProgramSeries.objects.order_by("order");
-    else:
-        series.append(ProgramSeries.objects.get(id=sid));
+    if not sid == '-':
+        series = ProgramSeries.objects.exclude(id=sid);
     pgids = []
-    pgs = Program.objects.filter(group__in=groups, series__in=series);
+    pgs = Program.objects.filter(group__in=groups).exclude(series__in=series);
     for pg in pgs:
         pgids.append(pg.id);
     srres = []
