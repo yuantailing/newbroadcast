@@ -89,9 +89,17 @@ def result(req):
                               
 @power_required([None])
 def sort(req):
-    pids = req.GET.get('pid')
+    pids = req.GET.getlist(u'pid[]', [])
+    pids_i = []
+    for id in pids:
+        id = int(id)
+        pids_i.append(id)
     sort = req.GET.get('sort')
-    res = Program.objects.filter(id in pids).order_by(sort).values('id');
+    print pids
+    pgs = Program.objects.filter(id__in=pids).order_by(sort);
+    res = []
+    for pg in pgs:
+        res.append(pg.id);
     return HttpResponse(json.dumps({'pid':res}),
                         content_type='application/json')
                         
@@ -103,7 +111,11 @@ def filter(req):
     sids = req.GET.get('seriesid')
     if sids == '-':
         sids = ProgramSeries.objects.order_by("order").values('id');
+    pgids = [];
     pgs = Program.objects.filter(group__id in gids, series__id in sids).values('id');
+    for pg in pgs:
+        pgids.append(pg.id);
     srs = Program.objects.filter(group__id in gids).values('series').distinct();
-    return HttpResponse(json.dumps({'pgs':pgs, 'srs':srs}),
+    print pgids
+    return HttpResponse(json.dumps({'pgs':pgids, 'srs':srs}),
                         content_type='application/json')
