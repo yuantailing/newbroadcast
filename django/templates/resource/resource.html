@@ -63,9 +63,9 @@
 				<table id="res-table" class="panel-body table table-striped table-hover">
 					<thead id="res-thead">
 						<tr>
-							<th><u>名称</u></th>
-							<th><u>类型</u></th>
-							<th><u>系列</u></th>
+							<th id="th-title" onclick="sort(this)"><u>名称</u></th>
+							<th id="th-group"><u>类型</u></th>
+							<th id="th-series"><u>系列</u></th>
 							<th></th>
 						</tr>
 					</thead>
@@ -153,7 +153,6 @@
 	var index = 0;
 	var pictureIndex=1;
 		$(document).ready(function(){
-			alert(pids);
 			$.ajax({
 			  url:'/resource/listall/',
 			  type:"GET",
@@ -161,7 +160,6 @@
 				dataType:"json"
 			}).done(function(msg){
 				pids = msg.pid;
-				alert(pids);
 				var count=parseInt(pids.length/10+1);
 				document.getElementById("page-list").innerHTML="";
 				if (count>1) {
@@ -260,62 +258,6 @@
 					sharebutton.setAttribute("class", "btn btn-primary");
 					sharebutton.innerHTML="分享";
 					tddiv.appendChild(sharebutton);
-					
-/*					var anode=document.createElement("a");
-					anode.style.color="black";
-					anode.href="/program/"+pids[i+index];
-					var linode=document.createElement("li");
-					linode.className="list-group-item";
-					linode.setAttribute("onmouseover", "activeIt(this)");
-					linode.setAttribute("onmouseout", "deactiveIt(this)");
-					linode.setAttribute("value", pids[i+index]);
-					linode.appendChild(anode); //
-					var table=document.createElement("table");
-					table.setAttribute("class", "table");
-					table.setAttribute("cellspacing", "10");
-					var td1=document.createElement("td");
-					td1.innerHTML=msg.program[i].title;
-					var td2=document.createElement("td");
-					td2.innerHTML=msg.program[i].group+"/"+msg.program[i].series;
-					table.appendChild(td1);
-					table.appendChild(td2);
-					anode.appendChild(table); //
-					document.getElementById("res-list").appendChild(linode);
-					if ($("#user_power").attr("value")=="admin" || $("#user_power").attr("value")=="administrator") {
-					//	linode.style.height="100%";
-					//	linode.style.width="100%";
-					//	anode.style.height="100%";
-					//	anode.style.width="80%";
-					//	table.style.height="100%";
-					//	table.style.width="60%";
-						var tbutton=document.createElement("button");
-						tbutton.setAttribute("type", "button");
-						tbutton.setAttribute("id", "recommend");
-						tbutton.setAttribute("class", "btn btn-primary");
-						tbutton.innerHTML="推荐";
-						tbutton.style.float="right";
-						linode.appendChild(tbutton);
-						var mbutton=document.createElement("button");
-						mbutton.setAttribute("type", "button");
-						mbutton.setAttribute("id", "modify");
-						mbutton.setAttribute("class", "btn btn-primary");
-						mbutton.setAttribute("data-toggle", "modal");
-						mbutton.setAttribute("data-target", "#modifyModal");
-						mbutton.innerHTML="修改";
-					//	mbutton.style.height="100%";
-					//	mbutton.style.width="10%";
-						mbutton.style.float="right";
-						linode.appendChild(mbutton);
-						var dbutton=document.createElement("button");
-						dbutton.setAttribute("type", "button");
-						dbutton.setAttribute("id", "delete");
-						dbutton.setAttribute("class", "btn btn-primary");
-						dbutton.innerHTML="删除";
-					//	dbutton.style.height="100%";
-					//	dbutton.style.width="10%";
-						dbutton.style.float="right";
-						linode.appendChild(dbutton);
-					}*/
 				}
 			}).fail(function(jqXHR,textStatus){
 			  $('#getarr_show').html('request failed '+ textStatus);
@@ -355,7 +297,9 @@
 				deactiveIt(lists[i]);
 			}
 */
+			alert(x.innerHTML);
 			if (x.id=="groupstitle") {
+				alert(x.innerHTML);
 				if (x.innerHTML=="全部") {
 					document.getElementById("group-button").innerHTML="类型<span class='caret'></span>";
 				} else {
@@ -448,6 +392,26 @@
 				var node=document.getElementById("adddiv"+pictureIndex);
 				parent.removeChild(node);
 			}
+		}
+		function sort(x) {
+			var xid=$(x).attr("id");
+			var sortarg=xid.replace((new RegExp("th")), "");
+			var newid;
+			if (xid.match(new RegExp("th-"))) {
+				newid=xid.replace((new RegExp("th-")), "th");
+			} else {
+				newid=xid.replace((new RegExp("th")), "th-");
+			}
+			x.setAttribute("id", newid);
+			alert($(x).attr("id"));
+		/*	$.ajax({
+				url:'/resource/sort',
+				type:"GET",
+				data:{'pid':pids, 'sort':sortarg},
+				dataType:"json"
+			}).done(function(msg) {
+			}).fail(function(jqXHR, textStatus) {
+			});*/
 		}
 	</script>
 
