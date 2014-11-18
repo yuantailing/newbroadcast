@@ -14,9 +14,9 @@
         <label for="group" class="col-sm-offset-1 col-sm-2 control-label">节目组别</label>
         <div class="col-sm-6">
             <select name="group" class="form-control">
-                <option selected="selected">---------</option>
-                {% for item in group_title %}
-                <option>{{ item }}</option>
+                <option value="" selected="selected">---------</option>
+                {% for item in group_all %}
+                <option value="{{ item.id }}">{{ item.title }}</option>
                 {% endfor %}
             </select>
         </div>
@@ -25,9 +25,9 @@
         <label for="series" class="col-sm-offset-1 col-sm-2 control-label">节目系列</label>
         <div class="col-sm-6">
             <select name="series" class="form-control">
-                <option selected="selected">---------</option>
-                {% for item in series_title %}
-                <option>{{ item }}</option>
+                <option value="" selected="selected">---------</option>
+                {% for item in series_all %}
+                <option value="{{ item.id }}">{{ item.title }}</option>
                 {% endfor %}
             </select>
         </div>
@@ -123,7 +123,6 @@ $('#upload-ajax-button').click(function saveReport() {
 	$("#upload-form").ajaxSubmit(options);
 });
 </script>
-<script src="http://www.gregpike.net/demos/bootstrap-file-input/bootstrap.file-input.js"></script>
 <script>
 var pictureIndex = 1;
 var docIndex = 1;

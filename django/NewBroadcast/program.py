@@ -157,29 +157,31 @@ def show_upload(req):
     elif result == 'failed':
         result = u'操作失败'
 
-    group_title = []
-    #group_id = []
+    group_all = []
     group_list = ProgramGroup.objects.all()
     for item in group_list:
-        group_title.append('[' + str(item.id) + '] ' + item.title)
-        #group_id.append(item.id)
+        gp = {}
+        gp['title'] = item.title
+        gp['id'] = item.id
+        group_all.append(gp)
 
-    series_title = []
-    #series_id = []
+    series_all = []
     series_list = ProgramSeries.objects.all()
     for item in series_list:
-        series_title.append('[' + str(item.id) + '] ' + item.title)
-        #series_id.append(item.id)
+        srs = {}
+        srs['title'] = item.title
+        srs['id'] = item.id
+        series_all.append(srs)
+
     return render_to_response("program/upload.html",
                               {'result':result,
-                               'group_title':group_title,
-                               'series_title':series_title},
+                               'group_all':group_all,
+                               'series_all':series_all},
                               context_instance=RequestContext(req))
 
 def ajax_upload(req):
     try:
         prg = Program()
-        pattern = re.compile(r'\d+')
 
         tgroup = req.POST.get('group', None)
         tseries = req.POST.get('series', None)
@@ -193,11 +195,11 @@ def ajax_upload(req):
         taudio = req.FILES.get('audio', None)
         tdocument = req.FILES.getlist('document', None) # json of list
         user = User.objects.get(id=req.session['uid'])
-        if (pattern.search(tgroup).group() != None):
-            pgroup = ProgramGroup.objects.get(id = pattern.search(tgroup).group())
+        if (tgroup != ""):
+            pgroup = ProgramGroup.objects.get(id = int(tgroup))
             prg.group = pgroup
-        if (pattern.search(tseries).group() != None):
-            pseries = ProgramSeries.objects.get(id = pattern.search(tseries).group())
+        if (tseries != ""):
+            pseries = ProgramSeries.objects.get(id = int(tseries))
             prg.series = pseries
         if (ttitle != None):
             prg.title = ttitle
@@ -246,7 +248,6 @@ def upload_program(req):
     res = { }
     try:
         prg = Program()
-        pattern = re.compile(r'\d+')
 
         tgroup = req.POST.get('group', None)
         tseries = req.POST.get('series', None)
@@ -260,11 +261,11 @@ def upload_program(req):
         taudio = req.FILES.get('audio', None)
         tdocument = req.FILES.getlist('document', None) # json of list
         user = User.objects.get(id=req.session['uid'])
-        if (pattern.search(tgroup) != None):
-            pgroup = ProgramGroup.objects.get(id = pattern.search(tgroup).group())
+        if (tgroup != ""):
+            pgroup = ProgramGroup.objects.get(id = int(tgroup))
             prg.group = pgroup
-        if (pattern.search(tseries) != None):
-            pseries = ProgramSeries.objects.get(id = pattern.search(tseries).group())
+        if (tseries != ""):
+            pseries = ProgramSeries.objects.get(id = int(tseries)
             prg.series = pseries
         if (ttitle != None):
             prg.title = ttitle
