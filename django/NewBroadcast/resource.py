@@ -104,26 +104,28 @@ def sort(req):
 @power_required([None])
 def filter(req):
     gid = req.GET.get('groupid')
-    groups = []
-    if gid == '-':
-        groups = ProgramGroup.objects.order_by("order");
-    else:
-        groups.append(ProgramGroup.objects.get(id=gid));
     sid = req.GET.get('seriesid')
-    series = []
-    if not sid == '-':
-        series = ProgramSeries.objects.exclude(id=sid);
+    if sid == '-' and gid == '-':
+        pgs = Program.objects.all();
+    elif sid == '-':
+        pgs = Program.objects.filter(group__id=gid);
+    elif gid == '-':
+        pgs = Program.objects.filter(series__id=sid);
+    else:
+        pgs = Program.objects.filter(group__id=gid, series__id=sid);
     pgids = []
-    pgs = Program.objects.filter(group__in=groups).exclude(series__in=series);
     for pg in pgs:
         pgids.append(pg.id);
     srres = []
-    srs = Program.objects.filter(group__in=groups).exclude(series=None).values('series').distinct();
+    if gid == '-':
+        srs = ProgramSeries.objects.values("id").distinct();
+    else:
+        srs = Program.objects.filter(group__id=gid).exclude(series=None).values('series').distinct();
     for sr in srs:
         srobj = ProgramSeries.objects.get(id=sr['series']);
         tmp = {};
         tmp['id'] = srobj.id;
         tmp['title'] = srobj.title;
         srres.append(tmp);
-    return HttpResponse(json.dumps({'pgs':pgids, 'srs':srres}),
+    return HttpResponse(json.dumps({'pid':pgids, 'srs':srres}),
                         content_type='application/json')
