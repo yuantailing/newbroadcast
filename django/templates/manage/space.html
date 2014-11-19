@@ -92,19 +92,17 @@
 							<th>系列</th>
 							<th>上传时间</th>
 							<th>&nbsp;</th>
-							<th>&nbsp;</th>
 						</tr>
-                    {% for up in ups %}
+                    {% for up in favs %}
 						<tr>
 							<td><a href="/program/{{ up.id }}">{{ up.title }}</a></td>
 							<td><a href="/source/?gid={{ up.group.id }}">{{ up.group.title }}</a></td>
 							<td><a href="/source/?sid={{ up.series.id }}">{{ up.series.title }}</a></td>
 							<td>{{ up.create_time|date:"Y-m-d" }}</td>
-							<td><a href="/program/modify/{{ up.id }}">修改</a></td>
-							<td><a href="/program/delete/?pid={{ up.id }}">删除</a></td><!-- Todo：以GET或POST发送到这个URI，返回json.success为true或false，然后刷新页面 -->
+							<td><a href="#" onclick="unfavorite({{ up.id }})">取消收藏</a></td>
 						</tr>
 					{% endfor %}
-						<tr><td><a href="/manage/favorites">更多...</a></td></tr>
+						<tr><td><a href="/manage/favorites/">更多...</a></td></tr>
 					</table>
 				</div>
 			</div>
@@ -135,7 +133,7 @@
 							<td><a href="/program/delete/?pid={{ up.id }}">删除</a></td><!-- Todo：以GET或POST发送到这个URI，返回json.success为true或false，然后刷新页面 -->
 						</tr>
 					{% endfor %}
-						<tr><td><a href="/manage/resource">更多...</a></td></tr>
+						<tr><td><a href="/manage/resource/">更多...</a></td></tr>
 					</table>
 					<div class="panel-footer" id="space-upload">
 						<a href="/program/upload/"><button class="btn btn-primary">上传节目</button></a>
@@ -152,7 +150,7 @@
 						<h4>成员管理</h4>
 					</div>
 					<div class="panel-body">
-						<a href="/manage/user">全部成员</a>
+						<a href="/manage/user/">全部成员</a>
 					</div>
 				</div>
 			</div>
@@ -306,6 +304,20 @@
 {% block script %}
 <script src="/static/js/birthday-picker.js"></script>
 <script>
+function unfavorite(pid) {
+	$.ajax({
+		url:'/program/unfavorite/',
+		type:"POST",
+		data:{pid:pid},
+		dataType:"json"
+	}).done(function(msg){
+		if (msg.success) {
+			location.reload();
+		}
+	}).fail(function(jqXHR,textStatus){
+		alert('与服务器连接中断');
+	});
+}
 $(document).ready(function(){
     $('#change-password-button').click(function(){
         $.ajax({

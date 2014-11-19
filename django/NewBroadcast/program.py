@@ -126,7 +126,7 @@ def favorite(req):
 
 @power_required(['user'])
 def un_favorite(req):
-    return del_user_program_itrm(Favorite, req)
+    return del_user_program_item(Favorite, req)
 
 @power_required(['user'])
 def add_comment(req):

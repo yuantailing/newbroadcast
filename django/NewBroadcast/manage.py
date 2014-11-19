@@ -24,11 +24,31 @@ def power_trans(power_str):
 def show_space(req):
     user = User.objects.get(id=req.session['uid'])
     ups = Program.objects.filter(uploader=user).order_by('-create_time')[0:5]
+    favs = Program.objects.filter(favorite__in=user.favorite.all())
     return render_to_response("manage/space.html",
                               {'user':user,
                                'power':power_trans(user.power),
-                               'ups':ups, },
+                               'ups':ups,
+                               'favs':favs, },
                               context_instance=RequestContext(req));
+
+@power_required(['user'])
+def show_favorites(req):
+    user = User.objects.get(id=req.session['uid'])
+    favs = Program.objects.filter(favorite__in=user.favorite.all())
+    return render_to_response("manage/favorites.html",
+                              {'user':user,
+                               'obj_list':favs, },
+                              context_instance=RequestContext(req));
+
+@power_required(['user'])
+def show_favorites_table(req):
+    user = User.objects.get(id=req.session['uid'])
+    favs = Program.objects.filter(favorite__in=user.favorite.all())
+    return render_to_response("manage/myresource.html",
+                              {'title':u'我的收藏',
+                               'obj_list':favs, },
+                              context_instance=RequestContext(req))
 
 @power_required(['worker'])
 def show_mgrres(req):
