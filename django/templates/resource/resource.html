@@ -87,6 +87,22 @@
 	var pictureIndex=1;
 	var srs = new Array();
 		$(document).ready(function(){
+			var keyword="";
+			var gid="";
+			var sid="";
+			var url=document.location.href;
+			if (url.indexOf("?")!=-1) {
+				var arrStr=url.substring(url.indexOf("?")+1).split("&");
+				alert(arrStr);
+				for (var i=0; i<arrStr.length; i++) {
+					if (arrStr[i].indexOf("keyword=")!=-1)
+						keyword=arrStr[i].replace("keyword=", "");
+					if (arrStr[i].indexOf("gid=")!=-1)
+						gid=arrStr[i].replace("gid=", "");
+					if (arrStr[i].indexOf("sid=")!=-1)
+						sid=arrStr[i].replace("sid", "");
+				}
+			}
 			$.ajax({
 			  url:'/resource/filter/',
 			  type:"GET",
@@ -247,11 +263,11 @@
 			if (x.id=="groupstitle") {
 				groupid=$(x).next().attr("value");
 				seriesid="-";
+				document.getElementById("series-button").innerHTML="系列<span class='caret'></span>";
+				document.getElementById("seriesid").setAttribute("value", "-");
 				if (x.innerHTML=="全部") {
 					document.getElementById("group-button").innerHTML="类型<span class='caret'></span>";
 					document.getElementById("groupid").setAttribute("value", "-");
-					document.getElementById("series-button").innerHTML="系列<span class='caret'></span>";
-					document.getElementById("seriesid").setAttribute("value", "-");
 				} else {
 					document.getElementById("group-button").innerHTML=x.innerHTML+"<span class='caret'></span>";
 					document.getElementById("groupid").setAttribute("value", groupid);
