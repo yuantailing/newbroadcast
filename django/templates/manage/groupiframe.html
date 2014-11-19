@@ -20,7 +20,7 @@
 		<tbody>
 		<tr>
 		<td><input type="hidden" id="sort-group-series-id" value="{{ pg.id }}"/><a href="/resource/?gid={{ pg.id }}" target="_parent">{{ pg.title }}</a></td>
-		<td>{{ pg.program.count }}</a></td>
+		<td><a href="/resource/?gid={{ pg.id }}" target="_parent">{{ pg.program.count }}</a></td>
 		<td>{{ pg.create_time|date:"Y-m-d" }}</a></td>
 		<td><button class="btn btn-primary" data-toggle="modal" data-target="#change-info"
 			onclick="$('#modal-modify-id').attr('value', '{{ pg.id }}'); $('#modal-modify-origin-name').html('{{ pg.title|addslashes }}');">修改</button></td>
@@ -33,7 +33,7 @@
 	<div>
 		<button class="btn btn-primary" id="save-new-order">保存新顺序（拖拽可以排序）</button>
 	</div>
-	<span>已删除的{{ title }}</span>
+	<h5>已删除的{{ title }}</h5>
 	<table class="panel-body table table-bordered table-striped table-hover">
 		<div>
 		</div>
@@ -49,9 +49,9 @@
 		{% for pg in removed_list %}
 		<tbody>
 		<tr>
-		<td><a href="/source/?gid={{ pg.id }}" target="_parent">{{ pg.title }}</a></td>
-		<td>{{ pg.program.count }}</a></td>
-		<td>{{ pg.create_time|date:"Y-m-d" }}</a></td>
+		<td><a href="/resource/?gid={{ pg.id }}" target="_parent">{{ pg.title }}</a></td>
+		<td><a href="/resource/?gid={{ pg.id }}" target="_parent">{{ pg.program.count }}</a></td>
+		<td>{{ pg.create_time|date:"Y-m-d" }}</td>
 		<td><button class="btn btn-primary" data-toggle="modal" data-target="#restore-info"
 			onclick="$('#modal-restore-id').attr('value', '{{ pg.id }}'); $('#modal-restore-origin-name').html('{{ pg.title|addslashes }}');">恢复</button></td>
 		<td><button class="btn btn-primary" data-toggle="modal" data-target="#destroy-info"

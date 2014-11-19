@@ -11,7 +11,7 @@
 			<div style="height:100%; width:100%">
 				<div class="btn-group">
 					<button id="group-button" type="button" class="btn btn-primary dropdown-toggle" 
-						data-toggle="dropdown">类型
+						data-toggle="dropdown">组别
 						<span class="caret"></span>
 					</button>
 					<input type="hidden" id="groupid" value="-" />
@@ -55,7 +55,7 @@
 					<thead id="res-thead">
 						<tr>
 							<th id="th-title" onclick="sort(this)"><u>名称（点击可排序）</u></th>
-							<th id="th-group" onclick="sort(this)"><u>类型</u></th>
+							<th id="th-group" onclick="sort(this)"><u>组别</u></th>
 							<th id="th-series" onclick="sort(this)"><u>系列</u></th>
 							<th id="th-recorder" onclick="sort(this)"><u>播音人</u></th>
 							<th id="th-create_time" onclick="sort(this)"><u>上传时间</u></th>
@@ -75,10 +75,6 @@
 		</div>
 	</div>
 
-    <!-- jQuery (necessary for Flat UI's JavaScript plugins) -->
-    <script src="static/dist/js/vendor/jquery.min.js"></script>
-    <!-- Include all compiled plugins (below), or include individual files as needed -->
-    <script src="static/dist/js/flat-ui.min.js"></script>
 {% endblock %}
 {% block script %}
 	<script>
@@ -248,7 +244,7 @@
 				groupid=$(x).next().attr("value");
 				seriesid="-";
 				if (x.innerHTML=="全部") {
-					document.getElementById("group-button").innerHTML="类型<span class='caret'></span>";
+					document.getElementById("group-button").innerHTML="组别<span class='caret'></span>";
 					document.getElementById("groupid").setAttribute("value", "-");
 					document.getElementById("series-button").innerHTML="系列<span class='caret'></span>";
 					document.getElementById("seriesid").setAttribute("value", "-");

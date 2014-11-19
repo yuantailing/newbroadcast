@@ -202,7 +202,7 @@ def group_series_post(model, req):
             return HttpResponse(json.dumps({'success':False, 'info':'目标不存在'}),
                                 content_type='application/json')
         if obj.program.count() > 0:
-            return HttpResponse(json.dumps({'success':False, 'info':'属于目标的节目数量不为0'}),
+            return HttpResponse(json.dumps({'success':False, 'info':'只有节目数量为0才能删除'}),
                                 content_type='application/json')
         obj.delete()
         return HttpResponse(json.dumps({'success':True, 'info':'删除成功'}),
