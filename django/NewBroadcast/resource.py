@@ -121,14 +121,41 @@ def sort(req):
 def filter(req):
     gid = req.GET.get('groupid')
     sid = req.GET.get('seriesid')
-    if sid == '-' and gid == '-':
+    keyword = req.GET.get('keyword')
+    if keyword == None:
+        keyword = '';
+    if sid == '-' and gid == '-' and keyword == '':
         pgs = Program.objects.all();
-    elif sid == '-':
+    elif sid == '-' and keyword == '':
         pgs = Program.objects.filter(group__id=gid);
-    elif gid == '-':
+    elif gid == '-' and keyword == '':
         pgs = Program.objects.filter(series__id=sid);
-    else:
+    elif keyword == '':
         pgs = Program.objects.filter(group__id=gid, series__id=sid);
+    elif sid == '-' and gid == '-':
+        pgs = Program.objects.filter(Q(title__contains=keyword) |
+                                     Q(description__contains=keyword) |
+                                     Q(group__title__contains=keyword) |
+                                     Q(series__title__contains=keyword));
+    elif sid == '-':
+        pgs = Program.objects.filter(Q(group__id=gid),
+                                     Q(title__contains=keyword) |
+                                     Q(description__contains=keyword) |
+                                     Q(group__title__contains=keyword) |
+                                     Q(series__title__contains=keyword));
+    elif gid == '-':
+        pgs = Program.objects.filter(Q(series__id=sid),
+                                     Q(title__contains=keyword) |
+                                     Q(description__contains=keyword) |
+                                     Q(group__title__contains=keyword) |
+                                     Q(series__title__contains=keyword));
+    else:
+        pgs = Program.objects.filter(Q(group__id=gid),
+                                     Q(series__id=sid),
+                                     Q(title__contains=keyword) |
+                                     Q(description__contains=keyword) |
+                                     Q(group__title__contains=keyword) |
+                                     Q(series__title__contains=keyword));
     pgids = []
     for pg in pgs:
         pgids.append(pg.id);
