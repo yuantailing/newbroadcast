@@ -199,6 +199,17 @@ def group_series_post(model, req):
         obj.save()
         return HttpResponse(json.dumps({'success':True, 'info':'删除成功'}),
                             content_type='application/json')
+    if req.REQUEST.get('action', None) == 'restore':
+        print req.REQUEST
+        try:
+            obj = model.objects.get(id=req.REQUEST.get('id', None))
+        except Exception, e:
+            return HttpResponse(json.dumps({'success':False, 'info':'目标不存在'}),
+                                content_type='application/json')
+        obj.order = 0
+        obj.save()
+        return HttpResponse(json.dumps({'success':True, 'info':'恢复成功'}),
+                            content_type='application/json')
     return None
 
 @power_required(['superadmin'])
