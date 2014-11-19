@@ -18,8 +18,12 @@ def show(req):
     for gs in ProgramSeries.objects.order_by("order"):
         series.append({'id':gs.id, 'title':gs.title})
     liwidth = 99 / len(groups)
+    try:
+        user = User.objects.get(id=req.session['uid'])
+    except Exception, e:
+        user = None
     return render_to_response("resource/resource.html",
-                              {'groups':groups, 'series': series, 'liwidth': liwidth},
+                              {'groups':groups, 'series': series, 'liwidth': liwidth, 'logined':not (user == None)},
                               context_instance=RequestContext(req));
 
 @power_required([None])
@@ -41,6 +45,10 @@ def get_arr(req):
     res = []
     pids = req.POST.getlist(u'pid[]', [])
     pgs = []
+    try:
+        user = User.objects.get(id=req.session['uid'])
+    except Exception, e:
+        user = None
     for pid in pids:
         pgs.append(Program.objects.get(id=int(pid)))
     for pg in pgs:
@@ -53,7 +61,15 @@ def get_arr(req):
         tmp['contributor'] = None;
         tmp['workers'] = None;
         tmp['keyword'] = None;
+        tmp['have_praised'] = False;
+        tmp['have_favorited'] = False;
+        tmp['praise_count'] = pg.praise.count(),
+        tmp['favorite_count'] = pg.favorite.count(),
+        tmp['logined'] = not (user == None);
         tmp['create_time'] = pg.create_time.strftime("%Y-%m-%d %H:%I:%S");
+        if not (user == None):
+            tmp['have_praised'] = Praise.objects.filter(user=user, program=pg).count() > 0
+            tmp['have_favorited'] = Favorite.objects.filter(user=user, program=pg).count() > 0
         if (pg.group):
             tmp['group'] = pg.group.title
         if (pg.series):
@@ -132,3 +148,5 @@ def filter(req):
         srres.append(tmp);
     return HttpResponse(json.dumps({'pid':pgids, 'srs':srres}),
                         content_type='application/json')
+
+
