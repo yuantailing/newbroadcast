@@ -35,7 +35,7 @@
 			{% endif %}
 		</td>
 		<td>{% if request.session.user_power in "admin superadmin" %}
-			<a href="/program/delete/{{ pg.id }}" target="_parent">删除</a>
+			<a href="/program/delete/?pid={{ pg.id }}" target="_parent">删除</a>
 			{% endif %}
 		</td>
 		</tr>
