@@ -20,7 +20,7 @@
 		</thead>
 		{% for pg in obj_list %}
 		<tr>
-		<td><a href="/source/?gid={{ pg.id }}" target="_parent">{{ pg.title }}</a></td>
+		<td><a href="/resource/?gid={{ pg.id }}" target="_parent">{{ pg.title }}</a></td>
 		<td>{{ pg.program.count }}</a></td>
 		<td>{{ pg.create_time|date:"Y-m-d" }}</a></td>
 		<td><button class="btn btn-primary" data-toggle="modal" data-target="#change-info"

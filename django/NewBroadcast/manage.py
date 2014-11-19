@@ -63,7 +63,7 @@ def show_mgrmyres(req):
                                'obj_list':obj_list, },
                               context_instance=RequestContext(req))
 
-@power_required(['admin'])
+@power_required(['superadmin'])
 def show_mgrallres(req):
     obj_list = Program.objects.all()
     return render_to_response("manage/myresource.html",

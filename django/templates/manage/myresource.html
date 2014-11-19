@@ -25,8 +25,8 @@
 		{% for pg in obj_list %}
 		<tr>
 		<td><a href="/program/{{ pg.id }}" target="_parent">{{ pg.title }}</a></td>
-		<td><a href="/source/?gid={{ pg.group.id }}" target="_parent">{{ pg.group.title|default:"" }}</a></td>
-		<td><a href="/source/?gid={{ pg.series.id }}" target="_parent">{{ pg.series.title|default:"" }}</a></td>
+		<td><a href="/resource/?gid={{ pg.group.id }}" target="_parent">{{ pg.group.title|default:"" }}</a></td>
+		<td><a href="/resource/?gid={{ pg.series.id }}" target="_parent">{{ pg.series.title|default:"" }}</a></td>
 		<td>{{ pg.recorder|default:"" }}</td>
 		<td>{{ pg.contributor|default:"" }}</td>
 		<td>{{ pg.workers|default:"" }}</td>
