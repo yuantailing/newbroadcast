@@ -102,7 +102,7 @@
 							<td><a href="#" onclick="unfavorite({{ up.id }})">取消收藏</a></td>
 						</tr>
 					{% endfor %}
-						<tr><td><a href="/manage/favorites">更多...</a></td></tr>
+						<tr><td><a href="/manage/favorites/">更多...</a></td></tr>
 					</table>
 				</div>
 			</div>
@@ -133,7 +133,7 @@
 							<td><a href="/program/delete/?pid={{ up.id }}">删除</a></td><!-- Todo：以GET或POST发送到这个URI，返回json.success为true或false，然后刷新页面 -->
 						</tr>
 					{% endfor %}
-						<tr><td><a href="/manage/resource">更多...</a></td></tr>
+						<tr><td><a href="/manage/resource/">更多...</a></td></tr>
 					</table>
 					<div class="panel-footer" id="space-upload">
 						<a href="/program/upload/"><button class="btn btn-primary">上传节目</button></a>
@@ -150,7 +150,7 @@
 						<h4>成员管理</h4>
 					</div>
 					<div class="panel-body">
-						<a href="/manage/user">全部成员</a>
+						<a href="/manage/user/">全部成员</a>
 					</div>
 				</div>
 			</div>

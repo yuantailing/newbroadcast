@@ -1,35 +1,18 @@
 {% extends "base.html" %}
+{% block title %}
+我的上传
+{% endblock %}
+
 {% block body %}
-<div class="panel panel-default">
-	<div class="panel-heading">
-		<h4>{{ title }}</h4>
+<!-- main content -->
+<div class="container">
+	<div class="row">
+		<hr />
+		<iframe src="/manage/favorites/table/" width="100%" scrolling="no" frameborder="0" onload="this.height=this.contentWindow.document.documentElement.scrollHeight">
+		</iframe>
 	</div>
-	{% load pagination_tags %}
-	{% autopaginate obj_list 10 %}
-	<table class="panel-body table table-bordered table-striped table-hover">
-		<div>
-		{% paginate %}
-		</div>
-		<thead>
-		<tr>
-		<th>节目名称</th>
-		<th>简介</th>
-		<th>组别-系列</th>
-		<th>人员名单</th>
-		<th>稿件来源</th>
-		<th>机务人员</th>
-		</tr>
-		</thead>
-		{% for pg in obj_list %}
-		<tr>
-		<td>{{ pg.title }}</td>
-		<td>{{ pg.description }}</td>
-		<td>{{ pg.group.title }}-{{ pg.group.series}}</td>
-		<td>{{ pg.recorder }}</td>
-		<td>{{ pg.contributor }}</td>
-		<td>{{ pg.workers }}</td>
-		</tr>
-		{% endfor %}		
-	</table>
 </div>
+{% endblock %}
+
+{% block script %}
 {% endblock %}

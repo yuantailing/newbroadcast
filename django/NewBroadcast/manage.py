@@ -32,6 +32,24 @@ def show_space(req):
                                'favs':favs, },
                               context_instance=RequestContext(req));
 
+@power_required(['user'])
+def show_favorites(req):
+    user = User.objects.get(id=req.session['uid'])
+    favs = Program.objects.filter(favorite__in=user.favorite.all())
+    return render_to_response("manage/favorites.html",
+                              {'user':user,
+                               'obj_list':favs, },
+                              context_instance=RequestContext(req));
+
+@power_required(['user'])
+def show_favorites_table(req):
+    user = User.objects.get(id=req.session['uid'])
+    favs = Program.objects.filter(favorite__in=user.favorite.all())
+    return render_to_response("manage/myresource.html",
+                              {'title':u'我的收藏',
+                               'obj_list':favs, },
+                              context_instance=RequestContext(req))
+
 @power_required(['worker'])
 def show_mgrres(req):
     return render_to_response("manage/resource.html",
