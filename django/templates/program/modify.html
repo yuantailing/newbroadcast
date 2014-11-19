@@ -5,12 +5,12 @@
 <h1>修改节目信息</h1>
 </br>
 </div>
-<form class="form-horizontal" action="modifyword/{{pgid}}/" method="post" role="form">
+<form class="form-horizontal" id="modify-form" action="modify_program/{{pgid}}/" method="post" role="form" enctype="multipart/form-data">
     {% csrf_token %}
     <div class="form-group">
         <label for="group" class="col-sm-offset-1 col-sm-2 control-label">节目组别</label>
         <div class="col-sm-6">
-            <select name="group" class="form-control">
+            <select id="program-group" name="group" class="form-control">
                 <option value="" {% if group == 0 %}selected="selected"{%endif%}>---------</option>
                 {% for item in groups %}
                 <option value="{{item.id}}" {% if group == item.id %}selected="selected"{%endif%}>{{ item.title }}</option>
@@ -59,13 +59,9 @@
             <input type="text" class="form-control" name="workers" id="workers" value={{ workers }}>
         </div>
     </div>
-    <div class="form-group">
-        <input class="btn btn-info col-sm-offset-5" type="submit" value="确认修改"\>
-    </div>
-</form>
-</br>
-<form class="form-horizontal" action="modifyaudio/{{pgid}}/" method="post" role="form" enctype="multipart/form-data">
-    {% csrf_token %}
+
+    </br>
+
     <div class="form-group">
         <label for="audio" class="col-sm-offset-1 col-sm-2 control-label">音频文件</label>
         <div class="col-sm-3">
@@ -73,12 +69,9 @@
         </div>
         <label class="col-sm-3">{{ mediatitle }}</label>
     </div>
-    <button class="btn btn-info col-sm-offset-5" type="submit">替换音频文件</button>
-</form>
-</br>
-</br>
-<form class="form-horizontal" action="modifypic/{{pgid}}/" method="post" role="form" id="pic-form" enctype="multipart/form-data">
-    {% csrf_token %}
+
+    </br>
+
     {% for item in pictitle %}
     <div class="form-group">
         <label for="picture" class="col-sm-offset-1 col-sm-2 control-label">图片文件</label>
@@ -89,15 +82,13 @@
     </div>
     {% endfor %}
     <div class="form-group" id="add-pic-div">
-        <button type="button" class="btn btn-info col-sm-offset-4" id="add-pic" onclick="addPicture(this)">
+        <button type="button" class="btn btn-info col-sm-offset-5" id="add-pic" onclick="addPicture(this)">
             <span class="glyphicon glyphicon-plus"></span> 添加更多图片
         </button>
-        <button type="submit" class="btn btn-info col-sm-offset-1">确认修改图片</button>
     </div>
-</form>
-</br>
-<form class="form-horizontal" action="modifydoc/{{pgid}}/" method="post" role="form" id="doc-form" enctype="multipart/form-data">
-    {% csrf_token %}
+    
+    </br>
+
     {% for item in doctitle %}
     <div class="form-group">
         <label for="document" class="col-sm-offset-1 col-sm-2 control-label">文稿文件</label>
@@ -108,18 +99,37 @@
     </div>
     {% endfor %}
     <div class="form-group" id="add-doc-div">
-        <button type="button" class="btn btn-info col-sm-offset-4" id="add-doc" onclick="addDocument(this)">
+        <button type="button" class="btn btn-info col-sm-offset-5" id="add-doc" onclick="addDocument(this)">
             <span class="glyphicon glyphicon-plus"></span> 添加更多文稿
         </button>
-        <button type="submit" class="btn btn-info col-sm-offset-1">确认修改文稿</button>
+    </div>
+    <div class="form-group">
+        <input id="modify-button" class="btn btn-primary btn-lg col-sm-offset-5" type="button" value=" 确认修改 " />
     </div>
 </form>
 {% endblock %}
 {% block script %}
-<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
-<script src="http://code.jquery.com/jquery-migrate-1.1.1.js"></script>
+<script type="text/javascript" src="/static/js/jquery-migrate.js"></script>
 <script type="text/javascript" src="/static/js/jquery.form.js"></script>
 <script>
+$('#modify-button').click(function modifyReport() {
+    if ($('#program-group').val() == ""){
+        alert("请选择节目系列");
+        return;
+    }
+	var options = {
+		url: '/program/modify_program/{{pgid}}/',
+		dataType: 'json',
+		success: function(data) {
+            if (data.success){
+                alert("修改成功！");
+				location.reload();
+            }else
+				alert("修改失败，请检查输入");
+		}
+	};
+	$("#modify-form").ajaxSubmit(options);
+});
 function delPic(x, prgid, picid) {
 	$.ajax({
 		url: '/program/modify/delpic/',
@@ -153,7 +163,7 @@ var docIndex = 1;
 function addPicture(x) {
     var fdiv=document.createElement("div");
     fdiv.setAttribute("class", "form-group");
-    document.getElementById("pic-form").insertBefore(fdiv, document.getElementById("add-pic-div"));
+    document.getElementById("modify-form").insertBefore(fdiv, document.getElementById("add-pic-div"));
     var plabel=document.createElement("label");
     plabel.setAttribute("for", "picture"+pictureIndex);
     plabel.setAttribute("class", "col-sm-offset-1 col-sm-2 control-label");
@@ -188,7 +198,7 @@ function delPicture(x) {
 function addDocument(x) {
     var fdiv=document.createElement("div");
     fdiv.setAttribute("class", "form-group");
-    document.getElementById("doc-form").insertBefore(fdiv, document.getElementById("add-doc-div"));
+    document.getElementById("modify-form").insertBefore(fdiv, document.getElementById("add-doc-div"));
     var plabel=document.createElement("label");
     plabel.setAttribute("for", "document"+docIndex);
     plabel.setAttribute("class", "col-sm-offset-1 col-sm-2 control-label");
