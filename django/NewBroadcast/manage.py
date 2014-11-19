@@ -174,7 +174,6 @@ def groupseries(req):
 
 def group_series_post(model, req):
     if req.REQUEST.get('action', None) == 'modify':
-        print req.REQUEST
         try:
             obj = model.objects.get(id=req.REQUEST.get('id', None))
         except Exception, e:
@@ -189,7 +188,6 @@ def group_series_post(model, req):
         return HttpResponse(json.dumps({'success':True, 'info':'修改成功'}),
                             content_type='application/json')
     if req.REQUEST.get('action', None) == 'delete':
-        print req.REQUEST
         try:
             obj = model.objects.get(id=req.REQUEST.get('id', None))
         except Exception, e:
@@ -199,8 +197,19 @@ def group_series_post(model, req):
         obj.save()
         return HttpResponse(json.dumps({'success':True, 'info':'删除成功'}),
                             content_type='application/json')
+    if req.REQUEST.get('action', None) == 'destroy':
+        try:
+            obj = model.objects.get(id=req.REQUEST.get('id', None))
+        except Exception, e:
+            return HttpResponse(json.dumps({'success':False, 'info':'目标不存在'}),
+                                content_type='application/json')
+        if obj.program.count() > 0:
+            return HttpResponse(json.dumps({'success':False, 'info':'属于目标的节目数量不为0'}),
+                                content_type='application/json')
+        obj.delete()
+        return HttpResponse(json.dumps({'success':True, 'info':'删除成功'}),
+                            content_type='application/json')
     if req.REQUEST.get('action', None) == 'restore':
-        print req.REQUEST
         try:
             obj = model.objects.get(id=req.REQUEST.get('id', None))
         except Exception, e:
@@ -209,6 +218,18 @@ def group_series_post(model, req):
         obj.order = 0
         obj.save()
         return HttpResponse(json.dumps({'success':True, 'info':'恢复成功'}),
+                            content_type='application/json')
+    if req.REQUEST.get('action', None) == 'add':
+        new_name = req.REQUEST.get('new_name', None)
+        if not new_name:
+            return HttpResponse(json.dumps({'success':False, 'info':'名称不能为空'}),
+                                content_type='application/json')
+        try:
+            model(title=new_name).save()
+        except Exception, e:
+            return HttpResponse(json.dumps({'success':False, 'info':'未知错误'}),
+                                content_type='application/json')
+        return HttpResponse(json.dumps({'success':True, 'info':'创建成功'}),
                             content_type='application/json')
     return None
 

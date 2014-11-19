@@ -15,6 +15,7 @@
 		<th>修改操作</th>
 		<th>删除操作</th>
 		<th>恢复操作</th>
+		<th>彻底删除</th>
 		</tr>
 		</thead>
 		{% for pg in obj_list %}
@@ -27,6 +28,7 @@
 		<td><button class="btn btn-primary" data-toggle="modal" data-target="#delete-info"
 			onclick="$('#modal-delete-id').attr('value', '{{ pg.id }}'); $('#modal-delete-origin-name').html('{{ pg.title|addslashes }}');">删除</button></td>
 		<td>&nbsp;</td>
+		<td>&nbsp;</td>
 		</tr>
 		{% endfor %}
 	
@@ -35,13 +37,19 @@
 		<td><a href="/source/?gid={{ pg.id }}" target="_parent">{{ pg.title }}</a></td>
 		<td>{{ pg.program.count }}</a></td>
 		<td>{{ pg.create_time|date:"Y-m-d" }}</a></td>
-		<td>&nbsp;</td>
+		<td><button class="btn btn-primary" data-toggle="modal" data-target="#change-info"
+			onclick="$('#modal-modify-id').attr('value', '{{ pg.id }}'); $('#modal-modify-origin-name').html('{{ pg.title|addslashes }}');">修改</button></td>
 		<td>&nbsp;</td>
 		<td><button class="btn btn-primary" data-toggle="modal" data-target="#restore-info"
 			onclick="$('#modal-restore-id').attr('value', '{{ pg.id }}'); $('#modal-restore-origin-name').html('{{ pg.title|addslashes }}');">恢复</button></td>
+		<td><button class="btn btn-primary" data-toggle="modal" data-target="#destroy-info"
+			onclick="$('#modal-destroy-id').attr('value', '{{ pg.id }}'); $('#modal-destroy-origin-name').html('{{ pg.title|addslashes }}');">彻底删除</button></td>
 		</tr>
 		{% endfor %}
 	</table>
+	<div class="panel-footer">
+		<button class="btn btn-primary" data-toggle="modal" data-target="#add-info">增加{{ title }}</button>
+	</div>
 </div>
 
 
@@ -109,10 +117,57 @@
 						<span id="modal-delete-origin-name">名称</span>
 					</div>
 				</div>
+				<div class="form-group">
+					<label for="old-password" class="col-sm-offset-1 col-sm-2 control-label">说明</label>
+					<div class="col-sm-6">
+						<span id="modal-restore-origin-name">隐藏这个{{ title }}。隐藏后，资源页面筛选框、节目上传页面将不会出现这个选项。你可以随时恢复</span>
+					</div>
+				</div>
 			</form>
          </div>
          <div class="modal-footer">
             <button type="button" class="btn btn-primary" id="modal-delete-button">
+              	确认删除
+            </button>
+            <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+         </div>
+      </div><!-- /.modal-content -->
+    </div>
+</div><!-- /.modal -->
+
+<div class="modal fade" id="destroy-info" tabindex="-1" role="dialog" aria-labelledby="change-password-label" aria-hidden="true">
+   <div class="modal-dialog">
+      <div class="modal-content">
+         <div class="modal-header">
+            <button type="button" class="close" 
+               data-dismiss="modal" aria-hidden="true">
+                  &times;
+            </button>
+            <h4 class="modal-title">
+               彻底删除{{ obj_title }}
+            </h4>
+            <div id="change-password-status"></div>
+         </div>
+         <div class="modal-body">
+            <form class="form-horizontal" role="form">
+				<span id="modal-destroy-status"></span>
+				<input type="hidden" class="form-control" id="modal-destroy-id"/>
+				<div class="form-group">
+					<label for="old-password" class="col-sm-offset-1 col-sm-2 control-label">名称</label>
+					<div class="col-sm-6">
+						<span id="modal-destroy-origin-name">名称</span>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="old-password" class="col-sm-offset-1 col-sm-2 control-label">说明</label>
+					<div class="col-sm-6">
+						<span id="modal-restore-origin-name">彻底删除这个{{ title }}。只有节目数量为0的{{ title }}才能彻底删除。</span>
+					</div>
+				</div>
+			</form>
+         </div>
+         <div class="modal-footer">
+            <button type="button" class="btn btn-primary" id="modal-destroy-button">
               	确认删除
             </button>
             <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
@@ -144,11 +199,51 @@
 						<span id="modal-restore-origin-name">名称</span>
 					</div>
 				</div>
+				<div class="form-group">
+					<label for="old-password" class="col-sm-offset-1 col-sm-2 control-label">说明</label>
+					<div class="col-sm-6">
+						<span id="modal-restore-origin-name">恢复后，节目上传页面、资源页面筛选框将出现这个{{ title }}过滤选项。</span>
+					</div>
+				</div>
 			</form>
          </div>
          <div class="modal-footer">
             <button type="button" class="btn btn-primary" id="modal-restore-button">
               	确认恢复
+            </button>
+            <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+         </div>
+      </div><!-- /.modal-content -->
+    </div>
+</div><!-- /.modal -->
+
+<div class="modal fade" id="add-info" tabindex="-1" role="dialog" aria-labelledby="change-password-label" aria-hidden="true">
+   <div class="modal-dialog">
+      <div class="modal-content">
+         <div class="modal-header">
+            <button type="button" class="close" 
+               data-dismiss="modal" aria-hidden="true">
+                  &times;
+            </button>
+            <h4 class="modal-title">
+               创建{{ obj_title }}
+            </h4>
+            <div id="change-password-status"></div>
+         </div>
+         <div class="modal-body">
+            <form class="form-horizontal" role="form">
+				<span id="modal-add-status"></span>
+				<div class="form-group">
+					<label for="new-password" class="col-sm-offset-1 col-sm-2 control-label">新名称</label>
+					<div class="col-sm-6">
+						<input type="text" class="form-control" id="modal-add-new-name" placeholder="请输入新组名" />
+					</div>
+				</div>
+			</form>
+         </div>
+         <div class="modal-footer">
+            <button type="button" class="btn btn-primary" id="modal-add-button">
+              	提交
             </button>
             <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
          </div>
@@ -190,6 +285,21 @@ $('#modal-delete-button').click(function() {
 	});
 });
 
+$('#modal-destroy-button').click(function() {
+	$.ajax({
+		url:'/manage/groupseries/{{ obj_type }}/',
+		type:"POST",
+		data:{action:'destroy', id:$('#modal-destroy-id').val(), },
+		dataType:"json"
+	}).done(function(msg){
+		$('#modal-destroy-status').html(msg.info);
+		if (msg.success)
+			location.reload();
+	}).fail(function(jqXHR,textStatus){
+		$('#modal-destroy-status').html('与服务器连接中断');
+	});
+});
+
 $('#modal-restore-button').click(function() {
 	$.ajax({
 		url:'/manage/groupseries/{{ obj_type }}/',
@@ -202,6 +312,21 @@ $('#modal-restore-button').click(function() {
 			location.reload();
 	}).fail(function(jqXHR,textStatus){
 		$('#modal-restore-status').html('与服务器连接中断');
+	});
+});
+
+$('#modal-add-button').click(function() {
+	$.ajax({
+		url:'/manage/groupseries/{{ obj_type }}/',
+		type:"POST",
+		data:{action:'add', new_name:$('#modal-add-new-name').val(), },
+		dataType:"json"
+	}).done(function(msg){
+		$('#modal-add-status').html(msg.info);
+		if (msg.success)
+			location.reload();
+	}).fail(function(jqXHR,textStatus){
+		$('#modal-add-status').html('与服务器连接中断');
 	});
 });
 </script>
