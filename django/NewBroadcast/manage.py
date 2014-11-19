@@ -173,7 +173,7 @@ def groupseries(req):
 
 
 def group_series_post(model, req):
-    if req.REQUEST.get('action', None):
+    if req.REQUEST.get('action', None) == 'modify':
         print req.REQUEST
         try:
             obj = model.objects.get(id=req.REQUEST.get('id', None))
@@ -188,6 +188,17 @@ def group_series_post(model, req):
         obj.save()
         return HttpResponse(json.dumps({'success':True, 'info':'修改成功'}),
                             content_type='application/json')
+    if req.REQUEST.get('action', None) == 'delete':
+        print req.REQUEST
+        try:
+            obj = model.objects.get(id=req.REQUEST.get('id', None))
+        except Exception, e:
+            return HttpResponse(json.dumps({'success':False, 'info':'目标不存在'}),
+                                content_type='application/json')
+        obj.order = -1
+        obj.save()
+        return HttpResponse(json.dumps({'success':True, 'info':'删除成功'}),
+                            content_type='application/json')
     return None
 
 @power_required(['superadmin'])
@@ -195,10 +206,12 @@ def program_group(req):
     hr = group_series_post(ProgramGroup, req)
     if hr:
         return hr
+    obj_list = ProgramGroup.objects.all(),
     return render_to_response("manage/groupiframe.html",
-                              {'title':u'组别管理',
+                              {'title':u'组别',
                                'obj_type':'group',
-                               'obj_list':ProgramGroup.objects.all(), },
+                               'obj_list':ProgramGroup.objects.filter(order__gte=0),
+                               'removed_list':ProgramGroup.objects.filter(order__lt=0), },
                               context_instance=RequestContext(req))
 
 @power_required(['superadmin'])
@@ -207,8 +220,9 @@ def program_series(req):
     if hr:
         return hr
     return render_to_response("manage/groupiframe.html",
-                              {'title':u'系列管理',
+                              {'title':u'系列',
                                'obj_type':'series',
-                               'obj_list':ProgramSeries.objects.all(), },
+                               'obj_list':ProgramSeries.objects.filter(order__gte=0),
+                               'removed_list':ProgramSeries.objects.filter(order__lt=0), },
                               context_instance=RequestContext(req))
 
