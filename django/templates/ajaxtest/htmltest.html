@@ -1,26 +1,65 @@
 {% extends "base.html" %}
 
 {% block body %}
-				<div class="panel panel-default" id="space-info">
-					<div class="panel-heading">
-						<h4 clas="col-md-4">个人资料</h4>
-					</div>
-				</div>
+<ul id="sortable">
+  <li class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span>Item 1</li>
+  <li class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span>Item 2</li>
+  <li class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span>Item 3</li>
+  <li class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span>Item 4</li>
+  <li class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span>Item 5</li>
+  <li class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span>Item 6</li>
+  <li class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span>Item 7</li>
+</ul>
+<table id="tabletest">
+<tbody>
+<tr>
+<td>A</td><td>B</td>
+</tr>
+</tbody>
+<tbody>
+<tr>
+<td>C</td><td>D</td>
+</tr>
+</tbody>
+</table>
+
+
+
 {% endblock %}
 
 {% block script %}
+  <script src="//code.jquery.com/ui/1.11.2/jquery-ui.js"></script>
+  <script>
+  $(function() {
+    $( "#sortable" ).sortable();
+    $( "#sortable" ).disableSelection();
+    $( "#tabletest" ).sortable();
+  });
+  </script>
 <script>
-$(document).ready(function(){
-        $.ajax({
-            url:'/ajaxtest/htmlresponse/',
-            type:"GET",
-            data:{email:$("#login-email").val(), password:$("#login-password").val()},
-            dataType:"html"
-        }).done(function(msg){
-            $('#space-info').append(msg);
-        }).fail(function(jqXHR,textStatus){
-            $('#space-info').append('载入失败');
-        });
-});
+var fixHelper = function(e, ui) {  
+    //console.log(ui)   
+    ui.children().each(function() {  
+        $(this).width($(this).width());     //在拖动时，拖动行的cell（单元格）宽度会发生改变。在这里做了处理就没问题了   
+    });  
+    return ui;  
+};  
+   
+  
+jQuery(function(){  
+    jQuery("#hrCalendar tbody").sortable({                //这里是talbe tbody，绑定 了sortable   
+        helper: fixHelper,                  //调用fixHelper   
+        axis:"y",  
+        start:function(e, ui){  
+            ui.helper.css({"background":"#fff"})     //拖动时的行，要用ui.helper   
+            return ui;  
+        },  
+        stop:function(e, ui){  
+            //ui.item.removeClass("ui-state-highlight"); //释放鼠标时，要用ui.item才是释放的行   
+            return ui;  
+        }  
+    }).disableSelection();  
+})
 </script>
+
 {% endblock %}
