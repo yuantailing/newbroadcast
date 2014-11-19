@@ -381,7 +381,7 @@ def show_modify(req, arg):
                      context_instance=RequestContext(req));
 
 @power_required(['worker'])
-def modify_word(req, arg):
+def modify_program(req, arg):
     pgid = int(arg)
     pg = Program.objects.get(id = pgid)
 
@@ -410,37 +410,15 @@ def modify_word(req, arg):
             pg.contributor = tcontributor
         if (tworkers != None):
             pg.workers = tworkers
-        pg.save()
-        res['result'] = 'success'
-    except Exception, e:
-        res['result'] = 'failed'
-    return HttpResponse(json.dumps(res), content_type='application/json')
 
-@power_required(['worker'])
-def modify_audio(req, arg):
-    pgid = int(arg)
-    pg = Program.objects.get(id = pgid)
-
-    try:
-        res = { }
         taudio = req.FILES.get('audio', None)
-        ad = Source()
-        ad.document = taudio
-        ad.save()
-        pg.audio = ad.id
-        pg.save()
-        res['result'] = 'success'
-    except Exception, e:
-        res['result'] = 'failed'
-    return HttpResponse(json.dumps(res), content_type='application/json')
-
-@power_required(['worker'])
-def modify_pic(req, arg):
-    pgid = int(arg)
-    pg = Program.objects.get(id=pgid)
-    pic_arr = json.loads(pg.picture)
-    try:
-        res = { }
+        if (taudio != None):
+            ad = Source()
+            ad.document = taudio
+            ad.save()
+            pg.audio = ad.id
+        
+        pic_arr = json.loads(pg.picture)
         tpic = req.FILES.getlist('picture', None)
         if (len(tpic) > 0):
             for ele in tpic:
@@ -449,11 +427,23 @@ def modify_pic(req, arg):
                 pic.save()
                 pic_arr.append(pic.id)
         pg.picture = json.dumps(pic_arr)
+        doc_arr = json.loads(pg.document)
+        
+        tdoc = req.FILES.getlist('document', None)
+        if (len(tdoc) > 0):
+            for ele in tdoc:
+                doc = Source()
+                doc.document = ele
+                doc.save()
+                doc_arr.append(doc.id)
+        pg.document = json.dumps(doc_arr)
+
         pg.save()
-        res['result'] = 'success'
+        success = True
     except Exception, e:
-        res['result'] = 'failed'
-    return HttpResponse(json.dumps(res), content_type='application/json')
+        success = False
+    return HttpResponse(json.dumps({'success':success, 'info':'test info'}),
+                        content_type='application/json')
 
 
 @power_required(['worker'])
@@ -470,27 +460,6 @@ def del_pic(req):
     except Exception, e:
         success = False
     return HttpResponse(json.dumps({'success':success}), content_type='application/json')
-
-@power_required(['worker'])
-def modify_doc(req, arg):
-    pgid = int(arg)
-    pg = Program.objects.get(id=pgid)
-    doc_arr = json.loads(pg.document)
-    try:
-        res = { }
-        tdoc = req.FILES.getlist('document', None)
-        if (len(tdoc) > 0):
-            for ele in tdoc:
-                doc = Source()
-                doc.document = ele
-                doc.save()
-                doc_arr.append(doc.id)
-        pg.document = json.dumps(doc_arr)
-        pg.save()
-        res['result'] = 'success'
-    except Exception, e:
-        res['result'] = 'failed'
-    return HttpResponse(json.dumps(res), content_type='application/json')
 
 @power_required(['worker'])
 def del_doc(req):
