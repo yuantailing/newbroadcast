@@ -231,6 +231,13 @@ def power_required(power_list):
         def required_req(*args, **kwargs):
             req = args[0]
             power = req.session.get('user_power', None)
+            try:
+                user = User.objects.get(id=req.session.get('uid', None))
+                if not user.power == power:
+                    req.session['user_power'] = user.power
+                    power = user.power
+            except Exception, e:
+                user = None
             if not power:
                 req.session['user_power'] = 'guest'
                 power = 'guest'
