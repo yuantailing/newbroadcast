@@ -29,16 +29,25 @@
 	      	<br />
 	      	<div style="float:right">
 				{% if logined %}
+
 	      		{% if have_praised %}
 		      	<a class="btn btn-primary" id="program-praise" role="button" style="color:red" praised="true"><span id="program-praise-count" class="glyphicon glyphicon-thumbs-up">{{ praise_count}}</span></a>
 		      	{% else %}
 		      	<a class="btn btn-primary" id="program-praise" role="button" praised="false"><span id="program-praise-count" class="glyphicon glyphicon-thumbs-up">{{praise_count}}</span></a>
 		      	{% endif %}
+
+				{% if have_favorited %}
+		      	<a class="btn btn-primary" id="program-favorite" role="button" style="color:red" favorited="true"><span id="program-favorite-count" class="glyphicon glyphicon-heart">{{ favorite_count}}</span></a>
+		      	{% else %}
+		      	<a class="btn btn-primary" id="program-favorite" role="button" favorited="false"><span id="program-favorite-count" class="glyphicon glyphicon-heart">{{favorite_count}}</span></a>
+		      	{% endif %}
+				
 				{% else %}
 				<a class="btn btn-primary disabled" id="program-praise" role="button"><span id="program-praise-count" class="glyphicon glyphicon-thumbs-up">{{ praise_count}}</span></a>
+		      	<a class="btn btn-primary disabled" id="program-favorite" role="button"><span id="program-favorite-count" class="glyphicon glyphicon-heart">{{ favorite_count }}</span></a>
 		      	{% endif %}
 		        <a class="btn btn-primary" href="#program-add-comment-div" role="button"><span class="glyphicon glyphicon-comment"></span></a>
-		        <a class="btn btn-primary" role="button" data-toggle="modal" data-target="#program-favorite-modal"><span class="glyphicon glyphicon-heart"></span></a>
+		        <!--a class="btn btn-primary" role="button" data-toggle="modal" data-target="#program-favorite-modal"><span class="glyphicon glyphicon-heart"></span></a-->
 		        <a class="btn btn-primary" role="button" data-toggle="modal" data-target="#program-share-modal"><span class="glyphicon glyphicon-share"></span></a>
 	        </div>
 	      </div>
@@ -273,6 +282,40 @@ $('#program-praise').click(function() {
 	        	praise_button.css("color", "#f00");
 	        	praise_button.attr("praised", "true");
 	        	$('#program-praise-count').html(msg.count);
+	        }
+	    }).fail(function(jqXHR,textStatus){
+	        $('#change-info-status').html('与服务器连接中断');
+	    });
+    }
+});
+$('#program-favorite').click(function() {
+	var favorite_button = $('#program-favorite');
+	if (favorite_button.attr("favorited") == "true") { 
+		$.ajax({
+	        url:'/program/unfavorite/',
+	        type:"POST",
+	        data:{pid: {{ pgid }} },
+	        dataType:"json"
+	    }).done(function(msg){
+	        if (msg.success) {
+	        	favorite_button.css("color", "#fff");
+	        	favorite_button.attr("favorited", "false");
+	        	$('#program-favorite-count').html(msg.count);
+	        }
+	    }).fail(function(jqXHR,textStatus){
+	        $('#change-info-status').html('与服务器连接中断');
+	    });
+    } else { 
+    	$.ajax({
+	        url:'/program/favorite/',
+	        type:"POST",
+	        data:{pid: {{ pgid }} },
+	        dataType:"json"
+	    }).done(function(msg){
+	        if (msg.success) {
+	        	favorite_button.css("color", "#f00");
+	        	favorite_button.attr("favorited", "true");
+	        	$('#program-favorite-count').html(msg.count);
 	        }
 	    }).fail(function(jqXHR,textStatus){
 	        $('#change-info-status').html('与服务器连接中断');
