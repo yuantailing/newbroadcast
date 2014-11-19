@@ -82,8 +82,8 @@
     {% for item in pictitle %}
     <div class="form-group">
         <label for="picture" class="col-sm-offset-1 col-sm-2 control-label">图片文件</label>
-        <label class="col-sm-6">{{ item }}</label>
-        <button type="button" class="btn btn-danger" onclick="delPicture(this)">
+        <label class="col-sm-6">{{ item.title }}</label>
+        <button type="button" class="btn btn-danger" onclick="delPic(this, {{pgid}}, {{item.id}})">
             <span class="glyphicon glyphicon-minus"> 删除</span>
         </button>
     </div>
@@ -101,8 +101,8 @@
     {% for item in doctitle %}
     <div class="form-group">
         <label for="document" class="col-sm-offset-1 col-sm-2 control-label">文稿文件</label>
-        <label class="col-sm-6">{{ item }}</label>
-        <button type="button" class="btn btn-danger" onclick="delDocument(this)">
+        <label class="col-sm-6">{{ item.title }}</label>
+        <button type="button" class="btn btn-danger" onclick="delDoc(this, {{pgid}}, {{item.id}})">
             <span class="glyphicon glyphicon-minus"> 删除</span>
         </button>
     </div>
@@ -116,6 +116,37 @@
 </form>
 {% endblock %}
 {% block script %}
+<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+<script src="http://code.jquery.com/jquery-migrate-1.1.1.js"></script>
+<script type="text/javascript" src="/static/js/jquery.form.js"></script>
+<script>
+function delPic(x, prgid, picid) {
+	$.ajax({
+		url: '/program/modify/delpic/',
+        data: {'prgid': prgid, 'picid': picid},
+		dataType: 'json'
+        }).done(function(data) {
+            if (data.success){
+                alert("删除成功！");
+				delPicture(x);
+            }else
+				alert("删除失败，请检查输入");
+		});
+}
+function delDoc(x, prgid, docid) {
+	$.ajax({
+		url: '/program/modify/deldoc/',
+        data: {'prgid': prgid, 'docid': docid},
+		dataType: 'json'
+        }).done(function(data) {
+            if (data.success){
+                alert("删除成功！");
+				delDocument(x);
+            }else
+				alert("删除失败，请检查输入");
+		});
+}
+</script>
 <script>
 var pictureIndex = 1;
 var docIndex = 1;
