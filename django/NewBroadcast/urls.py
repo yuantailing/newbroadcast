@@ -82,7 +82,9 @@ urlpatterns = patterns('',
     url(r'^manage/changepassword/$', manage.change_password),
     url(r'^manage/changeinfo/$', manage.change_info),
     url(r'^manage/changepower/$', manage.change_power),
-    
+    url(r'^manage/groupseries/$', manage.groupseries),
+    url(r'^manage/groupseries/group/$', manage.program_group),
+    url(r'^manage/groupseries/series/$', manage.program_series),
 
     url(r'^mgrdebug/changepower/(.*)$', mgrdebug.change_power),
 

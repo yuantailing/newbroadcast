@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}
+节目组别/系列管理
+{% endblock %}
+
+{% block body %}
+<!-- main content -->
+<div class="container">
+	<div class="row">
+		<hr />
+		<iframe src="/manage/groupseries/group/" width="100%" scrolling="no" frameborder="0" onload="this.height=this.contentWindow.document.documentElement.scrollHeight">
+		</iframe>
+	</div>
+	<div class="row">
+		<hr />
+		<iframe src="/manage/groupseries/series/" width="100%" scrolling="no" frameborder="0" onload="this.height=this.contentWindow.document.documentElement.scrollHeight">
+		</iframe>
+	</div>
+</div>
+{% endblock %}
+
+{% block script %}
+{% endblock %}

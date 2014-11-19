@@ -165,3 +165,50 @@ def change_power(req):
         return HttpResponse(json.dumps({'success':False, 'info':'未知错误'}),
                             content_type='application/json')
 
+
+@power_required(['superadmin'])
+def groupseries(req):
+    return render_to_response("manage/groupseries.html",
+                              context_instance=RequestContext(req))
+
+
+def group_series_post(model, req):
+    if req.REQUEST.get('action', None):
+        print req.REQUEST
+        try:
+            obj = model.objects.get(id=req.REQUEST.get('id', None))
+        except Exception, e:
+            return HttpResponse(json.dumps({'success':False, 'info':'目标不存在'}),
+                                content_type='application/json')
+        new_name = req.REQUEST.get('new_name', None)
+        if not new_name:
+            return HttpResponse(json.dumps({'success':False, 'info':'名称不能为空'}),
+                                content_type='application/json')
+        obj.title = new_name
+        obj.save()
+        return HttpResponse(json.dumps({'success':True, 'info':'修改成功'}),
+                            content_type='application/json')
+    return None
+
+@power_required(['superadmin'])
+def program_group(req):
+    hr = group_series_post(ProgramGroup, req)
+    if hr:
+        return hr
+    return render_to_response("manage/groupiframe.html",
+                              {'title':u'组别管理',
+                               'obj_type':'group',
+                               'obj_list':ProgramGroup.objects.all(), },
+                              context_instance=RequestContext(req))
+
+@power_required(['superadmin'])
+def program_series(req):
+    hr = group_series_post(ProgramSeries, req)
+    if hr:
+        return hr
+    return render_to_response("manage/groupiframe.html",
+                              {'title':u'系列管理',
+                               'obj_type':'series',
+                               'obj_list':ProgramSeries.objects.all(), },
+                              context_instance=RequestContext(req))
+
