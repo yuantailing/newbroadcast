@@ -1,5 +1,5 @@
-{% extends "base.html" %}
-{% block title %}Hello world! - 清华大学广播站{% endblock %}
+{% extends "base-player.html" %}
+{% block title %}player - 清华大学广播站{% endblock %}
 {% block header %}
 <style>
 #program-audio-player {
@@ -9,7 +9,9 @@
 
 	background:#eeecf4;
 }
-
+#player-viewport { 
+	padding: 1% 20% 1% 0%;
+}
 .progress { 
 	background: #fff;
 }
@@ -26,13 +28,13 @@ window.onload = function() {
 <audio src="{{ medialink }}" id="audio"></audio>
 
 <div id="program-audio-player">
-	<div class="col-md-2" >
+	<div class="col-md-2" style="min-width:230px">
 		<span class="btn glyphicon glyphicon-backward"></span>
 		<span class="btn glyphicon glyphicon-play" id="program-audio-play"></span>
 		<span class="btn glyphicon glyphicon-stop"></span>
 		<span class="btn glyphicon glyphicon-forward"></span>
 	</div>
-	<div class="col-md-8" style="padding-top:1%">
+	<div class="col-md-6" style="padding-top:1%">
 		<div class="progress">
 			 <div class="progress-bar" style="width: 40%;"></div>
 		</div>	
@@ -42,5 +44,67 @@ window.onload = function() {
 	
 </div>
 
+<div id="wrap">
+	<div class="col-md-2" id="player-sidebar">
+		<div class="bs-docs-sidebar affix-top" role="complementary">
+        	<ul class="nav bs-docs-sidenav">
+            	<li>
+            		<a href="#player-music-list"><span class="glyphicon glyphicon-list"></span> 播放列表</a>
+
+            		<ul class="nav">
+            		</ul>
+            	</li>
+            	<li>
+            		<a href="#player-favorites-list"><span class="glyphicon glyphicon-heart" style="color:red;"></span> 我的收藏</a>
+            	</li>
+            </ul>
+        </div>
+	</div>
+	<div class="col-md-8">
+		<div id="player-viewport" style="overflow:auto; position:fixed;">
+			<div>
+				<ul class="list-group">
+				<script>
+				for (i = 0; i < 100; i ++)
+					document.write("<li class=\"list-group-item\">test</li>");
+				</script>
+				</ul>
+			</div>
+		</div>
+	</div>
+
+	<div class="col-md-2" id="player-description" style="position:relative;float:right;">
+		<div class="bs-docs-sidebar affix-top" role="complementary">
+        	<ul class="nav bs-docs-sidenav">
+            	<li>
+            		<a href="#player-music-list"><span class="glyphicon glyphicon-list"></span> 播放列表</a>
+
+            		<ul class="nav">
+            		</ul>
+            	</li>
+            	<li>
+            		<a href="#player-favorites-list"><span class="glyphicon glyphicon-heart" style="color:red;"></span> 我的收藏</a>
+            	</li>
+            </ul>
+        </div>
+	</div>
 	
+	
+</div>
+
+{% endblock %}
+
+{% block script %}
+<script>
+$(document).ready(function() { 
+	$('#player-viewport').css('top', document.getElementById('navigation-navbar').scrollHeight + 10);
+	$('#player-viewport').css('bottom', document.getElementById('program-audio-player').scrollHeight + 10);
+	$('#player-viewport').css('left', document.getElementById('player-sidebar').scrollWidth + 10);
+	$('#player-viewport').css('right', document.getElementById('player-description').scrollWidth + 10);
+});
+$(window).resize(function() { 
+	$('#player-viewport').css('top', document.getElementById('navigation-navbar').scrollHeight + 10);
+	$('#player-viewport').css('bottom', document.getElementById('program-audio-player').scrollHeight + 10);
+});
+</script>
 {% endblock %}
