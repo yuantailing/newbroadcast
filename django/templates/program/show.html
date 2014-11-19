@@ -44,12 +44,11 @@
 	      </div>
 	      <div class="row">
 	          <br />
-	          <div style="float:right">
+	          <div id="img-div" style="float:right">
 		          {% for src in piclink %}
 				  <div class="row">
 				    <img src="{{ src }}" class="img-rounded img-responsive center-block" style="width:100%" />
 				  </div>
-				  <br />
 				  {% endfor %}
 			  </div>
 	      </div>
@@ -194,6 +193,58 @@
 
 {% block script %}
 <script>
+var imglength;
+var imgdis=0;
+$(document).ready(function() {
+    var y=document.getElementById("img-div");
+    var imglist=$(y).children("div");
+    imglength=imglist.length;
+    for (var i=0; i<imglength; i++) {
+        if (i!=(imglength-1)) {
+            var a=document.createElement("a");
+            a.setAttribute("class", "fui-arrow-right");
+            a.setAttribute("onclick", "nextPic(this)");
+            a.style.float="right";
+            imglist[i].appendChild(a);
+        }
+        if (i!=0) {
+            var a=document.createElement("a");
+            a.setAttribute("class", "fui-arrow-left");
+            a.setAttribute("onclick", "prevPic(this)");
+            imglist[i].appendChild(a);
+        }
+        if (i==imgdis) {
+            imglist[i].style.display="";
+        }
+        else {
+            imglist[i].style.display="none";
+        }
+    }
+});
+function nextPic(x) {
+    imgdis=imgdis+1;
+    var y=document.getElementById("img-div");
+    var imglist=$(y).children("div");
+    for (var i=0; i<imglength; i++) {
+        if (i==imgdis) {
+            imglist[i].style.display="";
+        } else {
+            imglist[i].style.display="none";
+        }
+    }
+}
+function prevPic(x) {
+    imgdis=imgdis-1;
+    var y=document.getElementById("img-div");
+    var imglist=$(y).children("div");
+    for (var i=0; i<imglength; i++) {
+        if (i==imgdis) {
+            imglist[i].style.display="";
+        } else {
+            imglist[i].style.display="none";
+        }
+    }
+}
 $('#program-praise').click(function() {
 	var praise_button = $('#program-praise');
 	if (praise_button.attr("praised") == "true") { 
