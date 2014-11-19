@@ -133,8 +133,11 @@ def add_comment(req):
     user = User.objects.get(id=req.session['uid'])
     pg = Program.objects.get(id=req.REQUEST.get('pid'))
     comment = req.REQUEST.get('comment')
+    if len(comment) < 5:
+        return HttpResponse(json.dumps({'success':False, 'info':'评论不能少于5个字'}),
+                            content_type='application/json')
     Comment(user=user, program=pg, content=comment).save()
-    return HttpResponse(json.dumps({'success':True, 'info':'success'}),
+    return HttpResponse(json.dumps({'success':True, 'info':'评论成功'}),
                         content_type='application/json')
 
 @power_required(['superadmin'])

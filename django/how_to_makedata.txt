@@ -30,7 +30,7 @@ ProgramGroup(title=u'体育').save()
 ProgramGroup(title=u'广播剧').save()
 ProgramSeries(title=u'校庆纪实').save()
 ProgramSeries(title=u'清韵烛光').save()
-User(email='admin', password='admin', nickname=u'广播台台长', power='superadmin').save()
+User(email='admin', password='admin', nickname=u'广播站站长', power='superadmin').save()
 
 for i in range(0, 50):
     s = make_group(name_char_set, random.randint(3, 8))
