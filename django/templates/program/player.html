@@ -1,8 +1,343 @@
-{% extends "base.html" %}
-{% block title %}Hello world! - 清华大学广播站{% endblock %}
+{% extends "base-player.html" %}
+{% block title %}player - 清华大学广播站{% endblock %}
+{% block header %}
+<style>
+body { 
+	background-color: #eeecf4;
+}
+#program-audio-player {
+	position: fixed;
+	bottom:0;
+	width:100%;
+
+	background:#eeecf4;
+}
+#player-viewport li{
+	border:0px;
+	width: 100%;
+}
+#player-viewport .active{
+	background-color: #875f9a;
+}
+#player-viewport::-webkit-scrollbar {
+	border:0px;
+	width:10px;
+	background: white;
+}
+#player-viewport::-webkit-scrollbar-thumb { 
+	background: #875f9a;
+	border-radius: 5px;
+}
+#slider { 
+	background-color: white;
+}
+#volume-slider {
+	width: 80%;
+	right: 0;
+	background-color: white;
+	height: 5px;
+}
+#volume-slider .ui-slider-handle { 
+	width: 10px;
+	height: 10px;
+}
+.progress { 
+	background: #fff;
+}
+</style>
+{% endblock%}
 {% block body %}
-<div style="text-align: center">
-  <br/>
-  <span class="preview"><audio autoplay="true" src="{{ medialink }}" controls=""></audio></span>
+
+<audio src="" id="audio" preload="true"></audio>
+
+<div id="program-audio-player">
+	<div class="col-md-2">
+		<span class="btn glyphicon glyphicon-backward" id="player-backward" title="上一首"></span>
+		<span class="btn glyphicon glyphicon-play" id="player-play" title="播放/暂停"></span>
+		<span class="btn glyphicon glyphicon-stop" id="player-stop" title="停止"></span>
+		<span class="btn glyphicon glyphicon-forward" id="player-forward" title="下一首"></span>
+	</div>
+	<div class="col-md-7" style="margin-top:15px">
+		<div id="slider" title="进度条">
+		</div>
+	</div>
+	<div class="col-md-1" style="margin-top:5px">
+	<p><small id="player-time-label"></small></p>
+	</div>
+	<div class="col-md-2">
+		<span class="btn glyphicon glyphicon-random" id="player-random" style="width:20%; float:left;color:#fff;" title="随机"></span>
+		<span class="btn glyphicon glyphicon-repeat" id="player-repeat" style="width:20%; float:left;color:#fff;" title="重复"></span>
+		<span class="btn glyphicon glyphicon-volume-up" id="player-volume" style="width:20%; float:left;" title="静音"></span>
+		<div style="width:40%;float:right;margin-top:18px">
+			<div id="volume-slider"></div>
+		</div>
+	</div>
+	
 </div>
+
+<div id="wrap">
+	<div class="col-md-2" id="player-sidebar">
+		<div class="bs-docs-sidebar affix-top" role="complementary">
+        	<ul class="nav bs-docs-sidenav">
+            	<li>
+            		<a href="#player-music-list"><span class="glyphicon glyphicon-list"></span> 播放列表</a>
+
+            		<ul class="nav">
+            		</ul>
+            	</li>
+            	<li>
+            		<a href="#player-favorites-list"><span class="glyphicon glyphicon-heart" style="color:red;"></span> 我的收藏</a>
+            	</li>
+            </ul>
+        </div>
+	</div>
+	<div class="col-md-7">
+		<ul id="player-viewport" class="list-group" style="overflow:auto; position:fixed;">
+		</ul>
+	</div>
+
+	<div class="col-md-3" id="player-description" style="position:relative;float:right;">
+		<div>
+        	description
+        </div>
+	</div>
+	
+	
+</div>
+
+{% endblock %}
+
+{% block script %}
+<script>
+var audio;
+var player_play;
+var player_stop;
+var player_repeat;
+var player_random;
+var player_volume;
+
+var audio_slider;
+var volume_slider;
+var audio_slider_handle;
+
+var audio_slider_hold = false;
+var audio_random = false;
+
+var localList = new Array();
+var favoriteList = new Array();
+var curProgramNum = 0;
+
+$(window).load(function() { 
+    audio = document.getElementById('audio');
+	player_play = $('#player-play');
+	player_stop = $('#player-stop');
+	player_repeat = $('#player-repeat');
+	player_random = $('#player-random');
+	player_volume = $('#player-volume');
+
+	audio_slider = $("#slider");
+	volume_slider = $("#volume-slider");
+    
+    localStorage.hasPlayer = 1;
+    
+    info = JSON.parse(localStorage.toPlayer);
+    program = new Object();
+    program.title = info.title;
+    program.description = info.description;
+    program.url = info.url;
+    program.id = info.id;
+    program.time = info.time;
+    onLocalListChange(info.location, program);
+    if(info.play == 1)
+        onCurProgramChange(0);
+
+	if (audio_slider.length > 0) {
+	  audio_slider.slider({
+	    min: 0,
+	    max: audio.duration,
+	    value: audio.currentTime,
+	    orientation: "horizontal",
+	    range: "min"
+	  });
+	}
+	if (volume_slider.length > 0) {
+	  volume_slider.slider({
+	    min: 0,
+	    max: 100,
+	    value: Math.floor(audio.volume * 100),
+	    orientation: "horizontal",
+	    range: "min"
+	  });
+	}
+	audio_slider.mouseup(function(){ 
+		audio_slider_hold = false;
+		audio.currentTime = audio_slider.slider("value");
+	});
+	audio_slider.mouseout(function(){ 
+		audio_slider_hold = false;
+	});
+	audio_slider.mouseover(function(){ 
+		audio_slider_hold = true;
+	});
+	audio_slider.mousedown(function(){ 
+		audio_slider_hold = true;
+	});
+	volume_slider.mouseup(function(){ 
+		audio.volume = volume_slider.slider("value") / 100;
+	});
+	volume_slider.mouseover(function(){ 
+		audio.volume = volume_slider.slider("value") / 100;
+	});
+	player_play.mousedown(function() { 
+		if (audio.paused) { 
+			$(this).removeClass("glyphicon-play");
+			$(this).addClass("glyphicon-pause");
+			audio.play();
+		} else {
+			$(this).removeClass("glyphicon-pause");
+			$(this).addClass("glyphicon-play");
+			audio.pause();
+		}
+	});
+	player_stop.mousedown(function() { 
+		audio.load();
+
+		player_play.removeClass("glyphicon-pause");
+		player_play.addClass("glyphicon-play");
+	});
+	player_repeat.mousedown(function() {
+		if (player_repeat.css("color") == "rgb(255, 255, 255)") { 
+			player_repeat.css("color", "#5c307d");
+			audio.loop = true;
+
+		} else { 
+			player_repeat.css("color", "#fff");
+			audio.loop = false;
+		}
+		
+	});
+	player_random.mousedown(function() {
+		if (player_random.css("color") == "rgb(255, 255, 255)") { 
+			player_random.css("color", "#5c307d");
+
+		} else { 
+			player_random.css("color", "#fff");
+		}
+		
+	});
+	player_volume.mousedown(function() {
+		if (audio.muted) { 
+			audio.muted = false;
+			player_volume.removeClass("glyphicon-volume-off");
+			player_volume.addClass("glyphicon-volume-up");
+		} else { 
+			audio.muted = true;
+			player_volume.removeClass("glyphicon-volume-up");
+			player_volume.addClass("glyphicon-volume-off");
+		}
+		
+	});
+
+	setInterval("update()", 100);
+});
+
+$(document).ready(function() { 
+	$('#player-viewport').css('top', document.getElementById('navigation-navbar').scrollHeight + 10);
+	$('#player-viewport').css('bottom', document.getElementById('program-audio-player').scrollHeight + 10);
+	$('#player-viewport').css('left', document.getElementById('player-sidebar').scrollWidth + 10);
+	$('#player-viewport').css('right', document.getElementById('player-description').scrollWidth + 10);
+    if(window.addEventListener){
+        window.addEventListener("storage", handle_storage, false);
+    }else if(window.attachEvent){
+        window.attachEvent("onstorage", handle_storage);
+    }
+});
+
+$(window).resize(function() { 
+	$('#player-viewport').css('top', document.getElementById('navigation-navbar').scrollHeight + 10);
+	$('#player-viewport').css('bottom', document.getElementById('program-audio-player').scrollHeight + 10);
+	$('#player-viewport').css('left', document.getElementById('player-sidebar').scrollWidth + 10);
+	$('#player-viewport').css('right', document.getElementById('player-description').scrollWidth + 10);
+});
+
+function update() {
+	// update slider;
+	if (audio_slider_hold == false) { 
+		audio_slider.slider({max:audio.duration,value:audio.currentTime}); 
+	}
+	if (audio.ended) {
+		audio.currentTime = 0;
+		player_play.removeClass("glyphicon-pause");
+		player_play.addClass("glyphicon-play");
+	}
+	// update time label
+	label = $('#player-time-label');
+	curm = parseInt(audio.currentTime / 60);
+	curs = Math.floor(audio.currentTime - 60 * curm);
+	tolm = parseInt(audio.duration / 60);
+	tols = Math.floor(audio.duration - 60 * tolm);
+	label.html(curm + ":" + curs + "/" + tolm + ":" + tols); 
+
+	volume_slider.attr('title', "音量：" + volume_slider.slider("value"));
+}
+
+var handle_storage = function(e) {
+    if(!e) {
+        e = window.event;
+    }
+    if(e.key == "toPlayer" && e.newValue != null) {
+        info = JSON.parse(e.newValue);
+        program = new Object();
+        program.title = info.title;
+        program.description = info.description;
+        program.url = info.url;
+        program.id = info.id;
+        program.time = info.time;
+        onLocalListChange(info.location, program);
+        if(info.play == 1)
+            onCurProgramChange(0);
+    }
+}
+
+function onLocalListChange(location, program) {
+    if(location == "top") {
+        localList.unshift(program);
+        newItem = document.createElement("li");
+        newItem.className = "list-group-item";
+        newItem.innerHTML = program.title;
+        newItem.id = "list-group-item-" + program.time;
+        $("#player-viewport").prepend(newItem);
+    } else if(info.location == "bottom") {
+        localList.push(program);
+        newItem = document.createElement("li");
+        newItem.className = "list-group-item";
+        newItem.innerHTML = program.title;
+        newItem.id = "list-group-item-" + program.time;
+        $("#player-viewport").append(newItem);
+    }
+}
+
+function onCurProgramChange(newProgramNum) {
+    oldItem = document.getElementById("list-group-item-" + localList[curProgramNum].time);
+    oldItem.className = "list-group-item";
+    curProgramNum = newProgramNum;
+    curItem = document.getElementById("list-group-item-" + localList[curProgramNum].time);
+    curItem.className = "list-group-item active";
+    audio.src = localList[curProgramNum].url;
+    audio.load();
+    audio.play();
+}
+
+function showObject(obj) {
+    if(!obj){return;}
+    for(var i in obj){
+        if(typeof(obj[i])!="object" || obj[i]==null){
+            document.write(i + " : " + obj[i] + "<br/>");
+        }else{
+            document.write(i + " : object" + "<br/>");
+        }
+    }
+}
+
+</script>
 {% endblock %}

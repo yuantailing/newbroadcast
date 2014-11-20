@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}
+我的收藏
+{% endblock %}
+
+{% block body %}
+<!-- main content -->
+<div class="container">
+	<div class="row">
+		<hr />
+		<iframe src="/manage/favorites/table/" width="100%" scrolling="no" frameborder="0" onload="this.height=this.contentWindow.document.documentElement.scrollHeight">
+		</iframe>
+	</div>
+</div>
+{% endblock %}
+
+{% block script %}
+{% endblock %}

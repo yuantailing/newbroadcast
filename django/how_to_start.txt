@@ -3,13 +3,48 @@ How to install
 [Install] python-2.7.2.amd64.msi
 [Install] setuptools-1.3.win-amd64-py2.7.exe
 [Environment Variable] PATH C:\Python27\;C:\Python27\Scripts
-(C:\Python27\Scripts\)easy_install django
+easy_install django
 cd NewBroadcast
 manage.py syncdb
-manage.py runserver 8001
+manage.py runserver
 
 How to coding
 (http://jingyan.baidu.com/article/ea24bc39a4fed2da62b3318f.html)
+
+----------
+
+产品模式使用MySQL数据库
+
+安装 MySQL-python-1.2.3.win-amd64-py2.7.exe
+安装 mysql-5.6.20-winx64.msi（仅教学用途）
+
+[安装MySQL服务]
+管理员模式启动命令行
+cd C:\Program Files\MySQL\MySQL Server 5.6\bin
+mysqld --install MySQL
+（显示Service successfully installed.）
+net start mysql
+
+[配置数据库]
+mysql -u root
+create database newbroadcast;
+ALTER DATABASE newbroadcast DEFAULT CHARACTER SET utf8 COLLATE utf8_unico
+de_ci;
+
+[使用产品模式]
+更改 django\NewBroadcast\settings.py
+DEBUG = False
+
+[数据库建表]
+django文件夹启动命令行
+manage.py syncdb
+no
+
+[添加测试数据]
+manage.py shell
+复制how_to_makedata.txt的全部内容，粘贴，回车
+
+----------
 
 How to run models test
 manage.py shell

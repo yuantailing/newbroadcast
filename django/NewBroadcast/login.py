@@ -10,7 +10,7 @@ import json
 
 from models import *
 
-
+@power_required([None])
 def login(req):
     res = { }
     try:
@@ -22,7 +22,6 @@ def login(req):
                 res['success'] = True
                 res['info'] = u'登录成功'
                 req.session['uid'] = user.id
-                req.session['user_nickname'] = user.nickname
                 req.session['user_power'] = user.power
             else:
                 res['success'] = False
@@ -35,6 +34,7 @@ def login(req):
         res['info'] = u'未知错误'
     return HttpResponse(json.dumps(res), content_type='application/json')
 
+@power_required([None])
 def test(req):
     res = { }
     try:
@@ -46,10 +46,12 @@ def test(req):
         res['login'] = False
     return HttpResponse(json.dumps(res), content_type='application/json')
 
+@power_required([None])
 def logout(req):
     req.session.clear()
     return HttpResponseRedirect('/')
 
+@power_required([None])
 def exist_judge(req):
     res = { }
     try:
@@ -64,6 +66,7 @@ def exist_judge(req):
         res['exist'] = 'false'
     return HttpResponse(json.dumps(res), content_type='application/json')
 
+@power_required([None])
 def signin(req):
     res = { }
     try:
@@ -72,7 +75,22 @@ def signin(req):
         p_nickname = req.POST.get('nickname', None)
         p_password = req.POST.get('password', None)
         p_password2 = req.POST.get('password2', None)
-        if (not p_password or p_password == p_password2):
+        if '@' not in p_email:
+            res['success'] = False
+            res['info'] = u'邮箱格式错误'
+        elif not p_nickname:
+            res['success'] = False
+            res['info'] = u'昵称不能为空'
+        elif '@' in p_nickname:
+            res['success'] = False
+            res['info'] = u'昵称不能含@符号'
+        elif not p_password:
+            res['success'] = False
+            res['info'] = u'密码不能为空'
+        elif not p_password == p_password2:
+            res['success'] = False
+            res['info'] = u'两次输入的密码不一致'
+        else:
             user.email = p_email
             user.nickname = p_nickname
             user.password = p_password
@@ -85,10 +103,7 @@ def signin(req):
                 req.session['user_power'] = user.power
             except Exception, e:
                 res['success'] = False
-                res['info'] = u'用户名/昵称错误'
-        else:
-            res['success'] = False
-            res['info'] = u'两次输入的密码不一致'
+                res['info'] = u'邮箱名/昵称错误'
     except Exception, e:
         res['success'] = False
         res['info'] = u'未知错误'

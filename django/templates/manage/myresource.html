@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block navigation %}{% endblock %}
+{% block body %}
+<div class="panel panel-default">
+	<div class="panel-heading">
+		<h4>{{ title }}</h4>
+	</div>
+	{% load pagination_tags %}
+	{% autopaginate obj_list 10 %}
+	<table class="panel-body table table-bordered table-striped table-hover">
+		<div>
+		{% paginate %}
+		</div>
+		<thead>
+		<tr>
+		<th>节目名称</th>
+		<th>组别</th>
+		<th>系列</th>
+		<th>人员名单</th>
+		<th>稿件来源</th>
+		<th>机务人员</th>
+		<th>&nbsp;</th>
+		<th>&nbsp;</th>
+		</tr>
+		</thead>
+		{% for pg in obj_list %}
+		<tr>
+		<td><a href="/program/{{ pg.id }}" target="_parent">{{ pg.title }}</a></td>
+		<td><a href="/resource/?gid={{ pg.group.id }}" target="_parent">{{ pg.group.title|default:"" }}</a></td>
+		<td><a href="/resource/?gid={{ pg.series.id }}" target="_parent">{{ pg.series.title|default:"" }}</a></td>
+		<td>{{ pg.recorder|default:"" }}</td>
+		<td>{{ pg.contributor|default:"" }}</td>
+		<td>{{ pg.workers|default:"" }}</td>
+		<td>{% if request.session.user_power in "admin superadmin" %}
+			<a href="/program/modify/{{ pg.id }}" target="_parent">修改</a>
+			{% endif %}
+		</td>
+		<td>{% if request.session.user_power in "admin superadmin" %}
+			<a href="/program/delete/?pid={{ pg.id }}" target="_parent">删除</a>
+			{% endif %}
+		</td>
+		</tr>
+		{% endfor %}
+	</table>
+</div>
+{% endblock %}

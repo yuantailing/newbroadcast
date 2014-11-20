@@ -1,5 +1,5 @@
 <!-- navbar -->
-<nav class="navbar navbar-default" role="navigation">
+<nav class="navbar navbar-default" role="navigation" id="navigation-navbar">
 	<div class="navbar-header">
 		<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-collapse-01">
 			<span class="sr-only">Toggle navigation</span>
@@ -7,15 +7,11 @@
 		<a class="navbar-brand" href="/">清华大学广播站</a>
 	</div>
 	<div class="collapse navbar-collapse" id="navbar-collapse-01">
-		<ul class="nav navbar-nav">
-			<li><a href="/index/">首页</a></li>
-			<li><a href="/resource/">资源</a></li>
-		</ul>
-		<form class="navbar-form navbar-right" action="/resource/" method="get" role="search">
+		<form class="navbar-form navbar-right" action="/resource/" method="get" role="search" target="_blank">
 			{% if request.session.uid %}
 			<div class="form-group" id="user-info">
-				<a href="/space/"><button type="button" class="btn btn-primary">个人中心</button></a>
-				<a href="/login/logout/"><button type="button" class="btn btn-primary">注销</button></a>
+				<a href="/space/" target="_blank"><button type="button" class="btn btn-primary">个人中心</button></a>
+				<a href="/login/logout/" target="_blank"><button type="button" class="btn btn-primary">注销</button></a>
 			</div>
 			{% else %}
 			<div class="form-group" id="user-info">
@@ -27,23 +23,10 @@
 				<div class="input-group">
 					<input class="form-control" id="navbarInput-01" name="keyword" type="search" placeholder="Search">
 					<span class="input-group-btn">
-						<button type="submit" onclick="return jiexi(this)" class="btn" style="margin-left:0px;"><span class="fui-search"></span></button>
+						<button type="submit" class="btn" style="margin-left:0px;"><span class="fui-search"></span></button>
 					</span>
 				</div>
 			</div>
 		</form>
 	</div><!-- /.navbar-collapse -->
 </nav>
-
-<script>
-	function jiexi(x) {
-		var t=document.getElementById("navbarInput-01").value;
-		document.getElementById("navbarInput-01").value=escape(t);
-//		self.location="/resource/?keyword=" + escape(t);
-	}
-</script>
-
-{% if not request.session.uid %}
-{% include "login/loginmodal.html" %}
-{% include "login/signinmodal.html" %}
-{% endif %}

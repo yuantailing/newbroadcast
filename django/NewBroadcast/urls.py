@@ -6,7 +6,7 @@ from NewBroadcast import resource
 from NewBroadcast import program
 from NewBroadcast import login
 from NewBroadcast import api
-from NewBroadcast import manager
+from NewBroadcast import manage
 from NewBroadcast import mgrdebug
 
 
@@ -24,28 +24,35 @@ urlpatterns = patterns('',
     url(r'^ajaxtest/getresult/$', ajaxtest.getresult),
     url(r'^ajaxtest/htmltest/$', ajaxtest.htmltest),
     url(r'^ajaxtest/htmlresponse/$', ajaxtest.htmlresponse),
+    url(r'^ajaxtest/listprogram/$', ajaxtest.list_program),
                        
 
     url(r'^index/$', frontpage.show_index),
     url(r'^index/waterflow$', frontpage.waterflow_data),
-    url(r'^index/click$', frontpage.click),
 
     url(r'^resource/$', resource.show),
+    url(r'^resource/sort/$', resource.sort),
+    url(r'^resource/filter/$', resource.filter),
     url(r'^resource/listall/$', resource.list_all),
-    url(r'^resource/groupfilter/([0-9]*)$', resource.group_filter),
+    url(r'^resource/groupfilter/([0-9]+)$', resource.group_filter),
     url(r'^resource/getarr/$', resource.get_arr),
     url(r'^resource/getarr_test/$', resource.getarr_test),
-    url(r'^resource/result/$', resource.result),
 
-    url(r'^program/([0-9]*)$', program.show_program),
+    url(r'^program/([0-9]+)$', program.show_program),
     url(r'^program/play/(.*)$', program.play_program),
+    url(r'^program/praise/$', program.praise),
+    url(r'^program/unpraise/$', program.un_praise),
+    url(r'^program/favorite/$', program.favorite),
+    url(r'^program/unfavorite/$', program.un_favorite),
+    url(r'^program/comment/add/', program.add_comment),
+    url(r'^program/comment/del/', program.del_comment),
+    url(r'^program/upload/ajaxupload/$', program.ajax_upload),
     url(r'^program/upload/$', program.show_upload),
-    url(r'^program/upload/dealupload/$', program.upload_program),
-    url(r'^program/modify/([0-9]*)$', program.show_modify),
-    url(r'^program/modify/modifyword/([0-9]*)/$', program.modify_word),
-    url(r'^program/modify/modifyaudio/([0-9]*)/$', program.modify_audio),
-    url(r'^program/modify/modifypic/([0-9]*)/$', program.modify_pic),
-    url(r'^program/delete/([0-9]*)$', program.delete_program),
+    url(r'^program/modify/([0-9]+)$', program.show_modify),
+    url(r'^program/modify_program/([0-9]+)/$', program.modify_program),
+    url(r'^program/modify/delpic/$', program.del_pic),
+    url(r'^program/modify/deldoc/$', program.del_doc),
+    url(r'^program/delete/$', program.delete_program),
 
     url(r'^login/do/$', login.login),
     url(r'^login/test/$', login.test),
@@ -60,10 +67,20 @@ urlpatterns = patterns('',
     url(r'^api_source/$', api.api_source),
     url(r'^api_comment/$', api.api_comment),
 
-    url(r'^space/$', manager.show_space),
-    url(r'^mgrres/$', manager.show_mgrres),
-    url(r'^mgruser/$', manager.show_mgruser),
-                       
+    url(r'^space/$', manage.show_space),
+    url(r'^manage/favorites/$', manage.show_favorites),
+    url(r'^manage/favorites/table/$', manage.show_favorites_table),
+    url(r'^manage/resource/$', manage.show_mgrres),
+    url(r'^manage/myresource/$', manage.show_mgrmyres),
+    url(r'^manage/allresources/$', manage.show_mgrallres),
+    url(r'^manage/user/$', manage.show_mgruser),
+    url(r'^manage/changepassword/$', manage.change_password),
+    url(r'^manage/changeinfo/$', manage.change_info),
+    url(r'^manage/changepower/$', manage.change_power),
+    url(r'^manage/groupseries/$', manage.groupseries),
+    url(r'^manage/groupseries/group/$', manage.program_group),
+    url(r'^manage/groupseries/series/$', manage.program_series),
+
     url(r'^mgrdebug/changepower/(.*)$', mgrdebug.change_power),
 
 )

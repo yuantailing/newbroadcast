@@ -4,9 +4,12 @@
 个人中心
 {% endblock %}
 
+{% block header %}
+<link href="/static/css/birthday-picker.css" rel="stylesheet" />
+{% endblock %}
+
 {% block body %}
 <!-- main content -->
-{% if request.session.uid %}
 <div class="container bs-docs-container">
 	<div class="row">
 		<div class="col-md-3">
@@ -20,9 +23,10 @@
                 			<li><a href="#space-change-info">修改资料</a></li>
                 		</ul>
                 	</li>
-                	
-                	{% ifequal request.session.user_power 'user'%}
-                	{% else %}
+                	<li>
+                		<a href="#space-favorites-manager">我的收藏</a>
+                	</li>
+                	{% if user.power == 'worker' or user.power == 'admin' or user.power == 'superadmin' %}
                 	<li>
                 		<a href="#space-upload-manager">上传资源管理</a>
                 		<ul class="nav">
@@ -30,13 +34,15 @@
                 			<li><a href="#space-upload">上传资源</a></li>
                 		</ul>
                 	</li>
-                	{% ifequal request.session.user_power 'worker' %}
-                	{% else %}
+					{% endif %}
+                	{% if user.power == 'superadmin' %}
+					<li>
+						<a href="#space-groupseries-manager">组别/系列管理</a>
+					</li>
 					<li>
 						<a href="#space-member-manager">站内成员管理</a>
 					</li>
-					{% endifequal %}
-					{% endifequal%}
+					{% endif%}
 					
                 </ul>
             </div>
@@ -66,7 +72,8 @@
 						<tr><td>昵称</td><td>{{ user.nickname }}</td></tr>
 						<tr><td>邮箱</td><td>{{ user.email }}</td></tr>
 						<tr><td>权限</td><td>{{ power }}</td></tr>
-						{% if user.phone_number %}<tr><td>联系方式</td><td>{{ user.phone_number }}</td></tr>{% endif %}
+						{% if user.phone_number %}<tr><td>联系电话</td><td>{{ user.phone_number }}</td></tr>{% endif %}
+						{% if user.birthday %}<tr><td>生日</td><td>{{ user.birthday|date:"Y-m-d" }}</td></tr>{% endif %}
 					</table>
 					<div class="panel-footer" id="space-change-info">
 						<button class="btn btn-primary" data-toggle="modal" data-target="#change-info">修改资料</button>
@@ -74,8 +81,35 @@
 					</div>
 				</div>
 			</div>
-			{% ifequal request.session.user_power 'user' %}
-			{% else %}
+			<!-- favorites manager -->
+			<div class="bs-docs-section" id="space-favorites-manager">
+				<hr />
+				<div class="panel panel-default" id="space-favorites-list">
+					<div class="panel-heading">
+						<h4>我的收藏</h4>
+					</div>
+					<table class="panel-body table table-bordered table-hover">
+						<tr>
+							<th>标题</th>
+							<th>组别</th>
+							<th>系列</th>
+							<th>上传时间</th>
+							<th>&nbsp;</th>
+						</tr>
+                    {% for up in favs %}
+						<tr>
+							<td><a href="/program/{{ up.id }}">{{ up.title }}</a></td>
+							<td><a href="/resource/?gid={{ up.group.id }}">{{ up.group.title }}</a></td>
+							<td><a href="/resource/?sid={{ up.series.id }}">{{ up.series.title }}</a></td>
+							<td>{{ up.create_time|date:"Y-m-d" }}</td>
+							<td><a href="#" onclick="unfavorite({{ up.id }})">取消收藏</a></td>
+						</tr>
+					{% endfor %}
+						<tr><td><a href="/manage/favorites/">更多...</a></td></tr>
+					</table>
+				</div>
+			</div>
+			{% if user.power == 'worker' or user.power == 'admin' or user.power == 'superadmin'%}
 			<!-- upload manager -->
 			<div class="bs-docs-section" id="space-upload-manager">
 				<hr />
@@ -84,20 +118,47 @@
 						<h4>最近上传</h4>
 					</div>
 					<table class="panel-body table table-bordered table-hover">
-						<tr><td>节目1</td><td>Nick Name</td></tr>
-						<tr><td>节目2</td><td>example@example.com</td></tr>
-						<tr><td>节目3</td><td>1</td></tr>
-						<tr><td>节目4</td><td>台员</td></tr>
-						<tr><td>节目5</td><td>+8687654321</td></tr>
-						<tr><td><a href="/mgrres">更多...</a></td></tr>
+						<tr>
+							<th>标题</th>
+							<th>组别</th>
+							<th>系列</th>
+							<th>上传时间</th>
+							<th>&nbsp;</th>
+							<th>&nbsp;</th>
+						</tr>
+                    {% for up in ups %}
+						<tr>
+							<td><a href="/program/{{ up.id }}">{{ up.title }}</a></td>
+							<td><a href="/resource/?gid={{ up.group.id }}">{{ up.group.title }}</a></td>
+							<td><a href="/resource/?sid={{ up.series.id }}">{{ up.series.title }}</a></td>
+							<td>{{ up.create_time|date:"Y-m-d" }}</td>
+							<td><a href="/program/modify/{{ up.id }}">修改</a></td>
+							<td><a href="/program/delete/?pid={{ up.id }}">删除</a></td><!-- Todo：以GET或POST发送到这个URI，返回json.success为true或false，然后刷新页面 -->
+						</tr>
+					{% endfor %}
+						<tr><td><a href="/manage/resource/">更多...</a></td></tr>
 					</table>
 					<div class="panel-footer" id="space-upload">
 						<a href="/program/upload/"><button class="btn btn-primary">上传节目</button></a>
 					</div>
 				</div>
 			</div>
-			{% ifequal request.session.user_power 'worker' %}
-            {% else %}
+			{% endif %}
+			{% if user.power == 'superadmin' %}
+			<!-- program group & series manage -->
+			<div class="bs-docs-section" id="space-groupseries-manager">
+				<hr />
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h4>节目组别/系列管理</h4>
+					</div>
+					<div class="panel-footer">
+						<a href="/manage/groupseries/?view=group"><button class="btn btn-primary">管理组别</button></a>
+						<a href="/manage/groupseries/?view=series"><button class="btn btn-primary">管理系列</button></a>
+					</div>
+				</div>
+			</div>
+			
 			<!-- member manager -->
 			<div class="bs-docs-section" id="space-member-manager">
 				<hr />
@@ -106,12 +167,11 @@
 						<h4>成员管理</h4>
 					</div>
 					<div class="panel-body">
-						<a href="/mgruser">全部成员</a>
+						<a href="/manage/user/">全部成员</a>
 					</div>
 				</div>
 			</div>
-			{% endifequal %}
-			{% endifequal %}
+			{% endif %}
 		</div>
 	</div>
 </div>
@@ -126,6 +186,8 @@
             <h4 class="modal-title">
                修改资料
             </h4>
+            <div id="change-info-status">
+            </div>
          </div>
          <div class="modal-body">
             <form class="form-horizontal" role="form">
@@ -133,31 +195,38 @@
 				<div class="form-group">
 					<label for="change-nickname" class="col-sm-offset-1 col-sm-2 control-label">昵称</label>
 					<div class="col-sm-6">
-						<input type="text" class="form-control" id="change-nickname" placeholder="请输入新的昵称">
+						<input type="text" class="form-control" id="change-nickname" placeholder="请输入新的昵称" value="{{ user.nickname}}">
 					</div>
 				</div>
+				<fieldset disabled="true">
 				<div class="form-group">
-					<label for="change-email" class="col-sm-offset-1 col-sm-2 control-label">邮箱</label>
+					<label for="change-email" class="col-sm-offset-1 col-sm-2 control-label" style="color:#bbb;">邮箱</label>
+                    <div class="col-sm-6">
+						<input type="text" class="form-control" id="change-email" placeholder="请输入新的邮箱" value="{{ user.email }}">
+					</div>
+				</div>
+                </fieldset>
+                <div class="form-group">
+					<label for="change-phone" class="col-sm-offset-1 col-sm-2 control-label">联系电话</label>
 					<div class="col-sm-6">
-						<input type="text" class="form-control" id="change-email" placeholder="请输入新的邮箱">
+						<input type="text" class="form-control" id="change-phone" placeholder="请输入新的联系电话"{% if user.phone_number %} value="{{ user.phone_number }}{% endif %}">
 					</div>
 				</div>
 				<div class="form-group">
 					<label for="change-birthday" class="col-sm-offset-1 col-sm-2 control-label">生日</label>
 					<div class="col-sm-6">
-						<input type="text" class="form-control" id="change-birthday" placeholder="请输入新的生日">
+						<input type="text" class="form-control" id="change-birthday" placeholder="请输入新的生日" value="{{ user.birthday|date:"Y-m-d" }}" data-date-format="yyyy-mm-dd">
 					</div>
 				</div>
 				<div class="form-group">
-					<label for="change-phone" class="col-sm-offset-1 col-sm-2 control-label">联系电话</label>
-					<div class="col-sm-6">
-						<input type="text" class="form-control" id="change-phone" placeholder="请输入新的联系电话">
+					<label for="change-birthday" class="col-sm-offset-1 col-sm-2 control-label"></label>
+					<div class="col-sm-6" id="birthday-picker">
 					</div>
 				</div>
 			</form>
          </div>
          <div class="modal-footer">
-            <button type="button" class="btn btn-primary">
+            <button type="button" class="btn btn-primary" id="change-info-button">
               	提交
             </button>
             <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
@@ -177,32 +246,32 @@
             <h4 class="modal-title">
                修改密码
             </h4>
+            <div id="change-password-status"></div>
          </div>
          <div class="modal-body">
             <form class="form-horizontal" role="form">
-                {% csrf_token %}
 				<div class="form-group">
 					<label for="old-password" class="col-sm-offset-1 col-sm-2 control-label">旧密码</label>
 					<div class="col-sm-6">
-						<input type="text" class="form-control" id="old-password" placeholder="请输入旧密码">
+						<input type="password" class="form-control" id="old-password" placeholder="请输入旧密码">
 					</div>
 				</div>
 				<div class="form-group">
 					<label for="new-password" class="col-sm-offset-1 col-sm-2 control-label">新密码</label>
 					<div class="col-sm-6">
-						<input type="password" class="form-control" id="new-passwowrd" placeholder="请输入新的密码">
+						<input type="password" class="form-control" id="new-password" placeholder="请输入新的密码">
 					</div>
 				</div>
 				<div class="form-group">
 					<label for="check-new-password" class="col-sm-offset-1 col-sm-2 control-label">确认密码</label>
 					<div class="col-sm-6">
-						<input type="password" class="form-control" id="check-new-passwowrd" placeholder="请再次输入新的密码">
+						<input type="password" class="form-control" id="check-new-password" placeholder="请再次输入新的密码">
 					</div>
 				</div>
 			</form>
          </div>
          <div class="modal-footer">
-            <button type="button" class="btn btn-primary">
+            <button type="button" class="btn btn-primary" id="change-password-button">
               	提交
             </button>
             <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
@@ -210,8 +279,7 @@
       </div><!-- /.modal-content -->
     </div>
 </div><!-- /.modal -->
-{% ifequal request.session.user_power 'user' %}
-{% else %}
+
 <div class="modal fade" id="space-fast-upload" tabindex="-1" role="dialog" aria-labelledby="space-fast-upload-label" aria-hidden="true">
    <div class="modal-dialog">
       <div class="modal-content">
@@ -225,7 +293,6 @@
          </div>
          <div class="modal-body">
             <form class="form-horizontal" role="form">
-                {% csrf_token %}
 				<div class="form-group">
 					<label for="fast-upload-name" class="col-sm-offset-1 col-sm-2 control-label">节目名称</label>
 					<div class="col-sm-6">
@@ -249,22 +316,64 @@
       </div><!-- /.modal-content -->
     </div>
 </div><!-- /.modal -->
-{% endifequal %}
-{% else %}
-{% include "error/forbid-not-user.html"%}
-{% endif %}
 {% endblock %}
 
 {% block script %}
+<script src="/static/js/birthday-picker.js"></script>
 <script>
-{% if request.session.uid %}
-$(document).ready(function() {
-	
-
-
-
+function unfavorite(pid) {
+	$.ajax({
+		url:'/program/unfavorite/',
+		type:"POST",
+		data:{pid:pid},
+		dataType:"json"
+	}).done(function(msg){
+		if (msg.success) {
+			location.reload();
+		}
+	}).fail(function(jqXHR,textStatus){
+		alert('与服务器连接中断');
+	});
+}
+$(document).ready(function(){
+    $('#change-password-button').click(function(){
+        $.ajax({
+            url:'/manage/changepassword/',
+            type:"POST",
+            data:{old_password:$("#old-password").val(), new_password:$("#new-password").val(), check_password:$("#check-new-password").val()},
+            dataType:"json"
+        }).done(function(msg){
+        	if (msg.success) { 
+        		$('#change-password-status').text(msg.info).show();
+        		$('#old-password').val("");
+        		$('#new-password').val("");
+        		$('#check-new-password').val("");
+        	} else { 
+        		$('#change-password-status').text(msg.info).show();
+        	}
+        }).fail(function(jqXHR,textStatus){   	
+            $('#change-password-status').html('与服务器连接中断');
+        });
+    });
 });
-{% endif %}
+$(document).ready(function(){
+    $('#change-info-button').click(function(){
+        $.ajax({
+            url:'/manage/changeinfo/',
+            type:"POST",
+            data:{nickname:$("#change-nickname").val(), birth:$("#change-birthday").val(), phone:$("#change-phone").val()},
+            dataType:"json"
+        }).done(function(msg){
+            $('#change-info-status').text(msg.info).show();
+            if (msg.success) location.reload();
+        }).fail(function(jqXHR,textStatus){
+            $('#change-info-status').html('与服务器连接中断');
+        });
+    });
+});
+$(document).ready(function() { 
+	$('#change-birthday').datepicker()
+});
 </script>
 
 {% endblock %}

@@ -21,21 +21,8 @@
             box.appendChild(info);
             var pic = document.createElement('a');
             pic.className = 'pic';
-            pic.setAttribute("href", "javascript:;");
+            pic.setAttribute("href", "/program/" + data[i].id);
             pic.id = data[i].id;
-            pic.onclick = function() {
-                p_id = this.id;
-                console.log(p_id);
-                $.ajax({
-                    url:'/index/click',
-                    type:"POST",
-                    data:{click:1, id:p_id},
-                }).done(function(result){
-                    window.location.href = "/program/" + p_id;
-                }).fail(function(jqXHR,textStatus){
-                    console.log('request failed '+ textStatus);
-                });
-            }
             info.appendChild(pic);
             var img = document.createElement('img');
             img.src = data[i].src;
@@ -43,18 +30,23 @@
             pic.appendChild(img);
             var title = document.createElement('div');
             title.className = 'title';
-            info.appendChild(title);
+            pic.appendChild(title);
             var a = document.createElement('div');
             a.innerHTML = data[i].title;
             var p = document.createElement('p');
-            p.innerHTML = data[i].content;
+            if (data[i].content.length > 100) { 
+            	p.innerHTML = data[i].content.substring(0, 100) + "...";
+            } else { 
+            	p.innerHTML = data[i].content;
+            }
+            
             p.style.display = 'none';
             a.appendChild(p);
-            a.onmouseover = function () {
+            info.onmouseover = function () {
                 p = this.getElementsByTagName('p');
                 p[0].style.display = 'block';
             }
-            a.onmouseout = function () {
+            info.onmouseout = function () {
                 p = this.getElementsByTagName('p');
                 p[0].style.display = 'none';
             }
@@ -98,21 +90,8 @@
                     box.appendChild(info);
                     var pic = document.createElement('a');
                     pic.className = 'pic';
-                    pic.setAttribute("href", "javascript:;");
+                    pic.setAttribute("href", "/program/" + data[i].id);
                     pic.id = data[i].id;
-                    pic.onclick = function() {
-                        p_id = this.id;
-                        console.log(p_id);
-                        $.ajax({
-                            url:'/index/click',
-                            type:"POST",
-                            data:{click:1, id:p_id},
-                        }).done(function(result){
-                            window.location.href = "/program/" + p_id;
-                        }).fail(function(jqXHR,textStatus){
-                            console.log('request failed '+ textStatus);
-                        });
-                    }
                     info.appendChild(pic);
                     var img = document.createElement('img');
                     img.src = data[i].src;
@@ -120,18 +99,18 @@
                     pic.appendChild(img);
                     var title = document.createElement('div');
                     title.className = 'title';
-                    info.appendChild(title);
+                    pic.appendChild(title);
                     var a = document.createElement('div');
                     a.innerHTML = data[i].title;
                     var p = document.createElement('p');
                     p.innerHTML = data[i].content;
                     p.style.display = 'none';
                     a.appendChild(p);
-                    a.onmouseover = function () {
+                    info.onmouseover = function () {
                         p = this.getElementsByTagName('p');
                         p[0].style.display = 'block';
                     }
-                    a.onmouseout = function () {
+                    info.onmouseout = function () {
                         p = this.getElementsByTagName('p');
                         p[0].style.display = 'none';
                     }
