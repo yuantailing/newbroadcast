@@ -14,7 +14,7 @@
         <label for="group" class="col-sm-offset-1 col-sm-2 control-label">节目组别</label>
         <div class="col-sm-6">
             <select id="program-group" name="group" class="form-control">
-                <option value="" selected="selected">---------</option>
+                <option value="0" selected="selected">---------</option>
                 {% for item in group_all %}
                 <option value="{{ item.id }}">{{ item.title }}</option>
                 {% endfor %}
@@ -25,7 +25,7 @@
         <label for="series" class="col-sm-offset-1 col-sm-2 control-label">节目系列</label>
         <div class="col-sm-6">
             <select name="series" class="form-control">
-                <option value="" selected="selected">---------</option>
+                <option value="0" selected="selected">---------</option>
                 {% for item in series_all %}
                 <option value="{{ item.id }}">{{ item.title }}</option>
                 {% endfor %}
@@ -104,13 +104,9 @@
 {% block script %}
 <script type="text/javascript" src="/static/js/jquery.js"></script>
 <script type="text/javascript" src="/static/js/jquery-migrate.js"></script>
-<script type="text/javascript" src="/static/js/jquery.form.js"></script>
+<script type="text/javascript" src="/static/js/jquery.form.min.js"></script>
 <script>
 $('#upload-ajax-button').click(function saveReport() {
-    if ($('#program-group').val() == ""){
-        alert("请选择节目系列");
-        return;
-    }
 	var options = {
 		url: '/program/upload/ajaxupload/',
 		dataType: 'json',
@@ -119,7 +115,7 @@ $('#upload-ajax-button').click(function saveReport() {
                 alert("上传成功！");
 				location.reload();
             }else
-				alert("上传失败，请检查输入");
+				alert(data.info);
 		}
 	};
 	$("#upload-form").ajaxSubmit(options);
