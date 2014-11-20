@@ -11,7 +11,7 @@
         <label for="group" class="col-sm-offset-1 col-sm-2 control-label">节目组别</label>
         <div class="col-sm-6">
             <select id="program-group" name="group" class="form-control">
-                <option value="" {% if group == 0 %}selected="selected"{%endif%}>---------</option>
+                <option value="0" {% if group == 0 %}selected="selected"{%endif%}>---------</option>
                 {% for item in groups %}
                 <option value="{{item.id}}" {% if group == item.id %}selected="selected"{%endif%}>{{ item.title }}</option>
                 {% endfor %}
@@ -22,7 +22,7 @@
         <label for="series" class="col-sm-offset-1 col-sm-2 control-label">节目系列</label>
         <div class="col-sm-6">
             <select name="series" class="form-control">
-                <option value="" {% if series == 0 %}selected="selected"{%endif%}>---------</option>
+                <option value="0" {% if series == 0 %}selected="selected"{%endif%}>---------</option>
                 {% for item in series_all %}
                 <option value="{{item.id}}" {% if series == item.id %}selected="selected"{%endif%}>{{ item.title }}</option>
                 {% endfor %}
@@ -112,10 +112,6 @@
 <script type="text/javascript" src="/static/js/jquery.form.min.js"></script>
 <script>
 $('#modify-button').click(function modifyReport() {
-    if ($('#program-group').val() == ""){
-        alert("请选择节目系列");
-        return;
-    }
 	var options = {
 		url: '/program/modify_program/{{pgid}}/',
 		dataType: 'json',
@@ -124,7 +120,7 @@ $('#modify-button').click(function modifyReport() {
                 alert("修改成功！");
 				location.reload();
             }else
-				alert("修改失败，请检查输入");
+				alert(data.info);
 		}
 	};
 	$("#modify-form").ajaxSubmit(options);
