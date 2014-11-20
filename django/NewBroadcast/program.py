@@ -175,9 +175,6 @@ def ajax_upload(req):
     try:
         prg = Program()
         
-
-        print Program.objects.get(id = 1000)
-
         tgroup = req.POST.get('group', None)
         tseries = req.POST.get('series', None)
         ttitle = req.POST.get('title', None)
