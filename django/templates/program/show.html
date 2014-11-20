@@ -13,7 +13,7 @@
 	      <div class="row">
 	        <div style="float:right">
 		        {% if medialink %}
-		        <a class="btn btn-primary" href="/program/play/{{ pgid }}" target="_blank" role="button"><span class="glyphicon glyphicon-play"></span>播放</a>
+		        <a class="btn btn-primary" href="javascript:;" onclick="play" role="button"><span class="glyphicon glyphicon-play"></span>播放</a>
 				{% if logined %}
 		        <a class="btn btn-primary" href="{{ medialink }}" target="_blank" role="button"><span class="glyphicon glyphicon-save"></span>下载</a>
 				{% else %}
@@ -233,6 +233,9 @@ $(document).ready(function() {
         }
     }
 });
+function play() {
+    str = "/program/play/{{ pgid }}";
+}
 function nextPic(x) {
     imgdis=imgdis+1;
     var y=document.getElementById("img-div");

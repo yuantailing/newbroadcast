@@ -128,7 +128,13 @@ var audio_slider_hold = false;
 var audio_random = false;
 
 $(window).load(function() { 
-	audio = document.getElementById('audio');
+	if(window.addEventListener){
+        window.addEventListener("storage",handle_storage,false);
+    }else if(window.attachEvent){
+        window.attachEvent("onstorage",handle_storage);
+    }
+    
+    audio = document.getElementById('audio');
 	player_play = $('#player-play');
 	player_stop = $('#player-stop');
 	player_repeat = $('#player-repeat');
@@ -261,5 +267,22 @@ function update() {
 
 	volume_slider.attr('title', "音量：" + volume_slider.slider("value"));
 }
+
+function handle_storage(e) {
+    if(!e){e=window.event;}
+    //showStorage();
+}
+
+function showObject(obj) {
+    if(!obj){return;}
+    for(var i in obj){
+        if(typeof(obj[i])!="object" || obj[i]==null){
+            document.write(i + " : " + obj[i] + "<br/>");
+        }else{
+            document.write(i + " : object" + "<br/>");
+        }
+    }
+}
+
 </script>
 {% endblock %}

@@ -5,6 +5,7 @@ from django import template
 from django.template.loader import get_template
 from django.db import models
 from django.core import serializers
+from django.db.models import Q
 import json
 
 from models import *
@@ -12,10 +13,10 @@ from models import *
 @power_required([None])
 def show(req):
     groups = []
-    for gp in ProgramGroup.objects.order_by("order"):
+    for gp in ProgramGroup.objects.filter(order__gte=0).order_by("order"):
         groups.append({'id':gp.id, 'title':gp.title})
     series = []
-    for gs in ProgramSeries.objects.order_by("order"):
+    for gs in ProgramSeries.objects.filter(order__gte=0).order_by("order"):
         series.append({'id':gs.id, 'title':gs.title})
     liwidth = 99 / len(groups)
     try:
@@ -92,16 +93,6 @@ def get_arr(req):
 def getarr_test(req):
     return render_to_response("resource/getarr_test.html",
                               context_instance=RequestContext(req));
-
-@power_required([None])
-def result(req):
-    wd = req.POST.get('wd', None)
-    res = []
-    for pg in Program.objects.order_by('-weight'):
-        res.append(pg.id)
-    return render_to_response("resource/result.html",
-                              {'pid':json.dumps(res)},
-                              context_instance=RequestContext(req));
                               
 @power_required([None])
 def sort(req):
@@ -175,5 +166,3 @@ def filter(req):
         srres.append(tmp);
     return HttpResponse(json.dumps({'pid':pgids, 'srs':srres}),
                         content_type='application/json')
-
-
