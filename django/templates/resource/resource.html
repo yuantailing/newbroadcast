@@ -1,9 +1,8 @@
 {% extends "base.html" %}
 {% block body %}
     <!-- /.container -->
-	  <div id="listall_show"></div>
-  <div id="getarr_show"></div>
 	<div style="height:100%; width:100%" class="container">
+		<input type="hidden" name="logined" id="logined" value="{{ logined }}" />
 
 		<div style="height:10px"></div>
 		<div class="row" style="height:80%; width:80%; margin:auto">
@@ -84,25 +83,31 @@
 	var srs = new Array();
 		$(document).ready(function(){
 			var keyword="";
-			var gid="";
-			var sid="";
+			var gid="-";
+			var sid="-";
 			var url=document.location.href;
+/*			var test1="清韵烛光";
+			alert(test1);
+			test1=escape(test1);
+			alert(test1);
+			test1=unescape(test1);
+			alert(test1);
+*/
 			if (url.indexOf("?")!=-1) {
 				var arrStr=url.substring(url.indexOf("?")+1).split("&");
-				alert(arrStr);
 				for (var i=0; i<arrStr.length; i++) {
 					if (arrStr[i].indexOf("keyword=")!=-1)
 						keyword=arrStr[i].replace("keyword=", "");
 					if (arrStr[i].indexOf("gid=")!=-1)
 						gid=arrStr[i].replace("gid=", "");
 					if (arrStr[i].indexOf("sid=")!=-1)
-						sid=arrStr[i].replace("sid", "");
+						sid=arrStr[i].replace("sid=", "");
 				}
 			}
 			$.ajax({
 			  url:'/resource/filter/',
 			  type:"GET",
-			  data:{'groupid':"-", 'seriesid':"-"},
+			  data:{'groupid':gid, 'seriesid':sid, 'keyword':unescape(unescape(keyword))},
 				dataType:"json"
 			}).done(function(msg){
 				pids = msg.pid;
@@ -207,14 +212,36 @@
 					var td=document.createElement("td");
 					tr.appendChild(td);
 					var tddiv=document.createElement("div")
-					tddiv.setAttribute("class", "btn-group");
 					td.appendChild(tddiv);
 					var playbutton=document.createElement("a");
 					playbutton.setAttribute("class", "btn btn-primary");
 					playbutton.setAttribute("target", "_blank");
 					playbutton.setAttribute("href", "/program/play/"+pids[i+index]);
-					playbutton.innerHTML="播放";
 					tddiv.appendChild(playbutton);
+					var playspan=document.createElement("span");
+					playspan.setAttribute("class", "glyphicon glyphicon-play");
+					playbutton.appendChild(playspan);
+					var zanbutton=document.createElement("a");
+					zanbutton.setAttribute("role", "button");
+					zanbutton.setAttribute("onclick", "zan(this)");
+					if ($("#logined").val()=="True") {
+						zanbutton.setAttribute("class", "btn btn-primary");
+						zanbutton.setAttribute("title", "点赞")
+						if (msg.program[i].have_praised) {
+							zanbutton.setAttribute("style", "color:red");
+							zanbutton.setAttribute("praised", "true");
+						} else {
+							zanbutton.setAttribute("praised", "false");
+						}
+					} else {
+						zanbutton.setAttribute("class", "btn btn-primary disabled");
+						zanbutton.setAttribute("title", "登陆后可以点赞")
+					}
+					tddiv.appendChild(zanbutton);
+					var zanspan=document.createElement("span");
+					zanspan.setAttribute("class", "glyphicon glyphicon-thumbs-up");
+					zanspan.innerHTML=msg.program[i].praise_count;
+					zanbutton.appendChild(zanspan);
 				}
 			}).fail(function(jqXHR,textStatus){
 			  $('#getarr_show').html('request failed '+ textStatus);
@@ -409,7 +436,36 @@
 			}).fail(function(jqXHR, textStatus) {
 			});
 		}
-		function filter(x) {
+		function zan(x) {
+			if ($(x).attr("praised") == "true") {
+				$.ajax({
+					url:'/program/unpraise/',
+					type:"POST",
+					data:{'pid':$(x).parent().parent().parent().attr("value")},
+					dataType:"json"
+				}).done(function(msg) {
+					if (msg.success) {
+						$(x).css("color", "#fff");
+						$(x).attr("praised", "false");
+						$(x).children().html(msg.count);
+					}
+				}).fail(function(jqXHR, textStatus) {
+				});
+			} else {
+				$.ajax({
+					url:'/program/praise/',
+					type:"POST",
+					data:{'pid':$(x).parent().parent().parent().attr("value")},
+					dataType:"json"
+				}).done(function(msg) {
+					if (msg.success) {
+						$(x).css("color", "#f00");
+						$(x).attr("praised", "true");
+						$(x).children().html(msg.count);
+					}
+				}).fail(function(jqXHR, textStatus) {
+				});
+			}
 		}
 	</script>
 

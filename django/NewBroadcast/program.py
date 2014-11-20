@@ -78,13 +78,7 @@ def show_program(req, arg):
 
 @power_required([None])
 def play_program(req, arg):
-    pgid = int(arg)
-    pg = Program.objects.get(id=pgid)
-    medialink = ""
-    if pg.audio:
-        medialink = Source.objects.get(id=pg.audio).document.url
     return render_to_response("program/player.html",
-                              {'medialink':medialink},
                               context_instance=RequestContext(req));
 
 def add_user_program_only_item(OnlyClassName, req):

@@ -13,10 +13,10 @@ from models import *
 @power_required([None])
 def show(req):
     groups = []
-    for gp in ProgramGroup.objects.filter(order__gte=0).order_by("order"):
+    for gp in ProgramGroup.objects.filter(order__gte=0).order_by("-order"):
         groups.append({'id':gp.id, 'title':gp.title})
     series = []
-    for gs in ProgramSeries.objects.filter(order__gte=0).order_by("order"):
+    for gs in ProgramSeries.objects.filter(order__gte=0).order_by("-order"):
         series.append({'id':gs.id, 'title':gs.title})
     liwidth = 99 / len(groups)
     try:
