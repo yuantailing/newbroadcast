@@ -3,6 +3,13 @@ import unittest
 import random
 from models import *
 
+
+class MakeDataTest(unittest.TestCase):
+    def test_makedata(self):
+        User(email='admin', nickname='admin', password='admin',
+             power='superadmin').save()
+
+
 class ModelsTest(unittest.TestCase):
     def test_user_normal_use(self):
         s = str(random.random())
@@ -10,7 +17,7 @@ class ModelsTest(unittest.TestCase):
         user.email = s
         user.nickname = s
         user.password = '123456'
-        user.save
+        user.save()
     def test_user_just_empty(self):
         s = str(random.random())
         user = User()
@@ -63,11 +70,28 @@ class ModelsTest(unittest.TestCase):
         pg.title = 'A'
         pg.save()
 
-def run_test():
-    suite_models = unittest.TestLoader().loadTestsFromTestCase(ModelsTest)
-    suite = unittest.TestSuite([suite_models])
-    unittest.TextTestRunner().run(suite)
 
-if __name__ =='__main__':
-    print 'You must run test in manage.py shell'
-    run_test()
+import login
+import manage
+from django.test.client import Client
+
+
+class ManageTest(unittest.TestCase):
+    def __init__(self, *args, **kwargs):
+        super(ManageTest, self).__init__(*args, **kwargs)
+    def test_login(self):
+        global cl
+        cl = Client()
+        cl.post('/login/do/', {'email':'admin', 'password':'admin', })
+        print cl.session.items()
+    def test_show_space(self):
+        global cl
+        res = cl.get('/space/')
+        self.assertTrue('<a href="/manage/user/">' in res.content)
+
+
+import program
+
+class ProgramTest(unittest.TestCase):
+    pass
+
