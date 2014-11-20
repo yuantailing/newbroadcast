@@ -34,3 +34,7 @@
 		</form>
 	</div><!-- /.navbar-collapse -->
 </nav>
+{% if not request.session.uid %}
+{% include "login/loginmodal.html" %}
+{% include "login/signinmodal.html" %}
+{% endif %}
