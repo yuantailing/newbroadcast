@@ -5,6 +5,7 @@ from django import template
 from django.template.loader import get_template
 from django.db import models
 from django.core import serializers
+from django.db.models import Q
 import json
 
 from models import *
@@ -12,14 +13,18 @@ from models import *
 @power_required([None])
 def show(req):
     groups = []
-    for gp in ProgramGroup.objects.order_by("order"):
+    for gp in ProgramGroup.objects.filter(order__gte=0).order_by("order"):
         groups.append({'id':gp.id, 'title':gp.title})
     series = []
-    for gs in ProgramSeries.objects.order_by("order"):
+    for gs in ProgramSeries.objects.filter(order__gte=0).order_by("order"):
         series.append({'id':gs.id, 'title':gs.title})
     liwidth = 99 / len(groups)
+    try:
+        user = User.objects.get(id=req.session['uid'])
+    except Exception, e:
+        user = None
     return render_to_response("resource/resource.html",
-                              {'groups':groups, 'series': series, 'liwidth': liwidth},
+                              {'groups':groups, 'series': series, 'liwidth': liwidth, 'logined':not (user == None)},
                               context_instance=RequestContext(req));
 
 @power_required([None])
@@ -41,6 +46,10 @@ def get_arr(req):
     res = []
     pids = req.POST.getlist(u'pid[]', [])
     pgs = []
+    try:
+        user = User.objects.get(id=req.session['uid'])
+    except Exception, e:
+        user = None
     for pid in pids:
         pgs.append(Program.objects.get(id=int(pid)))
     for pg in pgs:
@@ -53,7 +62,15 @@ def get_arr(req):
         tmp['contributor'] = None;
         tmp['workers'] = None;
         tmp['keyword'] = None;
+        tmp['have_praised'] = False;
+        tmp['have_favorited'] = False;
+        tmp['praise_count'] = pg.praise.count(),
+        tmp['favorite_count'] = pg.favorite.count(),
+        tmp['logined'] = not (user == None);
         tmp['create_time'] = pg.create_time.strftime("%Y-%m-%d %H:%I:%S");
+        if not (user == None):
+            tmp['have_praised'] = Praise.objects.filter(user=user, program=pg).count() > 0
+            tmp['have_favorited'] = Favorite.objects.filter(user=user, program=pg).count() > 0
         if (pg.group):
             tmp['group'] = pg.group.title
         if (pg.series):
@@ -76,16 +93,6 @@ def get_arr(req):
 def getarr_test(req):
     return render_to_response("resource/getarr_test.html",
                               context_instance=RequestContext(req));
-
-@power_required([None])
-def result(req):
-    wd = req.POST.get('wd', None)
-    res = []
-    for pg in Program.objects.order_by('-weight'):
-        res.append(pg.id)
-    return render_to_response("resource/result.html",
-                              {'pid':json.dumps(res)},
-                              context_instance=RequestContext(req));
                               
 @power_required([None])
 def sort(req):
@@ -105,14 +112,41 @@ def sort(req):
 def filter(req):
     gid = req.GET.get('groupid')
     sid = req.GET.get('seriesid')
-    if sid == '-' and gid == '-':
+    keyword = req.GET.get('keyword')
+    if keyword == None:
+        keyword = '';
+    if sid == '-' and gid == '-' and keyword == '':
         pgs = Program.objects.all();
-    elif sid == '-':
+    elif sid == '-' and keyword == '':
         pgs = Program.objects.filter(group__id=gid);
-    elif gid == '-':
+    elif gid == '-' and keyword == '':
         pgs = Program.objects.filter(series__id=sid);
-    else:
+    elif keyword == '':
         pgs = Program.objects.filter(group__id=gid, series__id=sid);
+    elif sid == '-' and gid == '-':
+        pgs = Program.objects.filter(Q(title__contains=keyword) |
+                                     Q(description__contains=keyword) |
+                                     Q(group__title__contains=keyword) |
+                                     Q(series__title__contains=keyword));
+    elif sid == '-':
+        pgs = Program.objects.filter(Q(group__id=gid),
+                                     Q(title__contains=keyword) |
+                                     Q(description__contains=keyword) |
+                                     Q(group__title__contains=keyword) |
+                                     Q(series__title__contains=keyword));
+    elif gid == '-':
+        pgs = Program.objects.filter(Q(series__id=sid),
+                                     Q(title__contains=keyword) |
+                                     Q(description__contains=keyword) |
+                                     Q(group__title__contains=keyword) |
+                                     Q(series__title__contains=keyword));
+    else:
+        pgs = Program.objects.filter(Q(group__id=gid),
+                                     Q(series__id=sid),
+                                     Q(title__contains=keyword) |
+                                     Q(description__contains=keyword) |
+                                     Q(group__title__contains=keyword) |
+                                     Q(series__title__contains=keyword));
     pgids = []
     for pg in pgs:
         pgids.append(pg.id);

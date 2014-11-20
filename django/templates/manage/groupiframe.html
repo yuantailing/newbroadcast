@@ -4,7 +4,7 @@
 	<div class="panel-heading">
 		<h4>{{ title }}管理</h4>
 	</div>
-	<table class="panel-body table table-bordered table-striped table-hover">
+	<table class="panel-body table table-bordered table-striped table-hover" id="sortable-items-table">
 		<div>
 		</div>
 		<thead>
@@ -14,37 +14,50 @@
 		<th>创建时间</th>
 		<th>修改操作</th>
 		<th>删除操作</th>
-		<th>恢复操作</th>
-		<th>彻底删除</th>
 		</tr>
 		</thead>
 		{% for pg in obj_list %}
+		<tbody>
 		<tr>
-		<td><a href="/resource/?gid={{ pg.id }}" target="_parent">{{ pg.title }}</a></td>
-		<td>{{ pg.program.count }}</a></td>
+		<td><input type="hidden" id="sort-group-series-id" value="{{ pg.id }}"/><a href="/resource/?gid={{ pg.id }}" target="_parent">{{ pg.title }}</a></td>
+		<td><a href="/resource/?gid={{ pg.id }}" target="_parent">{{ pg.program.count }}</a></td>
 		<td>{{ pg.create_time|date:"Y-m-d" }}</a></td>
 		<td><button class="btn btn-primary" data-toggle="modal" data-target="#change-info"
 			onclick="$('#modal-modify-id').attr('value', '{{ pg.id }}'); $('#modal-modify-origin-name').html('{{ pg.title|addslashes }}');">修改</button></td>
 		<td><button class="btn btn-primary" data-toggle="modal" data-target="#delete-info"
 			onclick="$('#modal-delete-id').attr('value', '{{ pg.id }}'); $('#modal-delete-origin-name').html('{{ pg.title|addslashes }}');">删除</button></td>
-		<td>&nbsp;</td>
-		<td>&nbsp;</td>
 		</tr>
+		</tbody>
 		{% endfor %}
-	
-		{% for pg in removed_list %}
+	</table>
+	<div>
+		<button class="btn btn-primary" id="save-new-order">保存新顺序（拖拽可以排序）</button>
+	</div>
+	<h5>已删除的{{ title }}</h5>
+	<table class="panel-body table table-bordered table-striped table-hover">
+		<div>
+		</div>
+		<thead>
 		<tr>
-		<td><a href="/source/?gid={{ pg.id }}" target="_parent">{{ pg.title }}</a></td>
-		<td>{{ pg.program.count }}</a></td>
-		<td>{{ pg.create_time|date:"Y-m-d" }}</a></td>
-		<td><button class="btn btn-primary" data-toggle="modal" data-target="#change-info"
-			onclick="$('#modal-modify-id').attr('value', '{{ pg.id }}'); $('#modal-modify-origin-name').html('{{ pg.title|addslashes }}');">修改</button></td>
-		<td>&nbsp;</td>
+		<th>标题</th>
+		<th>节目数量</th>
+		<th>创建时间</th>
+		<th>恢复操作</th>
+		<th>彻底删除</th>
+		</tr>
+		</thead>
+		{% for pg in removed_list %}
+		<tbody>
+		<tr>
+		<td><a href="/resource/?gid={{ pg.id }}" target="_parent">{{ pg.title }}</a></td>
+		<td><a href="/resource/?gid={{ pg.id }}" target="_parent">{{ pg.program.count }}</a></td>
+		<td>{{ pg.create_time|date:"Y-m-d" }}</td>
 		<td><button class="btn btn-primary" data-toggle="modal" data-target="#restore-info"
 			onclick="$('#modal-restore-id').attr('value', '{{ pg.id }}'); $('#modal-restore-origin-name').html('{{ pg.title|addslashes }}');">恢复</button></td>
 		<td><button class="btn btn-primary" data-toggle="modal" data-target="#destroy-info"
 			onclick="$('#modal-destroy-id').attr('value', '{{ pg.id }}'); $('#modal-destroy-origin-name').html('{{ pg.title|addslashes }}');">彻底删除</button></td>
 		</tr>
+		</tbody>
 		{% endfor %}
 	</table>
 	<div class="panel-footer">
@@ -254,7 +267,44 @@
 
 {% endblock %}
 {% block script %}
+<script src="/static/js/jquery-ui.custom.min.js"></script>
 <script>
+var fixHelper = function(e, ui) {
+    ui.children().each(function() {
+        $(this).width($(this).width());
+    });
+    return ui;
+};
+$( "#sortable-items-table" ).sortable({
+        helper: fixHelper,
+        axis:"y",
+        start:function(e, ui){
+            ui.helper.css({"background":"#fff"})
+            return ui;
+        },
+        stop:function(e, ui){
+            return ui;
+        }
+    }).disableSelection();
+
+$('#save-new-order').click(function() {
+	arr = new Array();
+	new_order = $('input#sort-group-series-id');
+	new_order.each(function(obj) { arr.push(new_order[obj].value); });
+	$.ajax({
+		url:'/manage/groupseries/{{ obj_type }}/',
+		type:"POST",
+		data:{action:'sort', new_order:arr },
+		dataType:"json"
+	}).done(function(msg){
+		alert(msg.info);
+		if (msg.success)
+			location.reload();
+	}).fail(function(jqXHR,textStatus){
+		alert('与服务器连接中断');
+	});
+});
+
 $('#modal-modify-button').click(function() {
 	$.ajax({
 		url:'/manage/groupseries/{{ obj_type }}/',

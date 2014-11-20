@@ -6,16 +6,20 @@
 {% block body %}
 <!-- main content -->
 <div class="container">
+{% if request.REQUEST.view != "series" %}
 	<div class="row">
 		<hr />
 		<iframe src="/manage/groupseries/group/" width="100%" scrolling="no" frameborder="0" onload="this.height=this.contentWindow.document.documentElement.scrollHeight">
 		</iframe>
 	</div>
+{% endif %}
+{% if request.REQUEST.view != "group" %}
 	<div class="row">
 		<hr />
 		<iframe src="/manage/groupseries/series/" width="100%" scrolling="no" frameborder="0" onload="this.height=this.contentWindow.document.documentElement.scrollHeight">
 		</iframe>
 	</div>
+{% endif %}
 </div>
 {% endblock %}
 

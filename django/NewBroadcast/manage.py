@@ -63,7 +63,7 @@ def show_mgrmyres(req):
                                'obj_list':obj_list, },
                               context_instance=RequestContext(req))
 
-@power_required(['superadmin'])
+@power_required(['admin'])
 def show_mgrallres(req):
     obj_list = Program.objects.all()
     return render_to_response("manage/myresource.html",
@@ -173,13 +173,15 @@ def groupseries(req):
 
 
 def group_series_post(model, req):
+    try:
+        obj = model.objects.get(id=req.REQUEST.get('id', None))
+    except Exception, e:
+        obj = None
+    new_name = req.REQUEST.get('new_name', None)
     if req.REQUEST.get('action', None) == 'modify':
-        try:
-            obj = model.objects.get(id=req.REQUEST.get('id', None))
-        except Exception, e:
+        if not obj:
             return HttpResponse(json.dumps({'success':False, 'info':'目标不存在'}),
                                 content_type='application/json')
-        new_name = req.REQUEST.get('new_name', None)
         if not new_name:
             return HttpResponse(json.dumps({'success':False, 'info':'名称不能为空'}),
                                 content_type='application/json')
@@ -188,9 +190,7 @@ def group_series_post(model, req):
         return HttpResponse(json.dumps({'success':True, 'info':'修改成功'}),
                             content_type='application/json')
     if req.REQUEST.get('action', None) == 'delete':
-        try:
-            obj = model.objects.get(id=req.REQUEST.get('id', None))
-        except Exception, e:
+        if not obj:
             return HttpResponse(json.dumps({'success':False, 'info':'目标不存在'}),
                                 content_type='application/json')
         obj.order = -1
@@ -198,21 +198,17 @@ def group_series_post(model, req):
         return HttpResponse(json.dumps({'success':True, 'info':'删除成功'}),
                             content_type='application/json')
     if req.REQUEST.get('action', None) == 'destroy':
-        try:
-            obj = model.objects.get(id=req.REQUEST.get('id', None))
-        except Exception, e:
+        if not obj:
             return HttpResponse(json.dumps({'success':False, 'info':'目标不存在'}),
                                 content_type='application/json')
         if obj.program.count() > 0:
-            return HttpResponse(json.dumps({'success':False, 'info':'属于目标的节目数量不为0'}),
+            return HttpResponse(json.dumps({'success':False, 'info':'只有节目数量为0才能删除'}),
                                 content_type='application/json')
         obj.delete()
         return HttpResponse(json.dumps({'success':True, 'info':'删除成功'}),
                             content_type='application/json')
     if req.REQUEST.get('action', None) == 'restore':
-        try:
-            obj = model.objects.get(id=req.REQUEST.get('id', None))
-        except Exception, e:
+        if not obj:
             return HttpResponse(json.dumps({'success':False, 'info':'目标不存在'}),
                                 content_type='application/json')
         obj.order = 0
@@ -220,7 +216,6 @@ def group_series_post(model, req):
         return HttpResponse(json.dumps({'success':True, 'info':'恢复成功'}),
                             content_type='application/json')
     if req.REQUEST.get('action', None) == 'add':
-        new_name = req.REQUEST.get('new_name', None)
         if not new_name:
             return HttpResponse(json.dumps({'success':False, 'info':'名称不能为空'}),
                                 content_type='application/json')
@@ -230,6 +225,24 @@ def group_series_post(model, req):
             return HttpResponse(json.dumps({'success':False, 'info':'未知错误'}),
                                 content_type='application/json')
         return HttpResponse(json.dumps({'success':True, 'info':'创建成功'}),
+                            content_type='application/json')
+    if req.REQUEST.get('action', None) == 'sort':
+        try:
+            new_order = req.REQUEST.getlist('new_order[]')
+        except Exception, e:
+            new_order = None
+        new_order = list(int(a) for a in new_order)
+        abled = model.objects.filter(order__gte=0)
+        print (abled.count())
+        if abled.count() == len(new_order):
+            for obj in abled:
+                print obj
+                obj.order = len(new_order) - new_order.index(obj.id)
+            for obj in abled:
+                obj.save()
+        else:
+            raise Exception
+        return HttpResponse(json.dumps({'success':True, 'info':'排序成功'}),
                             content_type='application/json')
     return None
 
@@ -242,7 +255,7 @@ def program_group(req):
     return render_to_response("manage/groupiframe.html",
                               {'title':u'组别',
                                'obj_type':'group',
-                               'obj_list':ProgramGroup.objects.filter(order__gte=0),
+                               'obj_list':ProgramGroup.objects.filter(order__gte=0).order_by('-order'),
                                'removed_list':ProgramGroup.objects.filter(order__lt=0), },
                               context_instance=RequestContext(req))
 
@@ -254,7 +267,7 @@ def program_series(req):
     return render_to_response("manage/groupiframe.html",
                               {'title':u'系列',
                                'obj_type':'series',
-                               'obj_list':ProgramSeries.objects.filter(order__gte=0),
+                               'obj_list':ProgramSeries.objects.filter(order__gte=0).order_by('-order'),
                                'removed_list':ProgramSeries.objects.filter(order__lt=0), },
                               context_instance=RequestContext(req))
 
