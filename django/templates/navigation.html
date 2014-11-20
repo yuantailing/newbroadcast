@@ -42,3 +42,8 @@
 //		self.location="/resource/?keyword=" + escape(t);
 	}
 </script>
+
+{% if not request.session.uid %}
+{% include "login/loginmodal.html" %}
+{% include "login/signinmodal.html" %}
+{% endif %}
