@@ -312,6 +312,10 @@ def modify_program(req, arg):
 
     try:
         res = { }
+        user = User.objects.get(id=req.session['uid'])
+        if (user.power == 'worker' and user.id != pg.uploader.id):
+            return HttpResponse(json.dumps({'success':False, 'info':'您只能修改自己上传的文件！'}),
+                        content_type='application/json')
         tgroup = req.POST.get('group', None)
         tseries = req.POST.get('series', None)
         ttitle = req.POST.get('title', None)
@@ -377,6 +381,11 @@ def modify_program(req, arg):
 @power_required(['worker'])
 def del_pic(req):
     prgid = req.GET.get('prgid', None)
+    pg = Program.objects.get(id=prgid)
+    user = User.objects.get(id=req.session['uid'])
+    if (user.power == 'worker' and user.id != pg.uploader.id):
+        return HttpResponse(json.dumps({'success':False, 'info':'您只能修改自己上传的文件！'}),
+                        content_type='application/json')
     picid = req.GET.get('picid', None)
     pg = Program.objects.get(id=prgid)
     pic_arr = json.loads(pg.picture)
@@ -387,11 +396,16 @@ def del_pic(req):
         success = True
     except Exception, e:
         success = False
-    return HttpResponse(json.dumps({'success':success}), content_type='application/json')
+    return HttpResponse(json.dumps({'success':success, 'info':'删除失败，请重新尝试！'}), content_type='application/json')
 
 @power_required(['worker'])
 def del_doc(req):
     prgid = req.GET.get('prgid', None)
+    pg = Program.objects.get(id=prgid)
+    user = User.objects.get(id=req.session['uid'])
+    if (user.power == 'worker' and user.id != pg.uploader.id):
+        return HttpResponse(json.dumps({'success':False, 'info':'您只能修改自己上传的文件！'}),
+                        content_type='application/json')
     docid = req.GET.get('docid', None)
     pg = Program.objects.get(id=prgid)
     doc_arr = json.loads(pg.document)
@@ -402,7 +416,7 @@ def del_doc(req):
         success = True
     except Exception, e:
         success = False
-    return HttpResponse(json.dumps({'success':success}), content_type='application/json')
+    return HttpResponse(json.dumps({'success':success, 'info':'删除失败，请重新尝试！'}), content_type='application/json')
 
 @power_required(['worker'])
 def delete_program(req):
