@@ -120,7 +120,6 @@ def change_info(req):
     try:
         try:
             user = User.objects.get(nickname=nick)
-            print user
             if user.id == req.session['uid']:
                 raise Exception
             res['success'] = False
@@ -128,11 +127,19 @@ def change_info(req):
         except Exception, e:
             user = User.objects.get(id=req.session['uid'])
             if nick:
-                user.nickname = nick
+                if '@' in nick:
+                    res['success'] = False
+                    res['info'] = u'昵称不能含@字符'
+                    return HttpResponse(json.dumps(res),
+                                        content_type='application/json')
+                else:
+                    user.nickname = nick
             user.birthday = birth
+            user.phone_number = phone
             if not birth:
                 user.birthday = None
-            user.phone_number = phone
+            if not phone:
+                user.phone_number = None
             user.save()
             res['success'] = True
             res['info'] = u'修改资料成功'
