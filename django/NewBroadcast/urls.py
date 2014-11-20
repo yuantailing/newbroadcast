@@ -10,10 +10,11 @@ from NewBroadcast import manage
 from NewBroadcast import mgrdebug
 
 
-urlpatterns = patterns('',
+urlpatterns = patterns(
     # Examples:
     # url(r'^$', 'NewBroadcast.views.home', name='home'),
     # url(r'^blog/', include('blog.urls')),
+    '',
 
     url(r'^$', frontpage.show_index),
     url(r'^upload/(?P<path>.*)$', 'django.views.static.serve',
@@ -25,7 +26,6 @@ urlpatterns = patterns('',
     url(r'^ajaxtest/htmltest/$', ajaxtest.htmltest),
     url(r'^ajaxtest/htmlresponse/$', ajaxtest.htmlresponse),
     url(r'^ajaxtest/listprogram/$', ajaxtest.list_program),
-                       
 
     url(r'^index/$', frontpage.show_index),
     url(r'^index/waterflow$', frontpage.waterflow_data),
@@ -86,7 +86,7 @@ urlpatterns = patterns('',
 )
 
 from django.conf import settings
-if settings.DEBUG is False: #if DEBUG is True it will be served automatically
+if settings.DEBUG is False:  # if DEBUG is True it will be served automatically
     urlpatterns += patterns('',
                             url(r'^static/(?P<path>.*)$',
                                 'django.views.static.serve',
