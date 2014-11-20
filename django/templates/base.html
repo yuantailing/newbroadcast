@@ -13,20 +13,20 @@
 <body>
 <!-- main content -->
 {% include "useraccess.html" %}
-{% if not request.session.uid %}
-{% include "login/loginmodal.html" %}
-{% include "login/signinmodal.html" %}
-{% endif %}
-{% include "navigation.html" %}
+{% block navigation %}{% include "navigation.html" %}{% endblock %}
 {% block body %}<span>&lt;empty&gt;</span>{% endblock %}
-{% block footer %}{% endblock %}
+{% block footer %}
+{% include "footer/footer.html" %}
+{% endblock %}
 <!-- jQuery (necessary for Flat UI's JavaScript plugins) -->
 <script src="/static/dist/js/vendor/jquery.min.js"></script>
 <!-- Include all compiled plugins (below), or include individual files as needed -->
 <script src="/static/dist/js/flat-ui.min.js"></script>
 <script src="/static/dist/js/docs.min.js"></script>
 <script src="/static/js/csrfajax.js"></script>
+{% if not request.session.uid %}
 <script src="/static/js/login.js"></script>
+{% endif %}
 {% block script %}{% endblock %}
 </body>
 </html>

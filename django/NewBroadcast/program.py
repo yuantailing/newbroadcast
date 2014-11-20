@@ -154,31 +154,23 @@ def show_upload(req):
     elif result == 'failed':
         result = u'操作失败'
 
-    group_all = []
-    group_list = ProgramGroup.objects.all()
-    for item in group_list:
-        gp = {}
-        gp['title'] = item.title
-        gp['id'] = item.id
-        group_all.append(gp)
-
-    series_all = []
-    series_list = ProgramSeries.objects.all()
-    for item in series_list:
-        srs = {}
-        srs['title'] = item.title
-        srs['id'] = item.id
-        series_all.append(srs)
-
+    group_all = ProgramGroup.objects.filter(order__gte=0).order_by('-order')
+    series_all = ProgramSeries.objects.filter(order__gte=0).order_by('-order')
+    
     return render_to_response("program/upload.html",
                               {'result':result,
                                'group_all':group_all,
                                'series_all':series_all},
                               context_instance=RequestContext(req))
 
+
+@power_required(['worker'])
 def ajax_upload(req):
     try:
         prg = Program()
+        
+
+        print Program.objects.get(id = 1000)
 
         tgroup = req.POST.get('group', None)
         tseries = req.POST.get('series', None)
@@ -192,10 +184,13 @@ def ajax_upload(req):
         taudio = req.FILES.get('audio', None)
         tdocument = req.FILES.getlist('document', None) # json of list
         user = User.objects.get(id=req.session['uid'])
-        if (tgroup != ""):
+        if (tgroup == "0"):
+            return HttpResponse(json.dumps({'success':False, 'info':'组别不能为空!'}),
+                        content_type='application/json')
+        else:
             pgroup = ProgramGroup.objects.get(id = int(tgroup))
             prg.group = pgroup
-        if (tseries != ""):
+        if (tseries != "0"):
             pseries = ProgramSeries.objects.get(id = int(tseries))
             prg.series = pseries
         if (ttitle != None):
@@ -237,94 +232,19 @@ def ajax_upload(req):
         success = True
     except Exception, e:
         success = False
-    return HttpResponse(json.dumps({'success':success, 'info':'test info'}),
+    return HttpResponse(json.dumps({'success':success, 'info':'上传失败，请检查输入！'}),
                         content_type='application/json')
 
-@power_required(['worker'])
-def upload_program(req):
-    res = { }
-    try:
-        prg = Program()
-
-        tgroup = req.POST.get('group', None)
-        tseries = req.POST.get('series', None)
-        ttitle = req.POST.get('title', None)
-        tdescription = req.POST.get('description', None)
-        tweight = req.POST.get('weight', None)
-        trecorder = req.POST.get('recorder', None)
-        tworkers = req.POST.get('workers', None)
-        tcontributor = req.POST.get('contributor', None)
-        tpicture = req.FILES.getlist('picture', None) # json of list
-        taudio = req.FILES.get('audio', None)
-        tdocument = req.FILES.getlist('document', None) # json of list
-        user = User.objects.get(id=req.session['uid'])
-        if (tgroup != ""):
-            pgroup = ProgramGroup.objects.get(id = int(tgroup))
-            prg.group = pgroup
-        if (tseries != ""):
-            pseries = ProgramSeries.objects.get(id = int(tseries))
-            prg.series = pseries
-        if (ttitle != None):
-            prg.title = ttitle
-        if (tdescription != None):
-            prg.description = tdescription
-        if (tweight != None):
-            prg.weight = tweight
-        if (trecorder != None):
-            prg.recorder = trecorder
-        if (tworkers != None):
-            prg.workers = tworkers
-        if (tcontributor != None):
-            prg.contributor = tcontributor
-        if (tpicture != None):
-            pics = []
-            for ele in tpicture:
-                pic = Source()
-                pic.document = ele
-                pic.save()
-                pics.append(pic.id)
-            prg.picture = json.dumps(pics)
-        if (taudio != None):
-            ad = Source()
-            ad.document = taudio
-            ad.save()
-            prg.audio = ad.id
-        if (tdocument != None):
-            docs = []
-            for ele in tdocument:
-                doc = Source()
-                doc.document = ele
-                doc.save()
-                docs.append(doc.id)
-            prg.document = json.dumps(docs)
-        if (user != None):
-            prg.uploader = user
-        prg.save()
-        res['result'] = 'success'
-    except Exception, e:
-        res['result'] = 'failed'
-    return HttpResponseRedirect('/program/upload/?result=' + res['result'])
 
 @power_required(['worker'])
 def show_modify(req, arg):
     pgid = int(arg)
     pg = Program.objects.get(id=pgid)
 
-    groups = []
-    group_list = ProgramGroup.objects.all()
-    for item in group_list:
-        gp = {}
-        gp['title'] = '[' + str(item.id) + '] ' + item.title
-        gp['id'] = item.id
-        groups.append(gp)
+    
+    group_all = ProgramGroup.objects.filter(order__gte=0).order_by('-order')
+    series_all = ProgramSeries.objects.filter(order__gte=0).order_by('-order')
 
-    series_all = []
-    series_list = ProgramSeries.objects.all()
-    for item in series_list:
-        srs = {}
-        srs['title'] = '[' + str(item.id) + '] ' + item.title
-        srs['id'] = item.id
-        series_all.append(srs)
     group = 0
     if pg.group:
         group = pg.group.id
@@ -352,18 +272,29 @@ def show_modify(req, arg):
         pic_arr = json.loads(pg.picture)
         for i in pic_arr:
             pic = {}
-            pic['title'] = os.path.split(Source.objects.get(id=i).document.file.name)[1]
+            try:
+                pic['title'] = os.path.split(Source.objects.get(id=i).document.file.name)[1]
+            except Exception, e:
+                pic['title'] = "此文件已被删除，请手动删除该条目"
             pic['id'] = i
             pictitle.append(pic)
+
     mediatitle = ""
     if pg.audio:
-        mediatitle = os.path.split(Source.objects.get(id=pg.audio).document.file.name)[1]
+        try:
+            mediatitle = os.path.split(Source.objects.get(id=pg.audio).document.file.name)[1]
+        except Exception, e:
+            mediatitle = "此文件已被删除，请手动删除该条目"
+
     doctitle = []
     if pg.document:
         doc_arr = json.loads(pg.document)
         for i in doc_arr:
             doc = {}
-            doc['title'] = os.path.split(Source.objects.get(id=i).document.file.name)[1]
+            try:
+                doc['title'] = os.path.split(Source.objects.get(id=i).document.file.name)[1]
+            except Exception, e:
+                doc['title'] = "此文件已被删除，请手动删除该条目"
             doc['id'] = i
             doctitle.append(doc)
 
@@ -373,7 +304,7 @@ def show_modify(req, arg):
                      'description':description, 'recorder':recorder,
                      'contributor':contributor, 'workers':workers,
                      'mediatitle':mediatitle, 'pictitle':pictitle,
-                     'doctitle':doctitle, 'groups':groups,
+                     'doctitle':doctitle, 'groups':group_all,
                      'series_all':series_all},
                      context_instance=RequestContext(req));
 
@@ -391,10 +322,13 @@ def modify_program(req, arg):
         trecorder = req.POST.get('recorder', None)
         tcontributor = req.POST.get('contributor', None)
         tworkers = req.POST.get('workers', None)
-        if (tgroup != ""):
+        if (tgroup == "0"):
+            return HttpResponse(json.dumps({'success':False, 'info':'组别不能为空！'}),
+                        content_type='application/json')
+        else:
             group = ProgramGroup.objects.get(id = int(tgroup))
             pg.group = group
-        if (tseries != ""):
+        if (tseries != "0"):
             series = ProgramSeries.objects.get(id = int(tseries))
             pg.series = series
         if (ttitle != None):
@@ -439,7 +373,7 @@ def modify_program(req, arg):
         success = True
     except Exception, e:
         success = False
-    return HttpResponse(json.dumps({'success':success, 'info':'test info'}),
+    return HttpResponse(json.dumps({'success':success, 'info':'上传失败，请检查输入！'}),
                         content_type='application/json')
 
 

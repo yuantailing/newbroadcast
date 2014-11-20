@@ -129,7 +129,7 @@ class Source(models.Model):
     md5 = models.TextField(null=True, blank=True, default=None)
 
     def __unicode__(self):
-        return '[' + str(self.id) + '] ' + os.path.split(self.document.file.name)[1]
+        return '[' + str(self.id) + '] ' + os.path.split(self.document.path)[1]
     
     def save(self):
         if not self.md5:
