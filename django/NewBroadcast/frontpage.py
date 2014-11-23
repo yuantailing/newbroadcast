@@ -21,11 +21,17 @@ def waterflow_data(req):
         tmpret = {};
         tmpret['id'] = o.id;
         pic_arr = json.loads(o.picture)
-        if pic_arr and (len(pic_arr) > 0):
-            tmpret['src'] = Source.objects.get(id=pic_arr[0]).document.url
-        else:
-            pass
-        tmpret['title'] = o.title;
-        tmpret['content'] = o.description;
+        try:
+            s = Source.objects.get(id=pic_arr[0])
+            if s.thumb:
+                s.thumb.file
+                tmpret['src'] = s.thumb.url
+            else:
+                s.document.file
+                tmpret['src'] = s.document.url
+        except Exception, e:
+            tmpret['src'] = "/static/images/default.jpg"
+        tmpret['title'] = o.title
+        tmpret['content'] = o.description
         ret.append(tmpret);
     return HttpResponse(json.dumps(ret), content_type = "application/json");
