@@ -122,10 +122,12 @@ class Program(models.Model):
             self.keyword += '|' + self.workers
         super(Program, self).save()
 
-
+from settings import MEDIA_ROOT
+from PIL import Image
 class Source(models.Model):
     document = models.FileField(null=True, blank=True, default=None,
                            upload_to='source')
+    thumb = models.ImageField(null=True, blank=True, default=None)
     md5 = models.TextField(null=True, blank=True, default=None)
 
     def __unicode__(self):
@@ -135,6 +137,22 @@ class Source(models.Model):
         if not self.md5:
             self.md5 = None
         super(Source, self).save()
+        try:
+            img = Image.open(self.document.path)
+            if img.size[0] > 100:
+                new_weight = 400
+                new_height = new_weight * img.size[1] / img.size[0]
+                if new_height < 1000:
+                    origin_name = os.path.split(self.document.path)[-1]
+                    new_img = img.resize((new_weight, new_height), Image.ANTIALIAS)
+                    new_path = os.path.join(MEDIA_ROOT, "pil", origin_name) + ".jpg"
+                    if not os.path.exists(os.path.join(MEDIA_ROOT, "pil")):
+                        os.mkdir(os.path.join(MEDIA_ROOT, "pil"))
+                    new_img.save(new_path)
+                    self.thumb = os.path.join("pil", origin_name) + ".jpg"
+                    super(Source, self).save()
+        except Exception, e:
+            self.thumb = None
 
 
 class Comment(models.Model):
