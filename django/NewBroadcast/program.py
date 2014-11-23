@@ -36,7 +36,11 @@ def show_program(req, arg):
     if pg.picture:
         pic_arr = json.loads(pg.picture)
         for i in pic_arr:
-            piclink.append(Source.objects.get(id=i).document.url)
+            s = Source.objects.get(id=i)
+            if s.thumb:
+                piclink.append(s.thumb.url)
+            else:
+                piclink.append(s.document.url)
     
     medialink = ""
     if pg.audio:
@@ -48,11 +52,11 @@ def show_program(req, arg):
         for i in range(0, len(doc_arr)):
             src = Source.objects.get(id=doc_arr[i])
             if i == 0:
-                doc_links.append((u"资料下载", src.document.url, u"资料" + str(i + 1) + u": " +
-                                  os.path.split(src.document.file.name)[1]))
+                doc_links.append((u"稿件下载", src.document.url, u"稿件" + str(i + 1)
+                                  + u" 下载链接"))
             else:
-                doc_links.append((u"", src.document.url, u"资料" + str(i + 1) + u": " +
-                                  os.path.split(src.document.file.name)[1]))
+                doc_links.append((u"", src.document.url, u"稿件" + str(i + 1)
+                                  + u" 下载链接"))
 
     have_praised = False
     have_favorited = False
