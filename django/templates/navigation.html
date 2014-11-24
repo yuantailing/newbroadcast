@@ -14,8 +14,16 @@
 		<form class="navbar-form navbar-right" action="/resource/" method="get" role="search">
 			{% if request.session.uid %}
 			<div class="form-group" id="user-info">
-				<a href="/space/"><button type="button" class="btn btn-primary">个人中心</button></a>
-				<a href="/login/logout/"><button type="button" class="btn btn-primary">注销</button></a>
+				<div class="btn-group">
+				  <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+				    管理 <span class="caret"></span>
+				  </button>
+				  <ul class="dropdown-menu" role="menu">
+				    <li><a href="/space/">个人中心</a></li>
+				    <li class="divider"></li>
+				    <li><a href="/login/logout/">注销</a></li>
+				  </ul>
+				</div>
 			</div>
 			{% else %}
 			<div class="form-group" id="user-info">
