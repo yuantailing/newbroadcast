@@ -5,15 +5,15 @@ from NewBroadcast import frontpage
 from NewBroadcast import resource
 from NewBroadcast import program
 from NewBroadcast import login
-from NewBroadcast import api
 from NewBroadcast import manage
 from NewBroadcast import mgrdebug
 
 
-urlpatterns = patterns('',
+urlpatterns = patterns(
     # Examples:
     # url(r'^$', 'NewBroadcast.views.home', name='home'),
     # url(r'^blog/', include('blog.urls')),
+    '',
 
     url(r'^$', frontpage.show_index),
     url(r'^upload/(?P<path>.*)$', 'django.views.static.serve',
@@ -25,7 +25,6 @@ urlpatterns = patterns('',
     url(r'^ajaxtest/htmltest/$', ajaxtest.htmltest),
     url(r'^ajaxtest/htmlresponse/$', ajaxtest.htmlresponse),
     url(r'^ajaxtest/listprogram/$', ajaxtest.list_program),
-                       
 
     url(r'^index/$', frontpage.show_index),
     url(r'^index/waterflow$', frontpage.waterflow_data),
@@ -60,13 +59,6 @@ urlpatterns = patterns('',
     url(r'^signin/judge/$', login.exist_judge),
     url(r'^signin/do/$', login.signin),
 
-    url(r'^user/$', api.api_user),
-    url(r'^program_group/$', api.api_program_group),
-    url(r'^program_series/$', api.api_program_series),
-    url(r'^program/$', api.api_program),
-    url(r'^api_source/$', api.api_source),
-    url(r'^api_comment/$', api.api_comment),
-
     url(r'^space/$', manage.show_space),
     url(r'^manage/favorites/$', manage.show_favorites),
     url(r'^manage/favorites/table/$', manage.show_favorites_table),
@@ -86,7 +78,7 @@ urlpatterns = patterns('',
 )
 
 from django.conf import settings
-if settings.DEBUG is False: #if DEBUG is True it will be served automatically
+if settings.DEBUG is False:  # if DEBUG is True it will be served automatically
     urlpatterns += patterns('',
                             url(r'^static/(?P<path>.*)$',
                                 'django.views.static.serve',

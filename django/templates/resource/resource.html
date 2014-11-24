@@ -1,4 +1,7 @@
 {% extends "base.html" %}
+{% block header %}
+<link href="/static/css/resource.css" rel="stylesheet" />
+{% endblock%}
 {% block body %}
     <!-- /.container -->
 	<div style="height:100%; width:100%" class="container">
@@ -48,15 +51,14 @@
 			<div class="panel panel-default" style="height:100%; width:100%">
 				<ul id="res-list" class="list-group" style="height:100%; width:100%">
 				</ul>
-
 				<table id="res-table" class="panel-body table table-striped table-bordered table-hover">
 					<thead id="res-thead">
 						<tr>
-							<th id="th-title" onclick="sort(this)"><u>名称（点击可排序）</u></th>
-							<th id="th-group" onclick="sort(this)"><u>组别</u></th>
-							<th id="th-series" onclick="sort(this)"><u>系列</u></th>
-							<th id="th-recorder" onclick="sort(this)"><u>播音人</u></th>
-							<th id="th-create_time" onclick="sort(this)"><u>上传时间</u></th>
+							<th><a id="th-title" onclick="sort(this)" href="#">名称（点击可排序）</a></th>
+							<th><a id="th-group" onclick="sort(this)" href="#">组别</a></th>
+							<th><a id="th-series" onclick="sort(this)" href="#">系列</a></th>
+							<th><a id="th-recorder" onclick="sort(this)" href="#">播音人</a></th>
+							<th><a id="th-create_time" onclick="sort(this)" href="#">上传时间</a></th>
 							<th></th>
 						</tr>
 					</thead>
@@ -213,7 +215,7 @@
 					var tddiv=document.createElement("div")
 					td.appendChild(tddiv);
 					var playbutton=document.createElement("a");
-					playbutton.setAttribute("class", "btn btn-primary btn-xs");
+					playbutton.setAttribute("class", "btn btn-xs");
 					playbutton.setAttribute("target", "_blank");
 					playbutton.setAttribute("href", "/program/play/"+pids[i+index]);
 					tddiv.appendChild(playbutton);
@@ -224,7 +226,7 @@
 					zanbutton.setAttribute("role", "button");
 					zanbutton.setAttribute("onclick", "zan(this)");
 					if ($("#logined").val()=="True") {
-						zanbutton.setAttribute("class", "btn btn-primary btn-xs");
+						zanbutton.setAttribute("class", "btn btn-xs");
 						zanbutton.setAttribute("title", "点赞")
 						if (msg.program[i].have_praised) {
 							zanbutton.setAttribute("style", "color:red");
@@ -233,7 +235,7 @@
 							zanbutton.setAttribute("praised", "false");
 						}
 					} else {
-						zanbutton.setAttribute("class", "btn btn-primary btn-xs disabled");
+						zanbutton.setAttribute("class", "btn btn-xs disabled");
 						zanbutton.setAttribute("title", "登陆后可以点赞")
 					}
 					tddiv.appendChild(zanbutton);

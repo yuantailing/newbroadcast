@@ -7,10 +7,10 @@
 <link href="/static/dist/css/bootstrap.min.css" rel="stylesheet" />
 <link href="/static/dist/css/flat-ui.min.css" rel="stylesheet" />
 <link href="/static/dist/css/docs.min.css" rel="stylesheet" />
-<link href="/static/css/waterflow.css" rel="stylesheet" />
+<link href="/static/css/default.css" rel="stylesheet" />
 {% block header %}{% endblock %}
 </head>
-<body>
+<body onunload="localStorage.hasPlayer=0">
 <!-- main content -->
 {% include "useraccess.html" %}
 {% if not request.session.uid %}
