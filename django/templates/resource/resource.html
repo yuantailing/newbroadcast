@@ -226,7 +226,7 @@
 					zanbutton.setAttribute("role", "button");
 					zanbutton.setAttribute("onclick", "zan(this)");
 					if ($("#logined").val()=="True") {
-						zanbutton.setAttribute("class", "btn-xs");
+						zanbutton.setAttribute("class", "btn btn-xs");
 						zanbutton.setAttribute("title", "点赞")
 						if (msg.program[i].have_praised) {
 							zanbutton.setAttribute("style", "color:red");
@@ -235,7 +235,7 @@
 							zanbutton.setAttribute("praised", "false");
 						}
 					} else {
-						zanbutton.setAttribute("class", "btn btn-primary disabled");
+						zanbutton.setAttribute("class", "btn btn-xs disabled");
 						zanbutton.setAttribute("title", "登陆后可以点赞")
 					}
 					tddiv.appendChild(zanbutton);
