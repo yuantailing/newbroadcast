@@ -1,8 +1,3 @@
-body {
-	background-color: #eeecf4;
-	font-family: "微软雅黑";
-}
-
 @-webkit-keyframes shade{
 	from{opacity:1;}
 	15%{opacity:0.4;}
