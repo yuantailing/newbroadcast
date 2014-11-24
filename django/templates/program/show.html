@@ -7,50 +7,50 @@
 <div class="container">
 	<hr class="featurette-divider" />
 	<div class="row featurette">
-		<div class="col-md-8">	
-	      <h1 class="featurette-heading">{{ title }}</h1>
-	      <p class="lead"><big><strong>{{ strong }}</strong></big>{{ description }}</p>
-	      <hr />
-	      <div class="row" >
-	        <div>
-		        {% if medialink %}
-		        <a class="btn btn-sm" title="播放" onclick="play()" role="button"><span class="glyphicon glyphicon-play"></span></a>
-				{% if logined %}
-		        <a class="btn btn-sm" title="下载" href="{{ medialink }}" target="_blank" role="button"><span class="glyphicon glyphicon-save"></span></a>
-				{% else %}
-		        <a class="btn btn-sm disabled" title="播放" role="button"><span class="glyphicon glyphicon-save"></span></a>
-				{% endif %}
-		        {% else %}
-		        <a class="btn btn-sm disabled" title="播放" role="button"><span class="glyphicon glyphicon-play"></span></a>
-		        <a class="btn btn-smdisabled"  title="下载" role="button"><span class="glyphicon glyphicon-save"></span></a>
-		        {% endif %}
+		<div class="col-md-8">
+		  <div id="program-description">
+		      <h4 class="featurette-heading">{{ title }}</h4>
+		      <p><big><strong>{{ strong }}</strong></big>{{ description }}</p>
+	      	  <hr />
+		      <div class="row" >
+		        <div>
+			        {% if medialink %}
+			        <a class="btn btn-sm" title="播放" onclick="play()" role="button"><span class="glyphicon glyphicon-play"></span></a>
+					{% if logined %}
+			        <a class="btn btn-sm" title="下载" href="{{ medialink }}" target="_blank" role="button"><span class="glyphicon glyphicon-save"></span></a>
+					{% else %}
+			        <a class="btn btn-sm disabled" role="button"><span class="glyphicon glyphicon-save"></span></a>
+					{% endif %}
+			        {% else %}
+			        <a class="btn btn-sm disabled" title="播放" role="button"><span class="glyphicon glyphicon-play"></span></a>
+			        <a class="btn btn-sm disabled"  title="下载" role="button"><span class="glyphicon glyphicon-save"></span></a>
+			        {% endif %}
 
-				{% if logined %}
-	      		{% if have_praised %}
-		      	<a class="btn btn-sm" id="program-praise" title="点赞" role="button" style="color:red" praised="true"><span id="program-praise-count" class="glyphicon glyphicon-thumbs-up">{{ praise_count}}</span></a>
-		      	{% else %}
-		      	<a class="btn btn-sm" id="program-praise" title="点赞" role="button" praised="false"><span id="program-praise-count" class="glyphicon glyphicon-thumbs-up">{{praise_count}}</span></a>
-		      	{% endif %}
+					{% if logined %}
+		      		{% if have_praised %}
+			      	<a class="btn btn-sm" id="program-praise" title="点赞" role="button" style="color:red" praised="true"><span id="program-praise-count" class="glyphicon glyphicon-thumbs-up">{{ praise_count}}</span></a>
+			      	{% else %}
+			      	<a class="btn btn-sm" id="program-praise" title="点赞" role="button" praised="false"><span id="program-praise-count" class="glyphicon glyphicon-thumbs-up">{{praise_count}}</span></a>
+			      	{% endif %}
 
-				{% if have_favorited %}
-		      	<a class="btn btn-sm" id="program-favorite" title="收藏" role="button" style="color:red" favorited="true"><span id="program-favorite-count" class="glyphicon glyphicon-heart">{{ favorite_count}}</span></a>
-		      	{% else %}
-		      	<a class="btn btn-sm" id="program-favorite" title="收藏" role="button" favorited="false"><span id="program-favorite-count" class="glyphicon glyphicon-heart">{{favorite_count}}</span></a>
-		      	{% endif %}
-				
-				{% else %}
-				<a class="btn btn-sm disabled" id="program-praise" title="登录后可以点赞" role="button"><span id="program-praise-count" class="glyphicon glyphicon-thumbs-up">{{ praise_count}}</span></a>
-		      	<a class="btn btn-sm disabled" id="program-favorite" title="登录后可以收藏" role="button"><span id="program-favorite-count" class="glyphicon glyphicon-heart">{{ favorite_count }}</span></a>
-		      	{% endif %}
-		        <a class="btn btn-sm" title="评论" href="#program-comment" role="button"><span class="glyphicon glyphicon-comment"></span></a>
-		        <!--a class="btn btn-sm" role="button" data-toggle="modal" data-target="#program-favorite-modal"><span class="glyphicon glyphicon-heart"></span></a-->
-		        <a class="btn btn-sm" title="分享" role="button" data-toggle="modal" data-target="#program-share-modal"><span class="glyphicon glyphicon-share"></span></a>
-	        </div>
+					{% if have_favorited %}
+			      	<a class="btn btn-sm" id="program-favorite" title="收藏" role="button" style="color:red" favorited="true"><span id="program-favorite-count" class="glyphicon glyphicon-heart">{{ favorite_count}}</span></a>
+			      	{% else %}
+			      	<a class="btn btn-sm" id="program-favorite" title="收藏" role="button" favorited="false"><span id="program-favorite-count" class="glyphicon glyphicon-heart">{{favorite_count}}</span></a>
+			      	{% endif %}
+					
+					{% else %}
+					<a class="btn btn-sm disabled" id="program-praise" title="登录后可以点赞" role="button"><span id="program-praise-count" class="glyphicon glyphicon-thumbs-up">{{ praise_count}}</span></a>
+			      	<a class="btn btn-sm disabled" id="program-favorite" title="登录后可以收藏" role="button"><span id="program-favorite-count" class="glyphicon glyphicon-heart">{{ favorite_count }}</span></a>
+			      	{% endif %}
+			        <a class="btn btn-sm" title="评论" href="#program-comment" role="button"><span class="glyphicon glyphicon-comment"></span></a>
+			        <!--a class="btn btn-sm" role="button" data-toggle="modal" data-target="#program-favorite-modal"><span class="glyphicon glyphicon-heart"></span></a-->
+			        <a class="btn btn-sm" title="分享" role="button" data-toggle="modal" data-target="#program-share-modal"><span class="glyphicon glyphicon-share"></span></a>
+		        </div>
+		      </div>
 	      </div>
 	    </div>
-	    <div class="col-md-1"></div>
-	    <div class="col-md-3">
-	      
+	    <div class="col-md-4">
 	      <div class="row">
 	          <br />
 	          <div id="img-div" style="float:right">
