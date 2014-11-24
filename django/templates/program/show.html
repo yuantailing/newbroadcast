@@ -241,11 +241,12 @@ function play() {
     program.url = "{{ medialink }}";
     program.description = "{{ description }}";
     program.title = "{{ title }}";
+	program.thumbnail = "{{ piclink.0 }}";
     program.play = 1;
     program.location = "top";
     localStorage.toPlayer = JSON.stringify(program);
     if(localStorage.hasPlayer != 1) {
-        window.open("http://127.0.0.1:8001/program/play/", "_blank");
+        window.open("/program/play/", "_blank");
     }
 }
 function nextPic(x) {
