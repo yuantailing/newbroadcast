@@ -1,6 +1,23 @@
 body {
 	background-color: #eeecf4;
 	font-family: "微软雅黑";
+	font-size: 16px;
+}
+
+footer { 
+	background:#5c307d;
+}
+
+footer p { 
+	font-size:14px;
+}
+
+#footer-content {
+	padding-top:1%;
+}
+
+.container { 
+	width: 80%;
 }
 
 .navbar-nav li a { 
