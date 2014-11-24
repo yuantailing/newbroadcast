@@ -48,7 +48,7 @@ body {
 {% endblock%}
 {% block body %}
 
-<audio src="{{ medialink }}" id="audio" preload="true"></audio>
+<audio src="" id="audio" preload="true"></audio>
 
 <div id="program-audio-player">
 	<div class="col-md-2">
@@ -93,10 +93,6 @@ body {
 	</div>
 	<div class="col-md-7">
 		<ul id="player-viewport" class="list-group" style="overflow:auto; position:fixed;">
-			<script>
-			for (i = 0; i < 50; i ++)
-				document.write("<li class=\"list-group-item\">test</li>");
-			</script>
 		</ul>
 	</div>
 
@@ -127,13 +123,11 @@ var audio_slider_handle;
 var audio_slider_hold = false;
 var audio_random = false;
 
+var localList = new Array();
+var favoriteList = new Array();
+var curProgramNum = 0;
+
 $(window).load(function() { 
-	if(window.addEventListener){
-        window.addEventListener("storage",handle_storage,false);
-    }else if(window.attachEvent){
-        window.attachEvent("onstorage",handle_storage);
-    }
-    
     audio = document.getElementById('audio');
 	player_play = $('#player-play');
 	player_stop = $('#player-stop');
@@ -143,6 +137,20 @@ $(window).load(function() {
 
 	audio_slider = $("#slider");
 	volume_slider = $("#volume-slider");
+    
+    localStorage.hasPlayer = 1;
+    
+    info = JSON.parse(localStorage.toPlayer);
+    program = new Object();
+    program.title = info.title;
+    program.description = info.description;
+    program.url = info.url;
+    program.id = info.id;
+    program.time = info.time;
+    onLocalListChange(info.location, program);
+    if(info.play == 1)
+        onCurProgramChange(0);
+
 	if (audio_slider.length > 0) {
 	  audio_slider.slider({
 	    min: 0,
@@ -238,6 +246,11 @@ $(document).ready(function() {
 	$('#player-viewport').css('bottom', document.getElementById('program-audio-player').scrollHeight + 10);
 	$('#player-viewport').css('left', document.getElementById('player-sidebar').scrollWidth + 10);
 	$('#player-viewport').css('right', document.getElementById('player-description').scrollWidth + 10);
+    if(window.addEventListener){
+        window.addEventListener("storage", handle_storage, false);
+    }else if(window.attachEvent){
+        window.attachEvent("onstorage", handle_storage);
+    }
 });
 
 $(window).resize(function() { 
@@ -268,9 +281,51 @@ function update() {
 	volume_slider.attr('title', "音量：" + volume_slider.slider("value"));
 }
 
-function handle_storage(e) {
-    if(!e){e=window.event;}
-    //showStorage();
+var handle_storage = function(e) {
+    if(!e) {
+        e = window.event;
+    }
+    if(e.key == "toPlayer" && e.newValue != null) {
+        info = JSON.parse(e.newValue);
+        program = new Object();
+        program.title = info.title;
+        program.description = info.description;
+        program.url = info.url;
+        program.id = info.id;
+        program.time = info.time;
+        onLocalListChange(info.location, program);
+        if(info.play == 1)
+            onCurProgramChange(0);
+    }
+}
+
+function onLocalListChange(location, program) {
+    if(location == "top") {
+        localList.unshift(program);
+        newItem = document.createElement("li");
+        newItem.className = "list-group-item";
+        newItem.innerHTML = program.title;
+        newItem.id = "list-group-item-" + program.time;
+        $("#player-viewport").prepend(newItem);
+    } else if(info.location == "bottom") {
+        localList.push(program);
+        newItem = document.createElement("li");
+        newItem.className = "list-group-item";
+        newItem.innerHTML = program.title;
+        newItem.id = "list-group-item-" + program.time;
+        $("#player-viewport").append(newItem);
+    }
+}
+
+function onCurProgramChange(newProgramNum) {
+    oldItem = document.getElementById("list-group-item-" + localList[curProgramNum].time);
+    oldItem.className = "list-group-item";
+    curProgramNum = newProgramNum;
+    curItem = document.getElementById("list-group-item-" + localList[curProgramNum].time);
+    curItem.className = "list-group-item active";
+    audio.src = localList[curProgramNum].url;
+    audio.load();
+    audio.play();
 }
 
 function showObject(obj) {

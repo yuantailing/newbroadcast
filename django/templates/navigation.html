@@ -27,13 +27,22 @@
 				<div class="input-group">
 					<input class="form-control" id="navbarInput-01" name="keyword" type="search" placeholder="Search">
 					<span class="input-group-btn">
-						<button type="submit" class="btn" style="margin-left:0px;"><span class="fui-search"></span></button>
+						<button type="submit" onclick="return jiexi(this)" class="btn" style="margin-left:0px;"><span class="fui-search"></span></button>
 					</span>
 				</div>
 			</div>
 		</form>
 	</div><!-- /.navbar-collapse -->
 </nav>
+
+<script>
+	function jiexi(x) {
+		var t=document.getElementById("navbarInput-01").value;
+		document.getElementById("navbarInput-01").value=escape(t);
+//		self.location="/resource/?keyword=" + escape(t);
+	}
+</script>
+
 {% if not request.session.uid %}
 {% include "login/loginmodal.html" %}
 {% include "login/signinmodal.html" %}

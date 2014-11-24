@@ -34,10 +34,12 @@
             var a = document.createElement('div');
             a.innerHTML = data[i].title;
             var p = document.createElement('p');
-            if (data[i].content.length > 100) { 
-            	p.innerHTML = data[i].content.substring(0, 100) + "...";
-            } else { 
-            	p.innerHTML = data[i].content;
+            if (data[i].content) {
+                if (data[i].content.length > 100) { 
+                    p.innerHTML = data[i].content.substring(0, 100) + "...";
+                } else { 
+                    p.innerHTML = data[i].content;
+                }
             }
             a.appendChild(p);
             title.appendChild(a);

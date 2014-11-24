@@ -83,12 +83,18 @@
 	var srs = new Array();
 		$(document).ready(function(){
 			var keyword="";
-			var gid="";
-			var sid="";
+			var gid="-";
+			var sid="-";
 			var url=document.location.href;
+/*			var test1="清韵烛光";
+			alert(test1);
+			test1=escape(test1);
+			alert(test1);
+			test1=unescape(test1);
+			alert(test1);
+*/
 			if (url.indexOf("?")!=-1) {
 				var arrStr=url.substring(url.indexOf("?")+1).split("&");
-				alert(arrStr);
 				for (var i=0; i<arrStr.length; i++) {
 					if (arrStr[i].indexOf("keyword=")!=-1)
 						keyword=arrStr[i].replace("keyword=", "");
@@ -101,7 +107,7 @@
 			$.ajax({
 			  url:'/resource/filter/',
 			  type:"GET",
-			  data:{'groupid':"-", 'seriesid':"-", 'keyword':keyword, 'gid':gid, 'sid':sid},
+			  data:{'groupid':gid, 'seriesid':sid, 'keyword':unescape(unescape(keyword))},
 				dataType:"json"
 			}).done(function(msg){
 				pids = msg.pid;

@@ -36,7 +36,11 @@ def show_program(req, arg):
     if pg.picture:
         pic_arr = json.loads(pg.picture)
         for i in pic_arr:
-            piclink.append(Source.objects.get(id=i).document.url)
+            s = Source.objects.get(id=i)
+            if s.thumb:
+                piclink.append(s.thumb.url)
+            else:
+                piclink.append(s.document.url)
     
     medialink = ""
     if pg.audio:
@@ -48,11 +52,11 @@ def show_program(req, arg):
         for i in range(0, len(doc_arr)):
             src = Source.objects.get(id=doc_arr[i])
             if i == 0:
-                doc_links.append((u"资料下载", src.document.url, u"资料" + str(i + 1) + u": " +
-                                  os.path.split(src.document.file.name)[1]))
+                doc_links.append((u"稿件下载", src.document.url, u"稿件" + str(i + 1)
+                                  + u" 下载链接"))
             else:
-                doc_links.append((u"", src.document.url, u"资料" + str(i + 1) + u": " +
-                                  os.path.split(src.document.file.name)[1]))
+                doc_links.append((u"", src.document.url, u"稿件" + str(i + 1)
+                                  + u" 下载链接"))
 
     have_praised = False
     have_favorited = False
@@ -78,13 +82,7 @@ def show_program(req, arg):
 
 @power_required([None])
 def play_program(req, arg):
-    pgid = int(arg)
-    pg = Program.objects.get(id=pgid)
-    medialink = ""
-    if pg.audio:
-        medialink = Source.objects.get(id=pg.audio).document.url
     return render_to_response("program/player.html",
-                              {'medialink':medialink},
                               context_instance=RequestContext(req));
 
 def add_user_program_only_item(OnlyClassName, req):
@@ -175,9 +173,6 @@ def ajax_upload(req):
     try:
         prg = Program()
         
-
-        print Program.objects.get(id = 1000)
-
         tgroup = req.POST.get('group', None)
         tseries = req.POST.get('series', None)
         ttitle = req.POST.get('title', None)
@@ -321,6 +316,10 @@ def modify_program(req, arg):
 
     try:
         res = { }
+        user = User.objects.get(id=req.session['uid'])
+        if (user.power == 'worker' and user.id != pg.uploader.id):
+            return HttpResponse(json.dumps({'success':False, 'info':'您只能修改自己上传的文件！'}),
+                        content_type='application/json')
         tgroup = req.POST.get('group', None)
         tseries = req.POST.get('series', None)
         ttitle = req.POST.get('title', None)
@@ -386,6 +385,11 @@ def modify_program(req, arg):
 @power_required(['worker'])
 def del_pic(req):
     prgid = req.GET.get('prgid', None)
+    pg = Program.objects.get(id=prgid)
+    user = User.objects.get(id=req.session['uid'])
+    if (user.power == 'worker' and user.id != pg.uploader.id):
+        return HttpResponse(json.dumps({'success':False, 'info':'您只能修改自己上传的文件！'}),
+                        content_type='application/json')
     picid = req.GET.get('picid', None)
     pg = Program.objects.get(id=prgid)
     pic_arr = json.loads(pg.picture)
@@ -396,11 +400,16 @@ def del_pic(req):
         success = True
     except Exception, e:
         success = False
-    return HttpResponse(json.dumps({'success':success}), content_type='application/json')
+    return HttpResponse(json.dumps({'success':success, 'info':'删除失败，请重新尝试！'}), content_type='application/json')
 
 @power_required(['worker'])
 def del_doc(req):
     prgid = req.GET.get('prgid', None)
+    pg = Program.objects.get(id=prgid)
+    user = User.objects.get(id=req.session['uid'])
+    if (user.power == 'worker' and user.id != pg.uploader.id):
+        return HttpResponse(json.dumps({'success':False, 'info':'您只能修改自己上传的文件！'}),
+                        content_type='application/json')
     docid = req.GET.get('docid', None)
     pg = Program.objects.get(id=prgid)
     doc_arr = json.loads(pg.document)
@@ -411,7 +420,7 @@ def del_doc(req):
         success = True
     except Exception, e:
         success = False
-    return HttpResponse(json.dumps({'success':success}), content_type='application/json')
+    return HttpResponse(json.dumps({'success':success, 'info':'删除失败，请重新尝试！'}), content_type='application/json')
 
 @power_required(['worker'])
 def delete_program(req):
