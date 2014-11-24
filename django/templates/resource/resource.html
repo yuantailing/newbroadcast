@@ -139,7 +139,7 @@
 					input.setAttribute("value", srs[i].id);
 					li.appendChild(input);
 				}
-				var count=parseInt(pids.length/10+1);
+				var count=parseInt((pids.length-1)/10+1);
 				document.getElementById("page-list").innerHTML="";
 				if (count>1) {
 					var linode=document.createElement("li");
@@ -341,7 +341,7 @@
 					input.setAttribute("value", srs[i].id);
 					li.appendChild(input);
 				}
-				var count=parseInt(pids.length/10+1);
+				var count=parseInt((pids.length-1)/10+1);
 				document.getElementById("page-list").innerHTML="";
 				if (count>1) {
 					var linode=document.createElement("li");
