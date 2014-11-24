@@ -1,6 +1,34 @@
 body {
+	background-color: #eeecf4;
 	font-family: "微软雅黑";
 }
+
+@-webkit-keyframes shade{
+	from{opacity:1;}
+	15%{opacity:0.4;}
+	to{opacity:1;}
+}
+@-moz-keyframes shade{
+	from{opacity:1;}
+	15%{opacity:0.4;}
+	to{opacity:1;}
+}
+@-ms-keyframes shade{
+	from{opacity:1;}
+	15%{opacity:0.4;}
+	to{opacity:1;}
+}
+@-o-keyframes shade{
+	from{opacity:1;}
+	15%{opacity:0.4;}
+	to{opacity:1;}
+}
+@keyframes shade{
+	from{opacity:1;}
+	15%{opacity:0.4;}
+	to{opacity:1;}
+}
+
 #wrap {
 	width:auto;
 	height:auto;
@@ -8,36 +36,43 @@ body {
 	position:relative;
 }
 #wrap .box {
-	width:500px;
+	width:280px;
 	height:auto;
-	padding:10px;
+	padding:7px;
 	float:left;
 	position: relative;
 }
 
 #wrap .box .info {
+	background-color: #fff;
 	position:relative;
-	box-shadow:0 0 11px #666;
+	box-shadow:0 0 5px #999;
 }
 
 #wrap .box .info .pic{
 	width:100%;
 	height:auto;
 }
+#wrap .box .info .pic:hover{
+	-webkit-animation:shade 3s ease-in-out 1;
+	-moz-animation:shade 3s ease-in-out 1;
+	-ms-animation:shade 3s ease-in-out 1;
+	-o-animation:shade 3s ease-in-out 1;
+	animation:shade 3s ease-in-out 1;
+}
 
-#wrap .box .info .pic  img{
+#wrap .box .info .pic img{
+	padding: 3%;
 	width:100%;
 }
 
 #wrap .box .info .title{
-	position:absolute;
-	bottom: 0%;
+	padding: 3%;
 	width: 100%;
-	padding: 0% 5% 0% 5%;
+	font-size: 18px;
+}
 
-	background-color: #000;
-	text-align: center;
-	opacity: 0.5;	
-
-	color: #fff;
+#wrap .box .info .title p { 
+	color:#999;
+	font-size: 14px;
 }
