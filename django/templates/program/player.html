@@ -270,6 +270,11 @@ $(document).ready(function() {
     }else if(window.attachEvent){
         window.attachEvent("onstorage", handle_storage);
     }
+    $('#player-viewport').click(function(e) {
+        if(e.target.tagName == 'A' || e.target.tagName == 'a') {
+            onCurProgramChange($(e.target).parent().index());
+        }
+    });
 });
 
 $(window).resize(function() { 
@@ -353,7 +358,7 @@ function onListChange(location, program, list) {
 function prependNewItem(program) {
 	newItem = document.createElement("li");
     newItem.className = "list-group-item";
-    newItem.innerHTML = program.title;
+    newItem.innerHTML = "<a style='width:100%' href='javascript:;'>" + program.title + "</a>";
     newItem.id = "list-group-item-" + program.time;
 	$("#player-viewport").prepend(newItem);
 }
@@ -361,13 +366,12 @@ function prependNewItem(program) {
 function appendNewItem(program) {
 	newItem = document.createElement("li");
     newItem.className = "list-group-item";
-    newItem.innerHTML = program.title;
+    newItem.innerHTML = "<a style='width:100%' href='javascript:;'>" + program.title + "</a>";
     newItem.id = "list-group-item-" + program.time;
 	$("#player-viewport").append(newItem);
 }
 
 function onCurProgramChange(newProgramNum) {
-	console.log(newProgramNum);
 	$(".list-group-item.active").removeClass("active");
     curProgramNum = newProgramNum;
     curItem = document.getElementById("list-group-item-" + curList[curProgramNum].time);
@@ -400,6 +404,5 @@ function showObject(obj) {
         }
     }
 }
-
 </script>
 {% endblock %}
