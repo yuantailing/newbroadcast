@@ -13,7 +13,8 @@ body {
 	background:#eeecf4;
 }
 #player-viewport li{
-	border:0px;
+	cursor: pointer;
+    border: 0px;
 	width: 100%;
 }
 #player-viewport .active{
@@ -271,8 +272,8 @@ $(document).ready(function() {
         window.attachEvent("onstorage", handle_storage);
     }
     $('#player-viewport').click(function(e) {
-        if(e.target.tagName == 'A' || e.target.tagName == 'a') {
-            onCurProgramChange($(e.target).parent().index());
+        if(e.target.tagName == 'LI' || e.target.tagName == 'li') {
+            onCurProgramChange($(e.target).index());
         }
     });
 });
@@ -358,7 +359,7 @@ function onListChange(location, program, list) {
 function prependNewItem(program) {
 	newItem = document.createElement("li");
     newItem.className = "list-group-item";
-    newItem.innerHTML = "<a style='width:100%' href='javascript:;'>" + program.title + "</a>";
+    newItem.innerHTML = program.title/*"<a style='width:100%' href='javascript:;'>" + program.title + "</a>"*/;
     newItem.id = "list-group-item-" + program.time;
 	$("#player-viewport").prepend(newItem);
 }
@@ -366,7 +367,7 @@ function prependNewItem(program) {
 function appendNewItem(program) {
 	newItem = document.createElement("li");
     newItem.className = "list-group-item";
-    newItem.innerHTML = "<a style='width:100%' href='javascript:;'>" + program.title + "</a>";
+    newItem.innerHTML = program.title/*"<a style='width:100%' href='javascript:;'>" + program.title + "</a>"*/;
     newItem.id = "list-group-item-" + program.time;
 	$("#player-viewport").append(newItem);
 }
