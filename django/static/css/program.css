@@ -8,5 +8,54 @@
 }
 
 #program-description { 
-	padding:1%;
+	padding-right:2%;
+}
+
+#program-add-comment-text { 
+}
+
+#program-add-comment-text textarea { 
+	width:100%;
+	font-size:14px;
+	color:#999;
+	border-radius: 0px;
+	border: 1px dashed;
+
+	resize:none;
+	transition: border-color 0.1s;
+}
+
+#program-add-comment-text textarea:focus { 
+	outline:0px dashed;
+	border-color: #5c307d;
+}
+
+.table thead tr th { 
+	border:0px;
+
+	font-size: 16px;
+}
+.table tbody tr td { 
+	border:0px;
+
+	color: #999;
+	font-size: 16px;
+}
+
+.table tbody tr td { 
+	font-size:14px;
+}
+
+.featurette { 
+	padding:2%;
+	background-color: #fff;
+	/*box-shadow: 0 0 5px 0px #999;*/
+}
+
+.program-comment-user { 
+	font-size:15px;
+}
+
+.btn-primary:hover { 
+	color: #fff;
 }

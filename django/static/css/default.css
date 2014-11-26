@@ -33,3 +33,15 @@ footer p {
 	background-color: inherit;
 	color: #999;
 }
+
+.btn:hover { 
+	color: #875f9a;
+}
+
+.dropdown-menu { 
+	background-color: #5c307d;
+}
+
+.dropdown-menu li a { 
+	color:#fff;
+}

@@ -5,6 +5,7 @@
 {% endblock %}
 
 {% block header %}
+<link href="/static/css/space.css" rel="stylesheet" />
 <link href="/static/css/birthday-picker.css" rel="stylesheet" />
 {% endblock %}
 
@@ -55,7 +56,6 @@
 					<div class="panel-heading">
 						<div class="col-md-8">
 							<img class="image-responsive img-rounded row" width="128" src="/static/images/1.jpg"  id="space-picture"/>
-							<a class="row" href="#">更换头像</a>
 						</div>
 						<h4>{{ user.nickname }}</h4>
 					</div>
@@ -88,7 +88,8 @@
 					<div class="panel-heading">
 						<h4>我的收藏</h4>
 					</div>
-					<table class="panel-body table table-bordered table-hover">
+					<table class="panel-body table table-bordered table-striped table-hover">
+						<thead>
 						<tr>
 							<th>标题</th>
 							<th>组别</th>
@@ -96,6 +97,8 @@
 							<th>上传时间</th>
 							<!--th>&nbsp;</th-->
 						</tr>
+						</thead>
+						<tbody>
                     {% for up in favs %}
 						<tr>
 							<td><a href="/program/{{ up.id }}">{{ up.title }}</a></td>
@@ -105,6 +108,7 @@
 							<!--td><a href="#" onclick="unfavorite({{ up.id }})">取消收藏</a></td-->
 						</tr>
 					{% endfor %}
+						</tbody>
 					</table>
 					<div class="panel-footer" id="space-upload">
 						<a href="/manage/favorites/"><button class="btn btn-primary">更多...</button></a>
