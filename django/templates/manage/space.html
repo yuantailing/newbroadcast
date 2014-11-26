@@ -19,7 +19,6 @@
                 	<li>
                 		<a href="#space-person">个人信息管理</a>
                 		<ul class="nav">
-                			<li><a href="#space-picture">头像</a></li>
                 			<li><a href="#space-info">资料</a></li>
                 			<li><a href="#space-change-info">修改资料</a></li>
                 		</ul>
@@ -38,10 +37,7 @@
 					{% endif %}
                 	{% if user.power == 'superadmin' %}
 					<li>
-						<a href="#space-groupseries-manager">组别/系列管理</a>
-					</li>
-					<li>
-						<a href="#space-member-manager">站内成员管理</a>
+						<a href="#space-groupseries-manager">管理员功能</a>
 					</li>
 					{% endif%}
 					
@@ -52,22 +48,11 @@
 			<!-- person -->
 			<div class="bs-docs-section" id="space-person">
 				<hr />
-				<div class="panel panel-default">
-					<div class="panel-heading">
-						<div class="col-md-8">
-							<img class="image-responsive img-rounded row" width="128" src="/static/images/1.jpg"  id="space-picture"/>
-						</div>
-						<h4>{{ user.nickname }}</h4>
-					</div>
-					<div class="panel-body">
-						<p>{{ user.email }}</p>
-					</div>
-				</div>
-				<div class="panel panel-default" id="space-info">
-					<div class="panel-heading">
+				<div class="space-section">
+					<div class="">
 						<h4 clas="col-md-4">个人资料</h4>
 					</div>
-					<table class="panel-body table table-bordered table-hover">
+					<table class="table table-hover">
 						<tr><td>#</td><td></td></tr>
 						<tr><td>昵称</td><td>{{ user.nickname }}</td></tr>
 						<tr><td>邮箱</td><td>{{ user.email }}</td></tr>
@@ -75,20 +60,20 @@
 						{% if user.phone_number %}<tr><td>联系电话</td><td>{{ user.phone_number }}</td></tr>{% endif %}
 						{% if user.birthday %}<tr><td>生日</td><td>{{ user.birthday|date:"Y-m-d" }}</td></tr>{% endif %}
 					</table>
-					<div class="panel-footer" id="space-change-info">
-						<button class="btn btn-primary" data-toggle="modal" data-target="#change-info">修改资料</button>
-						<button class="btn btn-primary" data-toggle="modal" data-target="#change-password">修改密码</button>	
+					<div id="space-change-info">
+						<button class="btn btn-default" data-toggle="modal" data-target="#change-info"><span class="glyphicon glyphicon-pencil"></span> 修改资料</button>
+						<button class="btn btn-default" data-toggle="modal" data-target="#change-password"><span class="glyphicon glyphicon-edit"></span> 修改密码</button>	
 					</div>
 				</div>
 			</div>
 			<!-- favorites manager -->
 			<div class="bs-docs-section" id="space-favorites-manager">
 				<hr />
-				<div class="panel panel-default" id="space-favorites-list">
-					<div class="panel-heading">
+				<div class="space-section" id="space-favorites-list">
+					<div class="">
 						<h4>我的收藏</h4>
 					</div>
-					<table class="panel-body table table-bordered table-striped table-hover">
+					<table class="table table-hover">
 						<thead>
 						<tr>
 							<th>标题</th>
@@ -110,8 +95,8 @@
 					{% endfor %}
 						</tbody>
 					</table>
-					<div class="panel-footer" id="space-upload">
-						<a href="/manage/favorites/"><button class="btn btn-primary">更多...</button></a>
+					<div id="space-upload">
+						<a href="/manage/favorites/"><button class="btn btn-default"><span class="glyphicon glyphicon-chevron-right"></span> 更多</button></a>
 					</div>
 				</div>
 			</div>
@@ -119,18 +104,16 @@
 			<!-- upload manager -->
 			<div class="bs-docs-section" id="space-upload-manager">
 				<hr />
-				<div class="panel panel-default" id="space-upload-list">
-					<div class="panel-heading">
+				<div class="space-section" id="space-upload-list">
+					<div>
 						<h4>最近上传</h4>
 					</div>
-					<table class="panel-body table table-bordered table-hover">
+					<table class="table table-hover">
 						<tr>
 							<th>标题</th>
 							<th>组别</th>
 							<th>系列</th>
 							<th>上传时间</th>
-							<!--th>&nbsp;</th>
-							<th>&nbsp;</th-->
 						</tr>
                     {% for up in ups %}
 						<tr>
@@ -143,9 +126,9 @@
 						</tr>
 					{% endfor %}
 					</table>
-					<div class="panel-footer" id="space-upload">
-						<a href="/manage/resource/"><button class="btn btn-primary">更多...</button></a>
-						<a href="/program/upload/"><button class="btn btn-primary">上传节目</button></a>
+					<div id="space-upload">
+						<a href="/manage/resource/"><button class="btn btn-default"><span class="glyphicon glyphicon-chevron-right"></span> 更多 </button></a>
+						<a href="/program/upload/"><button class="btn btn-default"><span class="glyphicon glyphicon-plus"></span> 上传节目</button></a>
 					</div>
 				</div>
 			</div>
@@ -154,26 +137,17 @@
 			<!-- program group & series manage -->
 			<div class="bs-docs-section" id="space-groupseries-manager">
 				<hr />
-				<div class="panel panel-default">
-					<div class="panel-heading">
-						<h4>节目组别/系列管理</h4>
+				<div class="space-section">
+					<div>
+						<h4>管理员功能</h4>
 					</div>
-					<div class="panel-footer">
-						<a href="/manage/groupseries/?view=group"><button class="btn btn-primary">管理组别</button></a>
-						<a href="/manage/groupseries/?view=series"><button class="btn btn-primary">管理系列</button></a>
-					</div>
-				</div>
-			</div>
-			
-			<!-- member manager -->
-			<div class="bs-docs-section" id="space-member-manager">
-				<hr />
-				<div class="panel panel-default" id="space-upload-list">
-					<div class="panel-heading">
-						<h4>成员管理</h4>
-					</div>
-					<div class="panel-body">
-						<a href="/manage/user/">全部成员</a>
+					<br />
+					<div>
+						<a href="/manage/groupseries/?view=group"><button class="btn btn-default"><span class="glyphicon glyphicon-th"></span> 组别管理</button></a>
+						<br />
+						<a href="/manage/groupseries/?view=series"><button class="btn btn-default"><span class="glyphicon glyphicon-th-list"></span> 系列管理</button></a>
+						<br />
+						<a href="/manage/user/"><button class="btn btn-default"><span class="glyphicon glyphicon-user"></span> 成员管理</button></a>
 					</div>
 				</div>
 			</div>

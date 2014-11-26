@@ -11,6 +11,10 @@
 	padding-right:2%;
 }
 
+#program-description p { 
+	color:#666;
+}
+
 #program-add-comment-text { 
 }
 
