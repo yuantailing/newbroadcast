@@ -1,9 +1,14 @@
 {% extends "base.html" %}
 {% block title %}{{ title }} - 清华大学广播站{% endblock %}
+{% block header %}
+<link href="/static/css/upload.css" rel="stylesheet" />
+{% endblock %}
 {% block body %}
 <div class="container">
+<hr />
+<div id="modify-content">
 	<div style="text-align:center;">
-		<h1>修改节目信息</h1>
+		<h4>修改节目信息</h4>
 		<br />
 	</div>
 	<div>
@@ -110,6 +115,7 @@
 	    </div>
 	</form>
 	</div>
+</div>
 </div>
 {% endblock %}
 {% block script %}
