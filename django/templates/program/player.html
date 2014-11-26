@@ -93,13 +93,12 @@ body {
 		<div class="bs-docs-sidebar affix-top" role="complementary">
         	<ul class="nav bs-docs-sidenav">
             	<li>
-            		<a href="#player-music-list"><span class="glyphicon glyphicon-list"></span> 播放列表</a>
-
+            		<a onclick="onCurListChange('local')" href="javascript:;"><span class="glyphicon glyphicon-list"></span> 播放列表</a>
             		<ul class="nav">
             		</ul>
             	</li>
             	<li>
-            		<a href="#player-favorites-list"><span class="glyphicon glyphicon-heart" style="color:red;"></span> 我的收藏</a>
+            		<a a onclick="onCurListChange('favorite')" href="javascript:;"><span class="glyphicon glyphicon-heart" style="color:red;"></span> 我的收藏</a>
             	</li>
             </ul>
         </div>
@@ -314,6 +313,21 @@ var handle_storage = function(e) {
         info = JSON.parse(e.newValue);
         readLocalStorage(info);
     }
+    if(e.key == "toFavorite" && e.newValue != null) {
+        info = JSON.parse(e.newValue);
+        parseFavoriteInfo(info);
+    }
+}
+
+function parseFavoriteInfo(info) {
+    program = new Object();
+    program.title = info.title;
+    program.description = info.description;
+    program.url = info.url;
+    program.id = info.id;
+    program.time = info.time;
+    program.thumbnail = info.thumbnail;
+    onListChange(info.location, program, favoriteList);
 }
 
 function readLocalStorage(info) {
@@ -324,9 +338,13 @@ function readLocalStorage(info) {
     program.id = info.id;
     program.time = info.time;
     program.thumbnail = info.thumbnail;
-    onListChange(info.location, program, localList);
+    if(info.list == 'local')
+        list = localList;
+    if(info.list == 'favorite')
+        list = favoriteList;
+    onListChange(info.location, program, list);
     if(info.play == 1) {
-		onCurListChange("local");
+		onCurListChange(info.list);
         onCurProgramChange(0);
 	}
 }
@@ -341,7 +359,6 @@ function onCurListChange(str) {
 	$("#player-viewport").empty();
 	for(i in curList)
 		appendNewItem(i);
-	onCurProgramChange(0);
 }
 
 function onListChange(location, program, list) {

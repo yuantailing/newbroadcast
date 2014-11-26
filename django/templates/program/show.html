@@ -251,6 +251,9 @@ $(document).ready(function() {
     }
 });
 function play() {
+    changeLocalStorageToPlayer("top", "local", 1);
+}
+function changeLocalStorageToPlayer(location, list, play) {
     var program = new Object();
     var d = new Date();
     program.time = d.getTime();
@@ -259,10 +262,11 @@ function play() {
     program.description = "{{ description }}";
     program.title = "{{ title }}";
 	program.thumbnail = "{{ piclink.0 }}";
-    program.play = 1;
-    program.location = "top";
+    program.play = play;
+    program.location = location;
+    program.list = list;
     localStorage.toPlayer = JSON.stringify(program);
-    if(localStorage.hasPlayer != 1) {
+    if(localStorage.hasPlayer != 1 && program.list != 'favorite') {
         window.open("/program/play/", "_blank");
     }
 }
@@ -337,6 +341,7 @@ $('#program-favorite').click(function() {
 	        	favorite_button.css("color", "#fff");
 	        	favorite_button.attr("favorited", "false");
 	        	$('#program-favorite-count').html(msg.count);
+                changeLocalStorageToPlayer("top", "favorite", 0);
 	        }
 	    }).fail(function(jqXHR,textStatus){
 	        $('#change-info-status').html('与服务器连接中断');
@@ -352,6 +357,7 @@ $('#program-favorite').click(function() {
 	        	favorite_button.css("color", "#f00");
 	        	favorite_button.attr("favorited", "true");
 	        	$('#program-favorite-count').html(msg.count);
+                changeLocalStorageToPlayer("delete", "favorite", 0);
 	        }
 	    }).fail(function(jqXHR,textStatus){
 	        $('#change-info-status').html('与服务器连接中断');
