@@ -6,7 +6,6 @@ from NewBroadcast import resource
 from NewBroadcast import program
 from NewBroadcast import login
 from NewBroadcast import manage
-from NewBroadcast import mgrdebug
 
 
 urlpatterns = patterns(
@@ -72,8 +71,6 @@ urlpatterns = patterns(
     url(r'^manage/groupseries/$', manage.groupseries),
     url(r'^manage/groupseries/group/$', manage.program_group),
     url(r'^manage/groupseries/series/$', manage.program_series),
-
-    url(r'^mgrdebug/changepower/(.*)$', mgrdebug.change_power),
 
 )
 

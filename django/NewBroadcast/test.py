@@ -9,7 +9,7 @@ class MakeDataTest(unittest.TestCase):
         User(email='admin', nickname='admin', password='admin',
              power='superadmin').save()
 
-
+# 测试
 class ModelsTest(unittest.TestCase):
     def test_user_normal_use(self):
         s = str(random.random())
@@ -96,6 +96,9 @@ class PoweredClient(Client):
 class ManageTest(unittest.TestCase):
     def __init__(self, *args, **kwargs):
         super(ManageTest, self).__init__(*args, **kwargs)
+        if not User.objects.filter(email='admin').exists():
+            User(email='admin', nickname='admin', password='admin',
+                 power='superadmin').save()
     def test_login(self):
         pc = PoweredClient('superadmin')
     def test_power_trans(self):
@@ -167,8 +170,8 @@ class ManageTest(unittest.TestCase):
         self.assertEqual(True, json.loads(res.content)['success'])
     def test_change_info(self):
         pc = PoweredClient('user')
-        # id = int(pc.session.get('uid'))
-        # user = User.objects.get(id=uid)
+        uid = int(pc.session.get('uid'))
+        user = User.objects.get(id=uid)
         res = pc.post('/manage/changeinfo/',
                       {'nickname': 'admin', 'birth': '1995-01-01',
                        'phone': '18811432211', })
@@ -182,13 +185,115 @@ class ManageTest(unittest.TestCase):
                        'phone': '18811432211', })
         self.assertEqual(False, json.loads(res.content)['success'])
         res = pc.post('/manage/changeinfo/',
-                      {'nickname': str(random.random()), 'birth': '1995-01-01',
+                      {'nickname': user.nickname, 'birth': '1995-01-01',
                        'phone': '18811432211', })
         self.assertEqual(True, json.loads(res.content)['success'])
-    
+        res = pc.post('/manage/changeinfo/',
+                      {'nickname': str(random.random()), 'birth': '',
+                       'phone': '', })
+        self.assertEqual(True, json.loads(res.content)['success'])
+    def test_change_power(self):
+        pc = PoweredClient('superadmin')
+        pc2 = PoweredClient('user')
+        uid = int(pc.session.get('uid'))
+        uid2 = int(pc2.session.get('uid'))
+        user = User.objects.get(id=uid)
+        user2 = User.objects.get(id=uid2)
+        res = pc.post('/manage/changepower/',
+                      {'uid': 99999, 'new_power': 'worker', })
+        self.assertEqual(False, json.loads(res.content)['success'])
+        res = pc.post('/manage/changepower/',
+                      {'uid': uid, 'new_power': 'worker', })
+        self.assertEqual(False, json.loads(res.content)['success'])
+        res = pc.post('/manage/changepower/',
+                      {'uid': 2, 'new_power': 'not_a_power', })
+        self.assertEqual(False, json.loads(res.content)['success'])
+        res = pc.post('/manage/changepower/',
+                      {'uid': uid2, 'new_power': 'worker', })
+        self.assertEqual(True, json.loads(res.content)['success'])
+    def test_groupseries(self):
+        pc = PoweredClient('admin')
+        res = pc.get('/manage/groupseries/')
+        self.assertTrue('forbidden' in res.content)
+        pc = PoweredClient('superadmin')
+        res = pc.get('/manage/groupseries/')
+        self.assertTrue('forbidden' not in res.content)
+    def test_program_group(self):
+        # 获取节目组别页面
+        pc = PoweredClient('superadmin')
+        res = pc.get('/manage/groupseries/group/')
+        self.assertEqual(200, res.status_code)
+        # 修改组别
+        pg = ProgramGroup(title="new_program_group")
+        pg.save()
+        res = pc.post('/manage/groupseries/group/',
+                      {'id': 99999, 'action': 'modify',
+                       'new_name': 'new_group', })
+        self.assertEqual(False, json.loads(res.content)['success'])
+        res = pc.post('/manage/groupseries/group/',
+                      {'id': 1, 'action': 'modify'})
+        self.assertEqual(False, json.loads(res.content)['success'])
+        res = pc.post('/manage/groupseries/group/',
+                      {'id': pg.id, 'action': 'modify',
+                       'new_name': 'new_group', })
+        # 增加组别（增加组别id为2）
+        self.assertEqual(True, json.loads(res.content)['success'])
+        res = pc.post('/manage/groupseries/group/',
+                      {'action': 'add',
+                       'new_name': '', })
+        self.assertEqual(False, json.loads(res.content)['success'])
+        res = pc.post('/manage/groupseries/group/',
+                      {'action': 'add',
+                       'new_name': 'add_group_name', })
+        self.assertEqual(True, json.loads(res.content)['success'])
+        # 删除组别
+        res = pc.post('/manage/groupseries/group/',
+                      {'id': 99999, 'action': 'delete', })
+        self.assertEqual(False, json.loads(res.content)['success'])
+        res = pc.post('/manage/groupseries/group/',
+                      {'id': 2, 'action': 'delete', })
+        self.assertEqual(True, json.loads(res.content)['success'])
+        # 恢复组别
+        res = pc.post('/manage/groupseries/group/',
+                      {'id': 99999, 'action': 'restore', })
+        self.assertEqual(False, json.loads(res.content)['success'])
+        res = pc.post('/manage/groupseries/group/',
+                      {'id': 2, 'action': 'restore', })
+        self.assertEqual(True, json.loads(res.content)['success'])
+        # 彻底删除组别
+        pro = Program(title="new_program", group_id=2)
+        pro.save()
+        res = pc.post('/manage/groupseries/group/',
+                      {'id': 99999, 'action': 'destroy', })
+        self.assertEqual(False, json.loads(res.content)['success'])
+        res = pc.post('/manage/groupseries/group/',
+                      {'id': 2, 'action': 'destroy', })
+        self.assertEqual(False, json.loads(res.content)['success'])
+        pro.delete()
+        res = pc.post('/manage/groupseries/group/',
+                      {'id': 2, 'action': 'destroy', })
+        self.assertEqual(True, json.loads(res.content)['success'])
+        # 组别排序
+        res = pc.post('/manage/groupseries/group/',
+                      {'new_order': 1, 'action': 'sort', })
+        self.assertEqual(False, json.loads(res.content)['success'])
+        res = pc.post('/manage/groupseries/group/',
+                      {'new_order[]': [1, 2, ], 'action': 'sort', })
+        self.assertEqual(False, json.loads(res.content)['success'])
+        res = pc.post('/manage/groupseries/group/',
+                      {'new_order[]': [1, ], 'action': 'sort', })
+        self.assertEqual(True, json.loads(res.content)['success'])
         
+    def test_program_series(self):
+        pc = PoweredClient('superadmin')
+        res = pc.get('/manage/groupseries/series/')
+        self.assertEqual(200, res.status_code)
+        # 测试增加系列
+        res = pc.post('/manage/groupseries/series/',
+                      {'action': 'add',
+                       'new_name': 'add_group_name', })
+        self.assertEqual(True, json.loads(res.content)['success'])
         
-    
 
 
 import program

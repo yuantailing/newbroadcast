@@ -150,8 +150,6 @@ def change_power(req):
     try:
         new_user = User.objects.get(id=int(req.POST.get('uid', None)))
         new_power = req.POST.get('new_power', None)
-        print new_user
-        print new_power
         if new_user.id == req.session['uid']:
             return HttpResponse(json.dumps({'success':False, 'info':'不能修改自己的权限'}),
                                 content_type='application/json')
@@ -222,29 +220,24 @@ def group_series_post(model, req):
         if not new_name:
             return HttpResponse(json.dumps({'success':False, 'info':'名称不能为空'}),
                                 content_type='application/json')
-        try:
-            model(title=new_name).save()
-        except Exception, e:
-            return HttpResponse(json.dumps({'success':False, 'info':'未知错误'}),
-                                content_type='application/json')
+        model(title=new_name).save()
         return HttpResponse(json.dumps({'success':True, 'info':'创建成功'}),
                             content_type='application/json')
     if req.REQUEST.get('action', None) == 'sort':
         try:
             new_order = req.REQUEST.getlist('new_order[]')
+            new_order = list(int(a) for a in new_order)
+            abled = model.objects.filter(order__gte=0)
+            if abled.count() == len(new_order):
+                for obj in abled:
+                    obj.order = len(new_order) - new_order.index(obj.id)
+                for obj in abled:
+                    obj.save()
+            else:
+                raise Exception
         except Exception, e:
-            new_order = None
-        new_order = list(int(a) for a in new_order)
-        abled = model.objects.filter(order__gte=0)
-        print (abled.count())
-        if abled.count() == len(new_order):
-            for obj in abled:
-                print obj
-                obj.order = len(new_order) - new_order.index(obj.id)
-            for obj in abled:
-                obj.save()
-        else:
-            raise Exception
+            return HttpResponse(json.dumps({'success':False, 'info':'序列错误'}),
+                    content_type='application/json')
         return HttpResponse(json.dumps({'success':True, 'info':'排序成功'}),
                             content_type='application/json')
     return None
