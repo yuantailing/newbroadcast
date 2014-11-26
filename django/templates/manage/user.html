@@ -4,6 +4,7 @@
 {% endblock %}
 
 {% block header%}
+<link href="/static/css/myresource.css" rel="stylesheet" />
 <script>
 function change_modal_id(id) {
 	$('#mgr-change-power-userid').val(id);
@@ -16,8 +17,8 @@ function change_modal_id(id) {
 <div class="container">
 	<div class="row">
 		<hr />
-		<div class="panel panel-default">
-			<div class="panel-heading">
+		<div id="user-content">
+			<div>
 				<h4>用户管理
 					<form style="float:right" method="get" class="navbar-form navbar-right" >
 						<div class="form-group">
@@ -30,17 +31,13 @@ function change_modal_id(id) {
 						</div>
 					</form>
 				</h4>
-
-				
 			</div>
 			{% load pagination_tags %}
 			{% autopaginate obj_list 10 %}
-			<table class="panel-body table table-bordered table-striped table-hover">
+			<table class="table table-hover">
 				<div>
 			{% paginate %}
 				</div>
-
-
 				<tr>
 					<th>ID</th>
 					<th>Email</th>

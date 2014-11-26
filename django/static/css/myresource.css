@@ -3,18 +3,50 @@
 	background-color: #fff;
 }
 
+#user-content { 
+	padding:2%;
+	background-color: #fff;
+}
+
+#groupseries-content, #group-deleted-series-content{ 
+	padding:2%;
+	background-color: #fff;
+}
+
+table tbody { 
+	border: 0px;
+}
+
+.table>tbody+tbody { 
+	border-top:0px;
+}
+
 .table thead tr th { 
 	border:0px;
+	border-top:0px;
 
 	font-size: 16px;
 }
+
+.table tbody { 
+	border:0px;
+}
+
+.table tbody tr th { 
+	border:0px;
+	border-bottom:0px;
+	font-size: 16px;
+}
+
 .table tbody tr td { 
 	border:0px;
+	border-top:0px;
 
 	color: #999;
-	font-size: 16px;
+	font-size: 14px;
 }
 
-.table tbody tr td { 
-	font-size:14px;
+.container .btn-primary { 
+	color: #5c307d;
+	background-color: #fff;
 }

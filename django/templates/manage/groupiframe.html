@@ -1,20 +1,24 @@
 {% extends "base.html" %}
 {% block navigation %}{% endblock %}
+
+{% block header%}
+<link href="/static/css/myresource.css" rel="stylesheet" />
+{% endblock %}
+
 {% block body %}
-<div class="panel panel-default">
-	<div class="panel-heading">
+<div class="container">
+<div id="groupseries-content">
+	<div>
 		<h4>{{ title }}管理</h4>
 	</div>
-	<table class="panel-body table table-bordered table-striped table-hover" id="sortable-items-table">
-		<div>
-		</div>
+	<hr />
+	<table class="table table-hover" id="sortable-items-table">
 		<thead>
 		<tr>
 		<th>标题</th>
 		<th>节目数量</th>
 		<th>创建时间</th>
-		<th>修改操作</th>
-		<th>删除操作</th>
+		<th></th>
 		</tr>
 		</thead>
 		{% for pg in obj_list %}
@@ -22,29 +26,30 @@
 		<tr>
 		<td><input type="hidden" id="sort-group-series-id" value="{{ pg.id }}"/><a href="/resource/?gid={{ pg.id }}" target="_parent">{{ pg.title }}</a></td>
 		<td><a href="/resource/?gid={{ pg.id }}" target="_parent">{{ pg.program.count }}</a></td>
-		<td>{{ pg.create_time|date:"Y-m-d" }}</a></td>
-		<td><button class="btn btn-primary" data-toggle="modal" data-target="#change-info"
-			onclick="$('#modal-modify-id').attr('value', '{{ pg.id }}'); $('#modal-modify-origin-name').html('{{ pg.title|addslashes }}');">修改</button></td>
-		<td><button class="btn btn-primary" data-toggle="modal" data-target="#delete-info"
-			onclick="$('#modal-delete-id').attr('value', '{{ pg.id }}'); $('#modal-delete-origin-name').html('{{ pg.title|addslashes }}');">删除</button></td>
+		<td>{{ pg.create_time|date:"Y-m-d" }}</td>
+		<td><button class="btn btn-primary" data-toggle="modal" data-target="#change-info" onclick="$('#modal-modify-id').attr('value', '{{ pg.id }}'); $('#modal-modify-origin-name').html('{{ pg.title|addslashes }}');"><span class="glyphicon glyphicon-pencil"></span> 修改</button>
+		<button class="btn btn-primary" data-toggle="modal" data-target="#delete-info" onclick="$('#modal-delete-id').attr('value', '{{ pg.id }}'); $('#modal-delete-origin-name').html('{{ pg.title|addslashes }}');"><span class="glyphicon glyphicon-remove"></span> 删除</button></td>
 		</tr>
 		</tbody>
 		{% endfor %}
 	</table>
+	<hr />
 	<div>
-		<button class="btn btn-primary" id="save-new-order">保存新顺序（拖拽可以排序）</button>
+		<button class="btn btn-primary" id="save-new-order"><span class="glyphicon glyphicon-floppy-save"></span> 保存新顺序（拖拽可以排序）</button>
 	</div>
-	<h5>已删除的{{ title }}</h5>
-	<table class="panel-body table table-bordered table-striped table-hover">
-		<div>
-		</div>
+</div>
+<hr />
+<div id="group-deleted-series-content">
+	<h5>已删除{{ title }}</h5>
+	<hr />
+	<table class="table table-hover">
+		
 		<thead>
 		<tr>
 		<th>标题</th>
 		<th>节目数量</th>
 		<th>创建时间</th>
-		<th>恢复操作</th>
-		<th>彻底删除</th>
+		<th></th>
 		</tr>
 		</thead>
 		{% for pg in removed_list %}
@@ -54,15 +59,16 @@
 		<td><a href="/resource/?gid={{ pg.id }}" target="_parent">{{ pg.program.count }}</a></td>
 		<td>{{ pg.create_time|date:"Y-m-d" }}</td>
 		<td><button class="btn btn-primary" data-toggle="modal" data-target="#restore-info"
-			onclick="$('#modal-restore-id').attr('value', '{{ pg.id }}'); $('#modal-restore-origin-name').html('{{ pg.title|addslashes }}');">恢复</button></td>
-		<td><button class="btn btn-primary" data-toggle="modal" data-target="#destroy-info"
-			onclick="$('#modal-destroy-id').attr('value', '{{ pg.id }}'); $('#modal-destroy-origin-name').html('{{ pg.title|addslashes }}');">彻底删除</button></td>
+			onclick="$('#modal-restore-id').attr('value', '{{ pg.id }}'); $('#modal-restore-origin-name').html('{{ pg.title|addslashes }}');"><span class="glyphicon glyphicon-repeat"></span> 恢复</button>
+		<button class="btn btn-primary" data-toggle="modal" data-target="#destroy-info"
+			onclick="$('#modal-destroy-id').attr('value', '{{ pg.id }}'); $('#modal-destroy-origin-name').html('{{ pg.title|addslashes }}');"><span class="glyphicon glyphicon-remove"></span> 彻底删除</button></td>
 		</tr>
 		</tbody>
 		{% endfor %}
 	</table>
-	<div class="panel-footer">
-		<button class="btn btn-primary" data-toggle="modal" data-target="#add-info">增加{{ title }}</button>
+	<hr />
+	<div>
+		<button class="btn btn-primary" data-toggle="modal" data-target="#add-info"><span class="glyphicon glyphicon-plus"></span> 增加{{ title }}</button>
 	</div>
 </div>
 
@@ -264,7 +270,7 @@
       </div><!-- /.modal-content -->
     </div>
 </div><!-- /.modal -->
-
+</div>
 {% endblock %}
 
 {% block footer %}{% endblock %}
