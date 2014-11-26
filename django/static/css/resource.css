@@ -1,3 +1,9 @@
+#resource-content { 
+	background-color:#fff;
+	box-shadow: 0 0 5px 0px #999;
+	border-radius: 2px;
+}
+
 .table thead tr th { 
 	border:0px;
 
