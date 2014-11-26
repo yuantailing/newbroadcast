@@ -3,13 +3,7 @@ import unittest
 import random
 from models import *
 
-
-class MakeDataTest(unittest.TestCase):
-    def test_makedata(self):
-        User(email='admin', nickname='admin', password='admin',
-             power='superadmin').save()
-
-# 测试
+# 测试模型（不充分的测试）
 class ModelsTest(unittest.TestCase):
     def test_user_normal_use(self):
         s = str(random.random())
@@ -77,6 +71,7 @@ import json
 from django.test.client import Client
 
 
+# 先访问login以获取权限的Client类
 class PoweredClient(Client):
     def __init__(self, power):
         super(PoweredClient, self).__init__()
@@ -93,14 +88,16 @@ class PoweredClient(Client):
         assert self.session.get('user_power') == power
 
 
+# 对manage.py的充分测试
 class ManageTest(unittest.TestCase):
     def __init__(self, *args, **kwargs):
         super(ManageTest, self).__init__(*args, **kwargs)
+        # 检查至少有一个admin用户
         if not User.objects.filter(email='admin').exists():
             User(email='admin', nickname='admin', password='admin',
                  power='superadmin').save()
-    def test_login(self):
-        pc = PoweredClient('superadmin')
+
+    # 测试权限翻译内容
     def test_power_trans(self):
         from manage import power_trans
         self.assertEqual(u'普通用户', power_trans(u'user'))
@@ -108,6 +105,8 @@ class ManageTest(unittest.TestCase):
         self.assertEqual(u'管理员', power_trans(u'admin'))
         self.assertEqual(u'超级管理员', power_trans(u'superadmin'))
         self.assertEqual(u'未知权限', power_trans(u''))
+
+    # 测试个人空间显示逻辑
     def test_show_space(self):
         pc = PoweredClient('superadmin')
         res = pc.get('/space/')
@@ -118,12 +117,16 @@ class ManageTest(unittest.TestCase):
         pc = Client()
         res = pc.get('/space/')
         self.assertTrue('forbidden' in res.content)
+
+    # 测试收藏夹显示
     def test_show_favorites(self):
         pc = PoweredClient('user')
         res = pc.get('/manage/favorites/')
         self.assertTrue('/manage/favorites/table/' in res.content)
         res = pc.get('/manage/favorites/table/')
         self.assertTrue('我的收藏' in res.content)
+
+    # 测试台员上传管理
     def test_show_mgrres(self):
         pc = PoweredClient('user')
         res = pc.get('/manage/resource/')
@@ -131,6 +134,8 @@ class ManageTest(unittest.TestCase):
         pc = PoweredClient('worker')
         res = pc.get('/manage/resource/')
         self.assertTrue('forbidden' not in res.content)
+
+    # 测试台员"我的上传"
     def test_show_mgrmyres(self):
         pc = PoweredClient('user')
         res = pc.get('/manage/myresource/')
@@ -138,6 +143,8 @@ class ManageTest(unittest.TestCase):
         pc = PoweredClient('worker')
         res = pc.get('/manage/myresource/')
         self.assertTrue('forbidden' not in res.content)
+
+    # 测试管理员"所有上传"
     def test_show_mgrallres(self):
         pc = PoweredClient('worker')
         res = pc.get('/manage/allresources/')
@@ -145,6 +152,8 @@ class ManageTest(unittest.TestCase):
         pc = PoweredClient('admin')
         res = pc.get('/manage/allresources/')
         self.assertTrue('forbidden' not in res.content)
+
+    # 测试超级管理员用户列表
     def test_show_mgruser(self):
         pc = PoweredClient('admin')
         res = pc.get('/manage/user/')
@@ -152,6 +161,8 @@ class ManageTest(unittest.TestCase):
         pc = PoweredClient('superadmin')
         res = pc.post('/manage/user/', {'wd': 'admin'})
         self.assertTrue('forbidden' not in res.content)
+
+    # 测试修改密码
     def test_change_password(self):
         pc = PoweredClient('user')
         uid = int(pc.session.get('uid'))
@@ -168,30 +179,41 @@ class ManageTest(unittest.TestCase):
                       {'old_password': user.password, 'new_password': 'newpassword',
                        'check_password': 'newpassword', })
         self.assertEqual(True, json.loads(res.content)['success'])
+
+    # 测试修改个人信息
     def test_change_info(self):
         pc = PoweredClient('user')
         uid = int(pc.session.get('uid'))
         user = User.objects.get(id=uid)
+        # 昵称重复
+        User(email='abcdefg@163.com', nickname='repeated_3322635',
+             password='123456').save()
         res = pc.post('/manage/changeinfo/',
-                      {'nickname': 'admin', 'birth': '1995-01-01',
+                      {'nickname': 'repeated_3322635', 'birth': '1995-01-01',
                        'phone': '18811432211', })
         self.assertEqual(False, json.loads(res.content)['success'])
+        # 昵称含@
         res = pc.post('/manage/changeinfo/',
                       {'nickname': 'abc@cde', 'birth': '1995-01-01',
                        'phone': '18811432211', })
         self.assertEqual(False, json.loads(res.content)['success'])
+        # 生日格式错误
         res = pc.post('/manage/changeinfo/',
                       {'nickname': str(random.random()), 'birth': '1',
                        'phone': '18811432211', })
         self.assertEqual(False, json.loads(res.content)['success'])
+        # 昵称不变，正确
         res = pc.post('/manage/changeinfo/',
                       {'nickname': user.nickname, 'birth': '1995-01-01',
                        'phone': '18811432211', })
         self.assertEqual(True, json.loads(res.content)['success'])
+        # 不修改生日和电话
         res = pc.post('/manage/changeinfo/',
                       {'nickname': str(random.random()), 'birth': '',
                        'phone': '', })
         self.assertEqual(True, json.loads(res.content)['success'])
+
+    # 测试修改权限
     def test_change_power(self):
         pc = PoweredClient('superadmin')
         pc2 = PoweredClient('user')
@@ -199,15 +221,19 @@ class ManageTest(unittest.TestCase):
         uid2 = int(pc2.session.get('uid'))
         user = User.objects.get(id=uid)
         user2 = User.objects.get(id=uid2)
+        # 用户不存在
         res = pc.post('/manage/changepower/',
                       {'uid': 99999, 'new_power': 'worker', })
         self.assertEqual(False, json.loads(res.content)['success'])
+        # 不允许修改自己的权限
         res = pc.post('/manage/changepower/',
                       {'uid': uid, 'new_power': 'worker', })
         self.assertEqual(False, json.loads(res.content)['success'])
+        # 不合法的新权限
         res = pc.post('/manage/changepower/',
                       {'uid': 2, 'new_power': 'not_a_power', })
         self.assertEqual(False, json.loads(res.content)['success'])
+        # 正确
         res = pc.post('/manage/changepower/',
                       {'uid': uid2, 'new_power': 'worker', })
         self.assertEqual(True, json.loads(res.content)['success'])
@@ -293,7 +319,6 @@ class ManageTest(unittest.TestCase):
                       {'action': 'add',
                        'new_name': 'add_group_name', })
         self.assertEqual(True, json.loads(res.content)['success'])
-        
 
 
 import program
