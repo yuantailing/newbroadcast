@@ -87,15 +87,11 @@ class PoweredClient(Client):
             self.post('/login/do/', {'email':user.email, 'password':user.password, })
         assert self.session.get('user_power') == power
 
-
+'''
 # 对manage.py的充分测试
 class ManageTest(unittest.TestCase):
     def __init__(self, *args, **kwargs):
         super(ManageTest, self).__init__(*args, **kwargs)
-        # 检查至少有一个admin用户
-        if not User.objects.filter(email='admin').exists():
-            User(email='admin', nickname='admin', password='admin',
-                 power='superadmin').save()
 
     # 测试权限翻译内容
     def test_power_trans(self):
@@ -319,10 +315,73 @@ class ManageTest(unittest.TestCase):
                       {'action': 'add',
                        'new_name': 'add_group_name', })
         self.assertEqual(True, json.loads(res.content)['success'])
-
+'''
 
 import program
 
 class ProgramTest(unittest.TestCase):
-    pass
+    def __init__(self, *args, **kwargs):
+        super(ProgramTest, self).__init__(*args, **kwargs)
+
+    def test_show_program(self):
+        pro = Program(title='program1')
+        pro.description = 'desc'
+        pg = ProgramGroup(title='group1')
+        pg.save()
+        ps = ProgramSeries(title='series1')
+        ps.save()
+        pro.group = pg
+        pro.series = ps
+        pro.recorder = 'recorder'
+        pro.contributor = 'contributor'
+        pro.workers = 'workers'
+        from api import ProgramLocalImporter
+        source1 = Source()
+        source1.document.save('test_not_pic.js',
+                              ProgramLocalImporter.SizeFile('static/js/csrfajax.js'))
+        source2 = Source()
+        source2.document.save('test_pic.jpg',
+                              ProgramLocalImporter.SizeFile('static/images/1.jpg'))
+        pro.picture = json.dumps([source1.id, source2.id])
+        pro.audio = source1.id
+        pro.document = json.dumps([source1.id, source2.id])
+        pro.save()
+        pc = PoweredClient('user')
+        res = pc.get('/program/' + str(pro.id))
+        self.assertEqual(200, res.status_code)
+    def test_play_program(self):
+        pc = PoweredClient('user')
+        res = pc.get('/program/play/1')
+        self.assertEqual(200, res.status_code)
+    def test_praise(self):
+        pro = Program(title="praise_program")
+        pro.save()
+        pc = PoweredClient('user')
+        res = pc.post('/program/praise/', {'pid': pro.id})
+        self.assertEqual(True, json.loads(res.content)['success'])
+        res = pc.post('/program/praise/', {'pid': pro.id})
+        self.assertEqual(False, json.loads(res.content)['success'])
+    def test_unparise(self):
+        pro = Program(title="praise_program")
+        pro.save()
+        pc = PoweredClient('user')
+        res = pc.post('/program/praise/', {'pid': pro.id})
+        res = pc.post('/program/unpraise/', {'pid': pro.id})
+        self.assertEqual(True, json.loads(res.content)['success'])
+        res = pc.post('/program/unpraise/', {'pid': 'abc'})
+        self.assertEqual(False, json.loads(res.content)['success'])
+    def test_favorite(self):
+        pc = PoweredClient('user')
+        res = pc.post('/program/favorite/', {'pid': 1})
+        self.assertEqual(200, res.status_code)
+    def test_unfavorite(self):
+        pc = PoweredClient('user')
+        res = pc.post('/program/unfavorite/', {'pid': 1})
+        self.assertEqual(200, res.status_code)
+        
+        
+        
+        
+        
+
 
