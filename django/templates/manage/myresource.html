@@ -1,16 +1,17 @@
 {% extends "base.html" %}
+{% block header %}
+<link href="/static/css/myresource.css" rel="stylesheet" />
+{% endblock %}
 {% block navigation %}{% endblock %}
 {% block body %}
-<div class="panel panel-default">
-	<div class="panel-heading">
+<div id="myresource-content">
+	<div class="">
 		<h4>{{ title }}</h4>
 	</div>
 	{% load pagination_tags %}
 	{% autopaginate obj_list 10 %}
-	<table class="panel-body table table-bordered table-striped table-hover">
-		<div>
-		{% paginate %}
-		</div>
+	<table class="table table-striped table-hover">
+		
 		<thead>
 		<tr>
 		<th>节目名称</th>
@@ -32,16 +33,20 @@
 		<td>{{ pg.contributor|default:"" }}</td>
 		<td>{{ pg.workers|default:"" }}</td>
 		<td>{% if request.session.user_power in "admin superadmin" %}
-			<a href="/program/modify/{{ pg.id }}" target="_parent">修改</a>
+			<a href="/program/modify/{{ pg.id }}" target="_parent"><span class="glyphicon glyphicon-pencil"></span> 修改</a>
 			{% endif %}
 		</td>
 		<td>{% if request.session.user_power in "admin superadmin" %}
-			<a href="/program/delete/?pid={{ pg.id }}" target="_parent">删除</a>
+			<a href="/program/delete/?pid={{ pg.id }}" target="_parent"><span class="glyphicon glyphicon-remove"></span> 删除</a>
 			{% endif %}
 		</td>
 		</tr>
 		{% endfor %}
 	</table>
+
+	<div>
+	{% paginate %}
+	</div>
 </div>
 {% endblock %}
 

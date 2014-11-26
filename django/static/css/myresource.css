@@ -1,0 +1,20 @@
+#myresource-content { 
+	padding:2%;
+	background-color: #fff;
+}
+
+.table thead tr th { 
+	border:0px;
+
+	font-size: 16px;
+}
+.table tbody tr td { 
+	border:0px;
+
+	color: #999;
+	font-size: 16px;
+}
+
+.table tbody tr td { 
+	font-size:14px;
+}
