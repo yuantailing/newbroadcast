@@ -73,20 +73,35 @@ class ModelsTest(unittest.TestCase):
 
 import login
 import manage
+import random
 from django.test.client import Client
+
+
+class PoweredClient(Client):
+    def __init__(self, power):
+        super(PoweredClient, self).__init__()
+        users = User.objects.filter(power=power)
+        if users.count() > 0:
+            user = users.first()
+            self.post('/login/do/', {'email': user.email, 'password': user.password,
+                                     'power': power, })
+        else:
+            s = str(random.random())
+            user = User(email=s + '@163.com', nickname=s, password='PoweredUser', )
+            user.save()
+            self.post('/login/do/', {'email':user.email, 'password':user.password, })
+        assert self.session.get('user_power') == power
 
 
 class ManageTest(unittest.TestCase):
     def __init__(self, *args, **kwargs):
         super(ManageTest, self).__init__(*args, **kwargs)
     def test_login(self):
-        global cl
-        cl = Client()
-        cl.post('/login/do/', {'email':'admin', 'password':'admin', })
-        print cl.session.items()
+        pc = PoweredClient('superadmin')
+        print pc.session.items()
     def test_show_space(self):
-        global cl
-        res = cl.get('/space/')
+        pc = PoweredClient('superadmin')
+        res = pc.get('/space/')
         self.assertTrue('<a href="/manage/user/">' in res.content)
 
 
