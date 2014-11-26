@@ -186,6 +186,7 @@ $(window).load(function() {
 	audio_slider.mouseup(function(){ 
 		audio_slider_hold = false;
 		audio.currentTime = audio_slider.slider("value");
+        audio.play();
 	});
 	audio_slider.mouseout(function(){ 
 		audio_slider_hold = false;
