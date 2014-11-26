@@ -73,7 +73,7 @@ class ModelsTest(unittest.TestCase):
 
 import login
 import manage
-import random
+import json
 from django.test.client import Client
 
 
@@ -86,7 +86,7 @@ class PoweredClient(Client):
             self.post('/login/do/', {'email': user.email, 'password': user.password, })
         else:
             s = str(random.random())
-            user = User(email=s + '@163.com', nickname=s, password='PoweredUser',
+            user = User(email=s + '@163.com', nickname=s, password=s,
                         power=power, )
             user.save()
             self.post('/login/do/', {'email':user.email, 'password':user.password, })
@@ -149,6 +149,24 @@ class ManageTest(unittest.TestCase):
         pc = PoweredClient('superadmin')
         res = pc.post('/manage/user/', {'wd': 'admin'})
         self.assertTrue('forbidden' not in res.content)
+    def test_change_password(self):
+        pc = PoweredClient('user')
+        uid = int(pc.session.get('uid'))
+        user = User.objects.get(id=uid)
+        res = pc.post('/manage/changepassword/',
+                      {'old_password': 'abcdefg', 'new_password': 'newpassword',
+                       'check_password': 'newpassword', })
+        self.assertEqual(False, json.loads(res.content)['success'])
+        res = pc.post('/manage/changepassword/',
+                      {'old_password': user.password, 'new_password': 'newpassword',
+                       'check_password': 'checkpassword', })
+        self.assertEqual(False, json.loads(res.content)['success'])
+        res = pc.post('/manage/changepassword/',
+                      {'old_password': user.password, 'new_password': 'newpassword',
+                       'check_password': 'newpassword', })
+        self.assertEqual(True, json.loads(res.content)['success'])
+        
+        
     
 
 
