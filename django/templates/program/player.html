@@ -93,12 +93,12 @@ body {
 		<div class="bs-docs-sidebar affix-top" role="complementary">
         	<ul class="nav bs-docs-sidenav">
             	<li>
-            		<a onclick="onCurListChange('local')" href="javascript:;"><span class="glyphicon glyphicon-list"></span> 播放列表</a>
+            		<a onclick="onShowListChange('local')" href="javascript:;"><span class="glyphicon glyphicon-list"></span> 播放列表</a>
             		<ul class="nav">
             		</ul>
             	</li>
             	<li>
-            		<a a onclick="onCurListChange('favorite')" href="javascript:;"><span class="glyphicon glyphicon-heart" style="color:red;"></span> 我的收藏</a>
+            		<a onclick="updateFavoriteList();onShowListChange('favorite');" href="javascript:;"><span class="glyphicon glyphicon-heart" style="color:red;"></span> 我的收藏</a>
             	</li>
             </ul>
         </div>
@@ -130,6 +130,7 @@ var player_forward;
 var player_repeat;
 var player_random;
 var player_volume;
+var player_id;
 
 var audio_slider;
 var volume_slider;
@@ -138,9 +139,10 @@ var audio_slider_handle;
 var audio_slider_hold = false;
 var audio_random = false;
 
-var curList;
-var localList = new Array();
-var favoriteList = new Array();
+var curList, showList;
+var lists = new Object();
+lists.local = new Array();
+lists.favorite = new Array();
 var curProgramNum = 0;
 var play_mode = new Object();
 
@@ -157,8 +159,11 @@ $(window).load(function() {
 	audio_slider = $("#slider");
 	volume_slider = $("#volume-slider");
     
-    curList = localList;
-	localStorage.hasPlayer = 1;
+    curList = 'local';
+    showList = 'local';
+    var d = new Date();
+    player_id = d.getTime();
+	localStorage.hasPlayer = player_id;
     info = JSON.parse(localStorage.toPlayer);
     readLocalStorage(info);
 	
@@ -186,7 +191,6 @@ $(window).load(function() {
 	audio_slider.mouseup(function(){ 
 		audio_slider_hold = false;
 		audio.currentTime = audio_slider.slider("value");
-        audio.play();
 	});
 	audio_slider.mouseout(function(){ 
 		audio_slider_hold = false;
@@ -220,10 +224,10 @@ $(window).load(function() {
 		player_play.addClass("glyphicon-play");
 	});
 	player_backward.mousedown(function() { 
-		onCurProgramChange(((curProgramNum + curList.length) - 1) % curList.length);
+		onCurProgramChange(((curProgramNum + lists[curList].length) - 1) % lists[curList].length);
 	});
 	player_forward.mousedown(function() { 
-		onCurProgramChange((curProgramNum + 1) % curList.length);
+		onCurProgramChange((curProgramNum + 1) % lists[curList].length);
 	});
 	player_repeat.mousedown(function() {
 		if (player_repeat.css("color") == "rgb(255, 255, 255)") { 
@@ -273,6 +277,7 @@ $(document).ready(function() {
     }
     $('#player-viewport').click(function(e) {
         if(e.target.tagName == 'LI' || e.target.tagName == 'li') {
+            onCurListChange(showList);
             onCurProgramChange($(e.target).index());
         }
     });
@@ -310,25 +315,10 @@ var handle_storage = function(e) {
     if(!e) {
         e = window.event;
     }
-    if(e.key == "toPlayer" && e.newValue != null) {
+    if(e.key == "toPlayer" && e.newValue != null && localStorage.hasPlayer == player_id) {
         info = JSON.parse(e.newValue);
         readLocalStorage(info);
     }
-    if(e.key == "toFavorite" && e.newValue != null) {
-        info = JSON.parse(e.newValue);
-        parseFavoriteInfo(info);
-    }
-}
-
-function parseFavoriteInfo(info) {
-    program = new Object();
-    program.title = info.title;
-    program.description = info.description;
-    program.url = info.url;
-    program.id = info.id;
-    program.time = info.time;
-    program.thumbnail = info.thumbnail;
-    onListChange(info.location, program, favoriteList);
 }
 
 function readLocalStorage(info) {
@@ -339,37 +329,41 @@ function readLocalStorage(info) {
     program.id = info.id;
     program.time = info.time;
     program.thumbnail = info.thumbnail;
-    if(info.list == 'local')
-        list = localList;
-    if(info.list == 'favorite')
-        list = favoriteList;
-    onListChange(info.location, program, list);
+    onListChange(info.location, program, info.list);
     if(info.play == 1) {
 		onCurListChange(info.list);
         onCurProgramChange(0);
 	}
 }
 
-function onCurListChange(str) {
-	if(str == "local" && curList != localList)
-		curList = localList;
-	else if(str == "favorite" && curList != favoriteList)
-		curList = favorateList;
-	else
-		return;
+function onShowListChange(str) {
+    if(str == showList)
+        return;
+    showList = str;
 	$("#player-viewport").empty();
-	for(i in curList)
-		appendNewItem(i);
+	for(var i in lists[showList])
+		appendNewItem(lists[showList][i]);
+    if(curList == showList) {
+        curItem = document.getElementById("list-group-item-" + lists[curList][curProgramNum].time);
+        curItem.className = "list-group-item active";
+    }
 }
 
-function onListChange(location, program, list) {
+function onCurListChange(str) {
+	if(str == curList)
+        return;
+    curList = str;
+    console.log(curList);
+}
+
+function onListChange(location, program, str) {
     if(location == "top") {
-        list.unshift(program);
-		if(curList == list)
+        lists[str].unshift(program);
+		if(showList == str)
 			prependNewItem(program);
     } else if(location == "bottom") {
-        list.push(program);
-		if(curList == list)
+        lists[str].push(program);
+		if(showList == str)
 			appendNewItem(program);
     }
 }
@@ -383,7 +377,8 @@ function prependNewItem(program) {
 }
 
 function appendNewItem(program) {
-	newItem = document.createElement("li");
+	console.log(program);
+    newItem = document.createElement("li");
     newItem.className = "list-group-item";
     newItem.innerHTML = program.title/*"<a style='width:100%' href='javascript:;'>" + program.title + "</a>"*/;
     newItem.id = "list-group-item-" + program.time;
@@ -393,11 +388,11 @@ function appendNewItem(program) {
 function onCurProgramChange(newProgramNum) {
 	$(".list-group-item.active").removeClass("active");
     curProgramNum = newProgramNum;
-    curItem = document.getElementById("list-group-item-" + curList[curProgramNum].time);
+    curItem = document.getElementById("list-group-item-" + lists[curList][curProgramNum].time);
     curItem.className = "list-group-item active";
-	$("#player-thumbnail").attr("src", curList[curProgramNum].thumbnail);
-	$("#player-description").html("<div>" + curList[curProgramNum].description + "</div>");
-    audio.src = curList[curProgramNum].url;
+	$("#player-thumbnail").attr("src", lists[curList][curProgramNum].thumbnail);
+	$("#player-description").html("<div>" + lists[curList][curProgramNum].description + "</div>");
+    audio.src = lists[curList][curProgramNum].url;
     audio.load();
     audio.play();
 }
@@ -407,10 +402,14 @@ function onProgramEnded() {
 	if(play_mode.repeat == 1) {
 		audio.play();
 	} else if(play_mode.random == 1) {
-		onCurProgramChange(Math.floor(Math.random() * curList.length));
+		onCurProgramChange(Math.floor(Math.random() * lists[curList].length));
 	} else {
-		onCurProgramChange((curProgramNum + 1) % curList.length);
+		onCurProgramChange((curProgramNum + 1) % lists[curList].length);
 	}
+}
+
+function updateFavoriteList() {
+    
 }
 
 function showObject(obj) {

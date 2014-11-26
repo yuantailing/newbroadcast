@@ -259,7 +259,7 @@ function changeLocalStorageToPlayer(location, list, play) {
     program.location = location;
     program.list = list;
     localStorage.toPlayer = JSON.stringify(program);
-    if(localStorage.hasPlayer != 1 && program.list != 'favorite') {
+    if((localStorage.hasPlayer == 0 || localStorage.hasPlayer == null) && program.list != 'favorite') {
         window.open("/program/play/", "_blank");
     }
 }

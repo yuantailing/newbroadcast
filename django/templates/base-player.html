@@ -10,7 +10,7 @@
 <link href="/static/css/default.css" rel="stylesheet" />
 {% block header %}{% endblock %}
 </head>
-<body onunload="localStorage.hasPlayer=0">
+<body onunload="if(localStorage.hasPlayer==player_id)localStorage.hasPlayer=0;">
 <!-- main content -->
 {% include "useraccess.html" %}
 {% if not request.session.uid %}
