@@ -22,7 +22,7 @@ SECRET_KEY = 'a%^(eux=15#1+u^+f$2!8tddq_x8&*8*ntpx(yphorwky)fn^o'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-TEMPLATE_DEBUG = True
+TEMPLATE_DEBUG = DEBUG
 
 ALLOWED_HOSTS = ['*', ]
 
@@ -98,7 +98,7 @@ USE_I18N = True
 
 USE_L10N = True
 
-USE_TZ = True
+USE_TZ = False
 
 
 # Static files (CSS, JavaScript, Images)

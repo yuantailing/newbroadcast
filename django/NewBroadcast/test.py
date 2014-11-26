@@ -165,6 +165,27 @@ class ManageTest(unittest.TestCase):
                       {'old_password': user.password, 'new_password': 'newpassword',
                        'check_password': 'newpassword', })
         self.assertEqual(True, json.loads(res.content)['success'])
+    def test_change_info(self):
+        pc = PoweredClient('user')
+        # id = int(pc.session.get('uid'))
+        # user = User.objects.get(id=uid)
+        res = pc.post('/manage/changeinfo/',
+                      {'nickname': 'admin', 'birth': '1995-01-01',
+                       'phone': '18811432211', })
+        self.assertEqual(False, json.loads(res.content)['success'])
+        res = pc.post('/manage/changeinfo/',
+                      {'nickname': 'abc@cde', 'birth': '1995-01-01',
+                       'phone': '18811432211', })
+        self.assertEqual(False, json.loads(res.content)['success'])
+        res = pc.post('/manage/changeinfo/',
+                      {'nickname': str(random.random()), 'birth': '1',
+                       'phone': '18811432211', })
+        self.assertEqual(False, json.loads(res.content)['success'])
+        res = pc.post('/manage/changeinfo/',
+                      {'nickname': str(random.random()), 'birth': '1995-01-01',
+                       'phone': '18811432211', })
+        self.assertEqual(True, json.loads(res.content)['success'])
+    
         
         
     

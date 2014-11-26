@@ -92,23 +92,19 @@ def change_password(req):
     psw_old = req.POST.get('old_password', None)
     psw0 = req.POST.get('new_password', None)
     psw1 = req.POST.get('check_password', None)
-    try:
-        if psw0 and psw0 == psw1:
-            user = User.objects.get(id=req.session['uid'])
-            if user.password == psw_old:
-                user.password = psw0
-                user.save()
-                res['success'] = True
-                res['info'] = u'修改密码成功'
-            else:
-                res['success'] = False
-                res['info'] = u'旧密码错误'
+    if psw0 and psw0 == psw1:
+        user = User.objects.get(id=req.session['uid'])
+        if user.password == psw_old:
+            user.password = psw0
+            user.save()
+            res['success'] = True
+            res['info'] = u'修改密码成功'
         else:
             res['success'] = False
-            res['info'] = u'密码不一致'
-    except Exception, e:
-            res['success'] = False
-            res['info'] = u'未知错误'
+            res['info'] = u'旧密码错误'
+    else:
+        res['success'] = False
+        res['info'] = u'密码不一致'
     return HttpResponse(json.dumps(res), content_type='application/json')
 
 @power_required(['user'])
@@ -145,7 +141,7 @@ def change_info(req):
             res['info'] = u'修改资料成功'
     except Exception, e:
         res['success'] = False
-        res['info'] = u'未知错误'
+        res['info'] = u'日期格式错误'
     return HttpResponse(json.dumps(res), content_type='application/json')
 
 @power_required(['superadmin'])
