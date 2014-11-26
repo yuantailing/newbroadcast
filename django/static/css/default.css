@@ -45,3 +45,38 @@ footer p {
 .dropdown-menu li a { 
 	color:#fff;
 }
+
+.pagination { 
+	border-radius: 0px;
+}
+
+.pagination ul { 
+	border-radius: 0px;	
+}
+
+.pagination li { 
+}
+
+.pagination .prev { 
+}
+
+.pagination .next { 
+}
+
+.modal-content {
+	border-radius:0px;
+	box-shadow: 0 2px 10px rgba(0,0,0,.5);
+}
+
+.form-control { 
+	border:1px solid #bdc3c7;
+	border-radius:0px;
+}
+
+.datepicker{ 
+	border:1px solid #eeecf4;
+}
+
+#birthday-picker .dropdown-menu { 
+	background-color: #fff;
+}
