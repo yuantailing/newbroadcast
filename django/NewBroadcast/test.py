@@ -83,11 +83,11 @@ class PoweredClient(Client):
         users = User.objects.filter(power=power)
         if users.count() > 0:
             user = users.first()
-            self.post('/login/do/', {'email': user.email, 'password': user.password,
-                                     'power': power, })
+            self.post('/login/do/', {'email': user.email, 'password': user.password, })
         else:
             s = str(random.random())
-            user = User(email=s + '@163.com', nickname=s, password='PoweredUser', )
+            user = User(email=s + '@163.com', nickname=s, password='PoweredUser',
+                        power=power, )
             user.save()
             self.post('/login/do/', {'email':user.email, 'password':user.password, })
         assert self.session.get('user_power') == power
@@ -98,11 +98,58 @@ class ManageTest(unittest.TestCase):
         super(ManageTest, self).__init__(*args, **kwargs)
     def test_login(self):
         pc = PoweredClient('superadmin')
-        print pc.session.items()
+    def test_power_trans(self):
+        from manage import power_trans
+        self.assertEqual(u'普通用户', power_trans(u'user'))
+        self.assertEqual(u'台员', power_trans(u'worker'))
+        self.assertEqual(u'管理员', power_trans(u'admin'))
+        self.assertEqual(u'超级管理员', power_trans(u'superadmin'))
+        self.assertEqual(u'未知权限', power_trans(u''))
     def test_show_space(self):
         pc = PoweredClient('superadmin')
         res = pc.get('/space/')
         self.assertTrue('<a href="/manage/user/">' in res.content)
+        pc = PoweredClient('admin')
+        res = pc.get('/space/')
+        self.assertFalse('<a href="/manage/user/">' in res.content)
+        pc = Client()
+        res = pc.get('/space/')
+        self.assertTrue('forbidden' in res.content)
+    def test_show_favorites(self):
+        pc = PoweredClient('user')
+        res = pc.get('/manage/favorites/')
+        self.assertTrue('/manage/favorites/table/' in res.content)
+        res = pc.get('/manage/favorites/table/')
+        self.assertTrue('我的收藏' in res.content)
+    def test_show_mgrres(self):
+        pc = PoweredClient('user')
+        res = pc.get('/manage/resource/')
+        self.assertTrue('forbidden' in res.content)
+        pc = PoweredClient('worker')
+        res = pc.get('/manage/resource/')
+        self.assertTrue('forbidden' not in res.content)
+    def test_show_mgrmyres(self):
+        pc = PoweredClient('user')
+        res = pc.get('/manage/myresource/')
+        self.assertTrue('forbidden' in res.content)
+        pc = PoweredClient('worker')
+        res = pc.get('/manage/myresource/')
+        self.assertTrue('forbidden' not in res.content)
+    def test_show_mgrallres(self):
+        pc = PoweredClient('worker')
+        res = pc.get('/manage/allresources/')
+        self.assertTrue('forbidden' in res.content)
+        pc = PoweredClient('admin')
+        res = pc.get('/manage/allresources/')
+        self.assertTrue('forbidden' not in res.content)
+    def test_show_mgruser(self):
+        pc = PoweredClient('admin')
+        res = pc.get('/manage/user/')
+        self.assertTrue('forbidden' in res.content)
+        pc = PoweredClient('superadmin')
+        res = pc.post('/manage/user/', {'wd': 'admin'})
+        self.assertTrue('forbidden' not in res.content)
+    
 
 
 import program
