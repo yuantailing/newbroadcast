@@ -13,7 +13,8 @@ body {
 	background:#eeecf4;
 }
 #player-viewport li{
-	border:0px;
+	cursor: pointer;
+    border: 0px;
 	width: 100%;
 }
 #player-viewport .active{
@@ -43,6 +44,18 @@ body {
 }
 .progress { 
 	background: #fff;
+}
+#player-thumbnail-div { 
+	margin: 5%;
+}
+#player-thumbnail-div img { 
+	border-radius: 3px;
+	box-shadow: 0 0 10px 2px #000;
+}
+#player-description {
+	overflow: auto;
+	position: fixed;
+	margin-top: 10px;
 }
 </style>
 {% endblock%}
@@ -96,10 +109,11 @@ body {
 		</ul>
 	</div>
 
-	<div class="col-md-3" id="player-description" style="position:relative;float:right;">
-		<div>
-        	description
-        </div>
+	<div class="col-md-3" id="player-program-info" style="position:relative;float:right;">
+		<div class="row" id="player-thumbnail-div">
+			<img id="player-thumbnail" class="img-responsive center-block" style="width:100%"></img>
+		</div>
+		<div class="row" id="player-description"></div>
 	</div>
 	
 	
@@ -112,6 +126,8 @@ body {
 var audio;
 var player_play;
 var player_stop;
+var player_backward;
+var player_forward;
 var player_repeat;
 var player_random;
 var player_volume;
@@ -123,14 +139,18 @@ var audio_slider_handle;
 var audio_slider_hold = false;
 var audio_random = false;
 
+var curList;
 var localList = new Array();
 var favoriteList = new Array();
 var curProgramNum = 0;
+var play_mode = new Object();
 
 $(window).load(function() { 
     audio = document.getElementById('audio');
 	player_play = $('#player-play');
 	player_stop = $('#player-stop');
+	player_backward = $('#player-backward');
+	player_forward = $('#player-forward');
 	player_repeat = $('#player-repeat');
 	player_random = $('#player-random');
 	player_volume = $('#player-volume');
@@ -138,18 +158,13 @@ $(window).load(function() {
 	audio_slider = $("#slider");
 	volume_slider = $("#volume-slider");
     
-    localStorage.hasPlayer = 1;
-    
+    curList = localList;
+	localStorage.hasPlayer = 1;
     info = JSON.parse(localStorage.toPlayer);
-    program = new Object();
-    program.title = info.title;
-    program.description = info.description;
-    program.url = info.url;
-    program.id = info.id;
-    program.time = info.time;
-    onLocalListChange(info.location, program);
-    if(info.play == 1)
-        onCurProgramChange(0);
+    readLocalStorage(info);
+	
+	play_mode.repeat = 0;
+	play_mode.random = 0;
 
 	if (audio_slider.length > 0) {
 	  audio_slider.slider({
@@ -201,27 +216,32 @@ $(window).load(function() {
 	});
 	player_stop.mousedown(function() { 
 		audio.load();
-
 		player_play.removeClass("glyphicon-pause");
 		player_play.addClass("glyphicon-play");
+	});
+	player_backward.mousedown(function() { 
+		onCurProgramChange(((curProgramNum + curList.length) - 1) % curList.length);
+	});
+	player_forward.mousedown(function() { 
+		onCurProgramChange((curProgramNum + 1) % curList.length);
 	});
 	player_repeat.mousedown(function() {
 		if (player_repeat.css("color") == "rgb(255, 255, 255)") { 
 			player_repeat.css("color", "#5c307d");
-			audio.loop = true;
-
+			play_mode.repeat = 1;
 		} else { 
 			player_repeat.css("color", "#fff");
-			audio.loop = false;
+			play_mode.repeat = 0;
 		}
 		
 	});
 	player_random.mousedown(function() {
 		if (player_random.css("color") == "rgb(255, 255, 255)") { 
 			player_random.css("color", "#5c307d");
-
+			play_mode.random = 1;
 		} else { 
 			player_random.css("color", "#fff");
+			play_mode.random = 0;
 		}
 		
 	});
@@ -245,19 +265,26 @@ $(document).ready(function() {
 	$('#player-viewport').css('top', document.getElementById('navigation-navbar').scrollHeight + 10);
 	$('#player-viewport').css('bottom', document.getElementById('program-audio-player').scrollHeight + 10);
 	$('#player-viewport').css('left', document.getElementById('player-sidebar').scrollWidth + 10);
-	$('#player-viewport').css('right', document.getElementById('player-description').scrollWidth + 10);
+	$('#player-viewport').css('right', document.getElementById('player-program-info').scrollWidth + 10);
     if(window.addEventListener){
         window.addEventListener("storage", handle_storage, false);
     }else if(window.attachEvent){
         window.attachEvent("onstorage", handle_storage);
     }
+    $('#player-viewport').click(function(e) {
+        if(e.target.tagName == 'LI' || e.target.tagName == 'li') {
+            onCurProgramChange($(e.target).index());
+        }
+    });
 });
 
 $(window).resize(function() { 
 	$('#player-viewport').css('top', document.getElementById('navigation-navbar').scrollHeight + 10);
 	$('#player-viewport').css('bottom', document.getElementById('program-audio-player').scrollHeight + 10);
 	$('#player-viewport').css('left', document.getElementById('player-sidebar').scrollWidth + 10);
-	$('#player-viewport').css('right', document.getElementById('player-description').scrollWidth + 10);
+	$('#player-viewport').css('right', document.getElementById('player-program-info').scrollWidth + 10);
+	$('#player-description').css('top', document.getElementById('program-audio-player').scrollHeight + document.getElementById('player-thumbnail-div').scrollHeight);
+	$('#player-description').css('bottom', document.getElementById('program-audio-player').scrollHeight + 10);
 });
 
 function update() {
@@ -266,9 +293,7 @@ function update() {
 		audio_slider.slider({max:audio.duration,value:audio.currentTime}); 
 	}
 	if (audio.ended) {
-		audio.currentTime = 0;
-		player_play.removeClass("glyphicon-pause");
-		player_play.addClass("glyphicon-play");
+		onProgramEnded();
 	}
 	// update time label
 	label = $('#player-time-label');
@@ -287,45 +312,87 @@ var handle_storage = function(e) {
     }
     if(e.key == "toPlayer" && e.newValue != null) {
         info = JSON.parse(e.newValue);
-        program = new Object();
-        program.title = info.title;
-        program.description = info.description;
-        program.url = info.url;
-        program.id = info.id;
-        program.time = info.time;
-        onLocalListChange(info.location, program);
-        if(info.play == 1)
-            onCurProgramChange(0);
+        readLocalStorage(info);
     }
 }
 
-function onLocalListChange(location, program) {
+function readLocalStorage(info) {
+    program = new Object();
+    program.title = info.title;
+    program.description = info.description;
+    program.url = info.url;
+    program.id = info.id;
+    program.time = info.time;
+    program.thumbnail = info.thumbnail;
+    onListChange(info.location, program, localList);
+    if(info.play == 1) {
+		onCurListChange("local");
+        onCurProgramChange(0);
+	}
+}
+
+function onCurListChange(str) {
+	if(str == "local" && curList != localList)
+		curList = localList;
+	else if(str == "favorite" && curList != favoriteList)
+		curList = favorateList;
+	else
+		return;
+	$("#player-viewport").empty();
+	for(i in curList)
+		appendNewItem(i);
+	onCurProgramChange(0);
+}
+
+function onListChange(location, program, list) {
     if(location == "top") {
-        localList.unshift(program);
-        newItem = document.createElement("li");
-        newItem.className = "list-group-item";
-        newItem.innerHTML = program.title;
-        newItem.id = "list-group-item-" + program.time;
-        $("#player-viewport").prepend(newItem);
-    } else if(info.location == "bottom") {
-        localList.push(program);
-        newItem = document.createElement("li");
-        newItem.className = "list-group-item";
-        newItem.innerHTML = program.title;
-        newItem.id = "list-group-item-" + program.time;
-        $("#player-viewport").append(newItem);
+        list.unshift(program);
+		if(curList == list)
+			prependNewItem(program);
+    } else if(location == "bottom") {
+        list.push(program);
+		if(curList == list)
+			appendNewItem(program);
     }
+}
+
+function prependNewItem(program) {
+	newItem = document.createElement("li");
+    newItem.className = "list-group-item";
+    newItem.innerHTML = program.title/*"<a style='width:100%' href='javascript:;'>" + program.title + "</a>"*/;
+    newItem.id = "list-group-item-" + program.time;
+	$("#player-viewport").prepend(newItem);
+}
+
+function appendNewItem(program) {
+	newItem = document.createElement("li");
+    newItem.className = "list-group-item";
+    newItem.innerHTML = program.title/*"<a style='width:100%' href='javascript:;'>" + program.title + "</a>"*/;
+    newItem.id = "list-group-item-" + program.time;
+	$("#player-viewport").append(newItem);
 }
 
 function onCurProgramChange(newProgramNum) {
-    oldItem = document.getElementById("list-group-item-" + localList[curProgramNum].time);
-    oldItem.className = "list-group-item";
+	$(".list-group-item.active").removeClass("active");
     curProgramNum = newProgramNum;
-    curItem = document.getElementById("list-group-item-" + localList[curProgramNum].time);
+    curItem = document.getElementById("list-group-item-" + curList[curProgramNum].time);
     curItem.className = "list-group-item active";
-    audio.src = localList[curProgramNum].url;
+	$("#player-thumbnail").attr("src", curList[curProgramNum].thumbnail);
+	$("#player-description").html("<div>" + curList[curProgramNum].description + "</div>");
+    audio.src = curList[curProgramNum].url;
     audio.load();
     audio.play();
+}
+
+function onProgramEnded() {
+	audio.currentTime = 0;
+	if(play_mode.repeat == 1) {
+		audio.play();
+	} else if(play_mode.random == 1) {
+		onCurProgramChange(Math.floor(Math.random() * curList.length));
+	} else {
+		onCurProgramChange((curProgramNum + 1) % curList.length);
+	}
 }
 
 function showObject(obj) {
@@ -338,6 +405,5 @@ function showObject(obj) {
         }
     }
 }
-
 </script>
 {% endblock %}

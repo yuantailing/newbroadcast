@@ -69,8 +69,8 @@
 		</div>
 		
 		<!-- 翻页 -->
-		<div style="height:100%; width:80%">
-			<ul id="page-list" class="pagination-plain" style="float:right">
+		<div class="pagination pagination-primary" style="height:100%; width:100%">
+			<ul id="page-list" style="float:right">
 			</ul>
 		</div>
 	</div>
@@ -81,6 +81,7 @@
 	var pids = new Array();
 	var index = 0;
 	var pictureIndex=1;
+	var perPage = 20;
 	var srs = new Array();
 		$(document).ready(function(){
 			var keyword="";
@@ -139,12 +140,13 @@
 					input.setAttribute("value", srs[i].id);
 					li.appendChild(input);
 				}
-				var count=parseInt(pids.length/10+1);
+				var count=parseInt((pids.length-1)/perPage+1);
 				document.getElementById("page-list").innerHTML="";
 				if (count>1) {
 					var linode=document.createElement("li");
 					linode.setAttribute("class", "previous");
 					var anode=document.createElement("a");
+					anode.setAttribute("href", "#");
 					anode.setAttribute("class", "fui-arrow-left");
 					anode.setAttribute("onclick", "prePage(this)");
 					linode.appendChild(anode);
@@ -153,6 +155,7 @@
 						var linode=document.createElement("li");
 						var anode=document.createElement("a");
 						anode.innerHTML=i;
+						anode.setAttribute("href", "#");
 						anode.setAttribute("onclick", "selectPage(this)");
 						linode.appendChild(anode);
 						document.getElementById("page-list").appendChild(linode);
@@ -160,6 +163,7 @@
 					var linode=document.createElement("li");
 					linode.setAttribute("class", "previous");
 					var anode=document.createElement("a");
+					anode.setAttribute("href", "#");
 					anode.setAttribute("class", "fui-arrow-right");
 					anode.setAttribute("onclick", "nextPage(this)");
 					linode.appendChild(anode);
@@ -172,8 +176,8 @@
 		function showResource() {
 			var subpids = new Array();
 			var len;
-			if (pids.length-index > 10) {
-				len = 10;
+			if (pids.length-index > perPage) {
+				len = perPage;
 			} else {
 				len = pids.length-index;
 			}
@@ -199,11 +203,17 @@
 					a.href="/program/"+pids[i+index];
 					td_title.appendChild(a);
 					var td_group=document.createElement("td");
-					td_group.innerHTML=msg.program[i].group;
 					tr.appendChild(td_group);
+					var a_group=document.createElement("a");
+					a_group.innerHTML=msg.program[i].group;
+					a_group.href="#";
+					td_group.appendChild(a_group);
 					var td_series=document.createElement("td");
-					td_series.innerHTML=msg.program[i].series;
 					tr.appendChild(td_series);
+					var a_series=document.createElement("a");
+					a_series.innerHTML=msg.program[i].series;
+					a_series.href="#";
+					td_series.appendChild(a_series);
 					var td_recorder=document.createElement("td");
 					td_recorder.innerHTML=msg.program[i].recorder;
 					tr.appendChild(td_recorder);
@@ -272,16 +282,6 @@
 				x.className = xClassName.replace((new RegExp("(^|\\s)" + "active" + "(\\s|$)")),""); 
 		}
 		function selectActiveIt(x) {
-/*			var y=x.parentNode;
-			if (!y) return;
-			var yClassName = y.className;
-			if (!yClassName.match(new RegExp("(^|\\s)" + "active" + "(\\s|$)")))
-				y.className = yClassName + " " + "active";
-			var lists = $(x).parent().siblings();
-			for (var i=0; i<lists.length; i++) {
-				deactiveIt(lists[i]);
-			}
-*/
 			var groupid;
 			var seriesid;
 			if (x.id=="groupstitle") {
@@ -341,12 +341,13 @@
 					input.setAttribute("value", srs[i].id);
 					li.appendChild(input);
 				}
-				var count=parseInt(pids.length/10+1);
+				var count=parseInt((pids.length-1)/perPage+1);
 				document.getElementById("page-list").innerHTML="";
 				if (count>1) {
 					var linode=document.createElement("li");
 					linode.setAttribute("class", "previous");
 					var anode=document.createElement("a");
+					anode.setAttribute("href", "#");
 					anode.setAttribute("class", "fui-arrow-left");
 					anode.setAttribute("onclick", "prePage(this)");
 					linode.appendChild(anode);
@@ -355,6 +356,7 @@
 						var linode=document.createElement("li");
 						var anode=document.createElement("a");
 						anode.innerHTML=i;
+						anode.setAttribute("href", "#");
 						anode.setAttribute("onclick", "selectPage(this)");
 						linode.appendChild(anode);
 						document.getElementById("page-list").appendChild(linode);
@@ -362,6 +364,7 @@
 					var linode=document.createElement("li");
 					linode.setAttribute("class", "previous");
 					var anode=document.createElement("a");
+					anode.setAttribute("href", "#");
 					anode.setAttribute("class", "fui-arrow-right");
 					anode.setAttribute("onclick", "nextPage(this)");
 					linode.appendChild(anode);
@@ -373,48 +376,20 @@
 			});
 		}
 		function nextPage(x) {
-			if (index+10<pids.length) {
-				index=index+10;
+			if (index+perPage<pids.length) {
+				index=index+perPage;
 				showResource();
 			}
 		}
 		function prePage(x) {
-			if (index-10>=0) {
-				index=index-10;
+			if (index-perPage>=0) {
+				index=index-perPage;
 				showResource();
 			}
 		}
 		function selectPage(x) {
-			index=(x.innerHTML-1)*10;
+			index=(x.innerHTML-1)*perPage;
 			showResource();
-		}
-		function addPicture(x) {
-			var fdiv=document.createElement("div");
-			fdiv.setAttribute("class", "form-group");
-			fdiv.setAttribute("id", "adddiv"+pictureIndex);
-			document.getElementById("modify-form").appendChild(fdiv);
-			var plabel=document.createElement("label");
-			plabel.setAttribute("for", "modify-picture"+pictureIndex);
-			plabel.setAttribute("class", "col-sm-offset-1 col-sm-2 control-label");
-			plabel.innerHTML="图片";
-			fdiv.appendChild(plabel);
-			var pdiv=document.createElement("div");
-			pdiv.setAttribute("class", "col-sm-6");
-			fdiv.appendChild(pdiv);
-			var pinput=document.createElement("input");
-			pinput.setAttribute("type", "file");
-			pinput.setAttribute("class", "form-control");
-			pinput.setAttribute("id", "modify-picture"+pictureIndex);
-			pdiv.appendChild(pinput);
-			pictureIndex=pictureIndex+1;
-		}
-		function delPicture(x) {
-			if (pictureIndex>1) {
-				pictureIndex=pictureIndex-1;
-				var parent=document.getElementById("modify-form");
-				var node=document.getElementById("adddiv"+pictureIndex);
-				parent.removeChild(node);
-			}
 		}
 		function sort(x) {
 			var xid=$(x).attr("id");
