@@ -3,7 +3,7 @@ import unittest
 import random
 from models import *
 
-'''
+
 # 测试模型（不充分的测试）
 class ModelsTest(unittest.TestCase):
     def test_user_normal_use(self):
@@ -64,7 +64,7 @@ class ModelsTest(unittest.TestCase):
         pg = ProgramGroup()
         pg.title = 'A'
         pg.save()
-'''
+
 
 import login
 import manage
@@ -88,7 +88,7 @@ class PoweredClient(Client):
             self.post('/login/do/', {'email':user.email, 'password':user.password, })
         assert self.session.get('user_power') == power
 
-'''
+
 # 对manage.py的充分测试
 class ManageTest(unittest.TestCase):
     def __init__(self, *args, **kwargs):
@@ -316,9 +316,12 @@ class ManageTest(unittest.TestCase):
                       {'action': 'add',
                        'new_name': 'add_group_name', })
         self.assertEqual(True, json.loads(res.content)['success'])
-'''
+
 
 import program
+import os
+from api import ProgramLocalImporter
+
 
 class ProgramTest(unittest.TestCase):
     def __init__(self, *args, **kwargs):
@@ -336,7 +339,6 @@ class ProgramTest(unittest.TestCase):
         pro.recorder = 'recorder'
         pro.contributor = 'contributor'
         pro.workers = 'workers'
-        from api import ProgramLocalImporter
         source1 = Source()
         source1.document.save('test_not_pic.js',
                               ProgramLocalImporter.SizeFile('static/js/csrfajax.js'))
@@ -348,6 +350,9 @@ class ProgramTest(unittest.TestCase):
         pro.document = json.dumps([source1.id, source2.id])
         pro.save()
         pc = PoweredClient('user')
+        res = pc.get('/program/' + str(pro.id))
+        self.assertEqual(200, res.status_code)
+        pc = Client()
         res = pc.get('/program/' + str(pro.id))
         self.assertEqual(200, res.status_code)
     def test_play_program(self):
@@ -372,9 +377,13 @@ class ProgramTest(unittest.TestCase):
         res = pc.post('/program/unpraise/', {'pid': 'abc'})
         self.assertEqual(False, json.loads(res.content)['success'])
     def test_favorite(self):
+        pro = Program(title="favorite_program")
+        pro.save()
         pc = PoweredClient('user')
-        res = pc.post('/program/favorite/', {'pid': 1})
-        self.assertEqual(200, res.status_code)
+        res = pc.post('/program/favorite/', {'pid': pro.id})
+        self.assertEqual(True, json.loads(res.content)['success'])
+        res = pc.post('/program/favorite/', {'pid': pro.id})
+        self.assertEqual(False, json.loads(res.content)['success'])
     def test_unfavorite(self):
         pc = PoweredClient('user')
         res = pc.post('/program/unfavorite/', {'pid': 1})
@@ -433,10 +442,16 @@ class ProgramTest(unittest.TestCase):
                        'document': open('static/js/csrfajax.js'), })
         self.assertEqual(True, json.loads(res.content)['success'])
     def test_show_modify(self):
+        # 这样取到的节目是test_ajax_upload中以worker身份上传的节目
         pro = Program.objects.filter(audio__gt=0, series_id__gt=0)[0]
         pc = PoweredClient('worker')
         res = pc.get('/program/modify/' + str(pro.id))
         self.assertEqual(200, res.status_code)
+        for s in Source.objects.all():
+            os.remove(s.document.path)
+        res = pc.get('/program/modify/' + str(pro.id))
+        self.assertEqual(200, res.status_code)
+        
     def test_modify_program(self):
         pro = Program.objects.filter(audio__gt=0, series_id__gt=0)[0]
         pc = PoweredClient('worker')
@@ -469,7 +484,7 @@ class ProgramTest(unittest.TestCase):
         pro.document = old_pro.document
         pro.save()
         pic_id = json.loads(pro.picture)[0]
-        doc_id = json.loads(pro.picture)[0]
+        doc_id = json.loads(pro.document)[0]
         pc = PoweredClient('worker')
         res = pc.post('/program/modify/delpic/', {'prgid': pro.id, 'picid': pic_id})
         self.assertEqual(False, json.loads(res.content)['success'])
@@ -479,6 +494,27 @@ class ProgramTest(unittest.TestCase):
         res = pc.post('/program/modify/delpic/', {'prgid': pro.id, 'picid': 99999})
         self.assertEqual(False, json.loads(res.content)['success'])
         res = pc.post('/program/modify/delpic/', {'prgid': pro.id, 'picid': pic_id})
+        self.assertEqual(True, json.loads(res.content)['success'])
+    def test_del_doc(self):
+        old_pro = Program.objects.filter(audio__gt=0, series_id__gt=0)[0]
+        pro = Program()
+        pro.group = old_pro.group
+        pro.series = old_pro.series
+        pro.title = old_pro.title
+        pro.picture = old_pro.picture
+        pro.document = old_pro.document
+        pro.save()
+        pic_id = json.loads(pro.picture)[0]
+        doc_id = json.loads(pro.document)[0]
+        pc = PoweredClient('worker')
+        res = pc.post('/program/modify/deldoc/', {'prgid': pro.id, 'docid': doc_id})
+        self.assertEqual(False, json.loads(res.content)['success'])
+        pc = PoweredClient('admin')
+        res = pc.post('/program/modify/deldoc/', {'prgid': pro.id, })
+        self.assertEqual(False, json.loads(res.content)['success'])
+        res = pc.post('/program/modify/deldoc/', {'prgid': pro.id, 'docid': 99999})
+        self.assertEqual(False, json.loads(res.content)['success'])
+        res = pc.post('/program/modify/deldoc/', {'prgid': pro.id, 'docid': doc_id})
         self.assertEqual(True, json.loads(res.content)['success'])
         
     def test_del_program(self):
