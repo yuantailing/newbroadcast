@@ -58,6 +58,8 @@ def get_arr(req):
         tmp['description'] = None;
         tmp['group'] = None;
         tmp['series'] = None;
+        tmp['group_id'] = None;
+        tmp['series_id'] = None;
         tmp['recorder'] = None;
         tmp['contributor'] = None;
         tmp['workers'] = None;
@@ -75,6 +77,10 @@ def get_arr(req):
             tmp['group'] = pg.group.title
         if (pg.series):
             tmp['series'] = pg.series.title
+        if (pg.group):
+            tmp['group_id'] = pg.group.id
+        if (pg.series):
+            tmp['series_id'] = pg.series.id
         if (pg.description):
             tmp['description'] = pg.description
         if (pg.recorder):
