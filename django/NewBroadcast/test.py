@@ -378,10 +378,57 @@ class ProgramTest(unittest.TestCase):
         pc = PoweredClient('user')
         res = pc.post('/program/unfavorite/', {'pid': 1})
         self.assertEqual(200, res.status_code)
-        
-        
-        
-        
-        
+    def test_add_comment_del_comment(self):
+        pro = Program(title="comment_program")
+        pro.save()
+        pc = PoweredClient('user')
+        res = pc.post('/program/comment/add/', {'pid': pro.id, 'comment':'abc'})
+        self.assertEqual(False, json.loads(res.content)['success'])
+        res = pc.post('/program/comment/add/', {'pid': pro.id, 'comment':'abcdefg'})
+        self.assertEqual(True, json.loads(res.content)['success'])
+        pc = PoweredClient('superadmin')
+        res = pc.post('/program/comment/del/', {'cid':99999})
+        self.assertEqual(False, json.loads(res.content)['success'])
+        pc = PoweredClient('superadmin')
+        res = pc.post('/program/comment/del/', {'cid':Comment.objects.first().id})
+        self.assertEqual(True, json.loads(res.content)['success'])
+    def test_show_upload(self):
+        pc = PoweredClient('worker')
+        res = pc.get('/program/upload/?result=success')
+        self.assertEqual(200, res.status_code)
+        res = pc.get('/program/upload/?result=failed')
+        self.assertEqual(200, res.status_code)
+    def test_ajax_upload(self):
+        pg = ProgramGroup(title='upload_group')
+        pg.save()
+        ps = ProgramSeries(title='upload_sereis')
+        ps.save()
+        pc = PoweredClient('worker')
+        res = pc.post('/program/upload/ajaxupload/',
+                      {'group': 0})
+        self.assertEqual(False, json.loads(res.content)['success'])
+        res = pc.post('/program/upload/ajaxupload/',
+                      {'group': -1})
+        self.assertEqual(False, json.loads(res.content)['success'])
+        res = pc.post('/program/upload/ajaxupload/',
+                      {'group': pg.id, 'series': ps.id, 'title': 'uploaded',
+                       'description': 'description', 'weight': 0,
+                       'recorder': 'recorder', 'workers': 'workers',
+                       'contributor': 'contributor'})
+        self.assertEqual(True, json.loads(res.content)['success'])
+        res = pc.post('/program/upload/ajaxupload/',
+                      {'group': pg.id, 'series': ps.id, 'title': 'uploaded',
+                       'description': 'description', 'weight': 0,
+                       'recorder': 'recorder', 'workers': 'workers',
+                       'contributor': 'contributor', })
+        self.assertEqual(True, json.loads(res.content)['success'])
+        res = pc.post('/program/upload/ajaxupload/',
+                      {'group': pg.id, 'series': 0, 'title': 'uploaded',
+                       'picture': open('static/images/1.jpg'),
+                       'audio': open('static/js/csrfajax.js'),
+                       'document': open('static/js/csrfajax.js'), })
+        self.assertEqual(True, json.loads(res.content)['success'])
+
+
 
 
