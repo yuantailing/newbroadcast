@@ -51,6 +51,7 @@ urlpatterns = patterns(
     url(r'^program/modify/delpic/$', program.del_pic),
     url(r'^program/modify/deldoc/$', program.del_doc),
     url(r'^program/delete/$', program.delete_program),
+    url(r'^program/recommand/$', program.recommand_program),
 
     url(r'^login/do/$', login.login),
     url(r'^login/test/$', login.test),

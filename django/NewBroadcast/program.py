@@ -317,7 +317,7 @@ def modify_program(req, arg):
     try:
         res = { }
         user = User.objects.get(id=req.session['uid'])
-        if (user.power == 'worker' and user.id != pg.uploader.id):
+        if (user.power == 'worker') and (not pg.uploader or not user.id == pg.uploader.id):
             return HttpResponse(json.dumps({'success':False, 'info':'您只能修改自己上传的文件！'}),
                         content_type='application/json')
         tgroup = req.POST.get('group', None)
@@ -440,4 +440,5 @@ def recommand_program(req):
     p_weight = req.POST.get('weight');
     obj = Program.objects.get(id = p_id);
     obj.weight = p_weight;
-    return HttpResponse(json.dumps([{"success":1}]), content_type = "application/json");
+    return HttpResponse(json.dumps({"success": True}),
+                        content_type = "application/json");

@@ -3,6 +3,7 @@ import unittest
 import random
 from models import *
 
+'''
 # 测试模型（不充分的测试）
 class ModelsTest(unittest.TestCase):
     def test_user_normal_use(self):
@@ -63,7 +64,7 @@ class ModelsTest(unittest.TestCase):
         pg = ProgramGroup()
         pg.title = 'A'
         pg.save()
-
+'''
 
 import login
 import manage
@@ -423,12 +424,53 @@ class ProgramTest(unittest.TestCase):
                        'contributor': 'contributor', })
         self.assertEqual(True, json.loads(res.content)['success'])
         res = pc.post('/program/upload/ajaxupload/',
-                      {'group': pg.id, 'series': 0, 'title': 'uploaded',
+                      {'group': pg.id, 'series': ps.id, 'title': 'uploaded',
+                       'description': 'description', 'weight': 0,
+                       'recorder': 'recorder', 'workers': 'workers',
+                       'contributor': 'contributor',
                        'picture': open('static/images/1.jpg'),
                        'audio': open('static/js/csrfajax.js'),
                        'document': open('static/js/csrfajax.js'), })
         self.assertEqual(True, json.loads(res.content)['success'])
+    def test_show_modify(self):
+        pro = Program.objects.filter(audio__gt=0, series_id__gt=0)[0]
+        pc = PoweredClient('worker')
+        res = pc.get('/program/modify/' + str(pro.id))
+        self.assertEqual(200, res.status_code)
+    def test_modify_program(self):
+        pro = Program.objects.filter(audio__gt=0, series_id__gt=0)[0]
+        pc = PoweredClient('worker')
+        res = pc.post('/program/modify_program/' + str(pro.id) + '/',
+                      {'group': pro.group.id, 'series': pro.series.id, 'title': 'uploaded',
+                       'description': 'description', 'weight': 0,
+                       'recorder': 'recorder', 'workers': 'workers',
+                       'contributor': 'contributor',
+                       'picture': open('static/images/1.jpg'),
+                       'audio': open('static/js/csrfajax.js'),
+                       'document': open('static/js/csrfajax.js'), })
+        self.assertEqual(True, json.loads(res.content)['success'])
+        res = pc.post('/program/modify_program/' + str(pro.id) + '/',
+                      {'group': '0'})
+        self.assertEqual(False, json.loads(res.content)['success'])
+        res = pc.post('/program/modify_program/' + str(pro.id) + '/',
+                      {'group': '-1'})
+        self.assertEqual(False, json.loads(res.content)['success'])
+        pro2 = Program(title='no_uploader')
+        pro2.save()
+        res = pc.post('/program/modify_program/' + str(pro2.id) + '/')
+        self.assertEqual(False, json.loads(res.content)['success'])
 
+    def test_recommand_program(self):
+        pro = Program(title='recommanded')
+        pro.save()
+        pc = PoweredClient('worker')
+        res = pc.post('/program/recommand/',
+                      {'id': pro.id, 'weight': 1})
+        self.assertTrue('forbidden' in res.content)
+        pc = PoweredClient('admin')
+        res = pc.post('/program/recommand/',
+                      {'id': pro.id, 'weight': 1})
+        self.assertEqual(True, json.loads(res.content)['success'])
 
 
 
