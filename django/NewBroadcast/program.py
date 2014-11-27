@@ -441,3 +441,39 @@ def recommand_program(req):
     obj = Program.objects.get(id = p_id);
     obj.weight = p_weight;
     return HttpResponse(json.dumps([{"success":1}]), content_type = "application/json");
+
+@power_required(['user'])
+def get_all_favorites(req):
+    uid = req.session['uid'];
+    fav = Favorite.objects.filter(user__id=uid);
+    print fav;
+    pgs = Program.objects.filter(favorite__in=fav).exclude(audio=None).order_by('favorite');
+    res = [];
+    for pg in pgs:
+        tmp = {}
+        tmp['id'] = pg.id;
+        tmp['title'] = pg.title;
+        tmp['url'] = Source.objects.get(id=pg.audio).document.url;
+        tmp['description'] = None;
+        tmp['have_praised'] = False;
+        tmp['have_favorited'] = False;
+        tmp['praise_count'] = pg.praise.count();
+        tmp['favorite_count'] = pg.favorite.count();
+        if pg.picture:
+            pic_arr = json.loads(pg.picture)
+            for i in pic_arr:
+                s = Source.objects.get(id=i)
+                if s.thumb:
+                    tmp['thumbnail'] = s.thumb.url;
+                else:
+                    tmp['thumbnail'] = s.document.url;
+                break;
+        else:
+            tmp['thumbnail'] = None;
+        tmp['have_praised'] = Praise.objects.filter(user__id=uid, program=pg).count() > 0
+        tmp['have_favorited'] = Favorite.objects.filter(user__id=uid, program=pg).count() > 0
+        if (pg.description):
+            tmp['description'] = pg.description
+        res.append(tmp);
+    print res;
+    return HttpResponse(json.dumps(res), content_type = "application/json");

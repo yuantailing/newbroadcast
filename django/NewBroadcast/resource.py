@@ -64,8 +64,8 @@ def get_arr(req):
         tmp['keyword'] = None;
         tmp['have_praised'] = False;
         tmp['have_favorited'] = False;
-        tmp['praise_count'] = pg.praise.count(),
-        tmp['favorite_count'] = pg.favorite.count(),
+        tmp['praise_count'] = pg.praise.count();
+        tmp['favorite_count'] = pg.favorite.count();
         tmp['logined'] = not (user == None);
         tmp['create_time'] = pg.create_time.strftime("%Y-%m-%d %H:%I:%S");
         if not (user == None):

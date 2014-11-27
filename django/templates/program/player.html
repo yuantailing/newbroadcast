@@ -93,12 +93,12 @@ body {
 		<div class="bs-docs-sidebar affix-top" role="complementary">
         	<ul class="nav bs-docs-sidenav">
             	<li>
-            		<a onclick="onShowListChange('local')" href="javascript:;"><span class="glyphicon glyphicon-list"></span> 播放列表</a>
+            		<a onclick="onShowListChange('local');" href="javascript:;"><span class="glyphicon glyphicon-list"></span> 播放列表</a>
             		<ul class="nav">
             		</ul>
             	</li>
             	<li>
-            		<a onclick="updateFavoriteList();onShowListChange('favorite');" href="javascript:;"><span class="glyphicon glyphicon-heart" style="color:red;"></span> 我的收藏</a>
+            		<a onclick="updateFavoriteList();" href="javascript:;"><span class="glyphicon glyphicon-heart" style="color:red;"></span> 我的收藏</a>
             	</li>
             </ul>
         </div>
@@ -409,7 +409,28 @@ function onProgramEnded() {
 }
 
 function updateFavoriteList() {
-    
+    $.ajax({
+	    url:'/program/get_all_favorites',
+	    type:"GET",
+        data:{nothing:"nothing"},
+	    dataType:"json"
+	}).done(function(msg){
+	    lists['favorite'] = new Array();
+        console.log(msg);
+        for(var i in msg) {
+            info = msg[i];
+            var d = new Date();
+            info.time = d.getTime();
+            info.location = "bottom";
+            info.list = "favorite";
+            info.play = 0;
+            readLocalStorage(info);
+        }
+        onShowListChange('favorite');
+	}).fail(function(jqXHR,textStatus){
+	    $('#change-info-status').html('与服务器连接中断');
+        onShowListChange('favorite');
+	});
 }
 
 function showObject(obj) {
