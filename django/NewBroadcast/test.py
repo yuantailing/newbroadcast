@@ -459,6 +459,14 @@ class ProgramTest(unittest.TestCase):
         pro2.save()
         res = pc.post('/program/modify_program/' + str(pro2.id) + '/')
         self.assertEqual(False, json.loads(res.content)['success'])
+    def test_del_program(self):
+        pro = Program(title="comment_program")
+        pro.save()
+        pc = PoweredClient('admin')
+        res = pc.post('/program/delete/', {'pid': pro.id, })
+        self.assertEqual(True, json.loads(res.content)['success'])
+        res = pc.post('/program/delete/', {'pid': 99999, })
+        self.assertEqual(False, json.loads(res.content)['success'])
 
     def test_recommand_program(self):
         pro = Program(title='recommanded')
