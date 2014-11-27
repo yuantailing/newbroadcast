@@ -89,14 +89,16 @@ class PoweredClient(Client):
         if users.count() > 0:
             user = users.first()
             self.post(
-                '/login/do/', {'email': user.email, 'password': user.password, })
+                '/login/do/',
+                {'email': user.email, 'password': user.password, })
         else:
             s = str(random.random())
             user = User(email=s + '@163.com', nickname=s, password=s,
                         power=power, )
             user.save()
             self.post(
-                '/login/do/', {'email': user.email, 'password': user.password, })
+                '/login/do/',
+                {'email': user.email, 'password': user.password, })
         assert self.session.get('user_power') == power
 
 

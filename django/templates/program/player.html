@@ -108,7 +108,7 @@ body {
 
 	<div class="col-md-3" id="player-program-info" style="position:relative;float:right;">
 		<div class="row" id="player-thumbnail-div">
-			<img id="player-thumbnail" class="img-responsive center-block" style="width:100%"></img>
+			<img id="player-thumbnail" class="img-responsive center-block"></img>
 		</div>
 		<div class="row" id="player-description"></div>
 	</div>
@@ -335,8 +335,10 @@ function readLocalStorage(info) {
 }
 
 function onShowListChange(str) {
+    console.log("showListIs:" + showList);
     if(str == showList)
         return;
+    console.log("showListChangeTo:" + str);
     showList = str;
 	$("#player-viewport").empty();
 	for(var i in lists[showList])
@@ -351,7 +353,6 @@ function onCurListChange(str) {
 	if(str == curList)
         return;
     curList = str;
-    console.log(curList);
 }
 
 function onListChange(location, program, str) {
@@ -359,26 +360,62 @@ function onListChange(location, program, str) {
         lists[str].unshift(program);
 		if(showList == str)
 			prependNewItem(program);
+        curProgramNum ++;
     } else if(location == "bottom") {
         lists[str].push(program);
 		if(showList == str)
 			appendNewItem(program);
+    } else if(location == "delete-id") {
+        for(var i in lists[str]) {
+            if(lists[str][i].id == program.id) {
+                lists[str].splice(i, 1);
+                if(showList == str)
+                    deleteItem(i);
+                if(curList == str && i == curProgramNum)
+                    onCurProgramChange(parseInt(i));
+                else if(curList == str && i < curProgramNum)
+                    curProgramNum --;
+            }
+        } 
+    } else if(location == "delete-index") {
+        lists[str].splice(program, 1);
+		if(showList == str)
+			deleteItem(program);
+        if(curList == str && i == curProgramNum)
+            onCurProgramChange(i);
+        else if(curList == str && i < curProgramNum)
+            curProgramNum --;
+    } else if(location == "delete-time") {
+        for(var i in lists[str]) {
+            if(lists[str][i].time == program.time) {
+                lists[str].splice(i, 1);
+                if(showList == str)
+                    deleteItem(i);
+                if(curList == str && i == curProgramNum)
+                    onCurProgramChange(i);
+                else if(curList == str && i < curProgramNum)
+                    curProgramNum --;
+            }
+        }
     }
+}
+
+function deleteItem(program_index) {
+    $('#player-viewport li:eq(' + program_index + ')').remove();
 }
 
 function prependNewItem(program) {
 	newItem = document.createElement("li");
     newItem.className = "list-group-item";
-    newItem.innerHTML = program.title/*"<a style='width:100%' href='javascript:;'>" + program.title + "</a>"*/;
+    newItem.innerHTML = program.title;
     newItem.id = "list-group-item-" + program.time;
 	$("#player-viewport").prepend(newItem);
 }
 
 function appendNewItem(program) {
-	console.log(program);
     newItem = document.createElement("li");
     newItem.className = "list-group-item";
-    newItem.innerHTML = program.title/*"<a style='width:100%' href='javascript:;'>" + program.title + "</a>"*/;
+    newItem.innerHTML = program.title;
     newItem.id = "list-group-item-" + program.time;
 	$("#player-viewport").append(newItem);
 }
@@ -414,7 +451,7 @@ function updateFavoriteList() {
 	    dataType:"json"
 	}).done(function(msg){
 	    lists['favorite'] = new Array();
-        console.log(msg);
+        $("#player-viewport").empty();
         for(var i in msg) {
             info = msg[i];
             var d = new Date();
@@ -423,6 +460,7 @@ function updateFavoriteList() {
             info.list = "favorite";
             info.play = 0;
             readLocalStorage(info);
+            console.log("loop" + i + " : " + lists['favorite']);
         }
         onShowListChange('favorite');
 	}).fail(function(jqXHR,textStatus){
