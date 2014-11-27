@@ -6,7 +6,7 @@ class SourceInline(admin.StackedInline):
     model = Source;
     fields = ['doc'];
     extra = 1;
-    
+
 
 class PictureInline(admin.StackedInline):
     model = Picture;

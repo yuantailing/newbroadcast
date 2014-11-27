@@ -53,9 +53,7 @@ body {
 	box-shadow: 0 0 10px 2px #000;
 }
 #player-description {
-	overflow: auto;
-	position: fixed;
-	margin-top: 10px;
+	margin: 5%;
 }
 </style>
 {% endblock%}
@@ -288,8 +286,8 @@ $(window).resize(function() {
 	$('#player-viewport').css('bottom', document.getElementById('program-audio-player').scrollHeight + 10);
 	$('#player-viewport').css('left', document.getElementById('player-sidebar').scrollWidth + 10);
 	$('#player-viewport').css('right', document.getElementById('player-program-info').scrollWidth + 10);
-	$('#player-description').css('top', document.getElementById('program-audio-player').scrollHeight + document.getElementById('player-thumbnail-div').scrollHeight);
-	$('#player-description').css('bottom', document.getElementById('program-audio-player').scrollHeight + 10);
+	// $('#player-description').css('top', document.getElementById('program-audio-player').scrollHeight + document.getElementById('player-thumbnail-div').scrollHeight);
+	// $('#player-description').css('bottom', document.getElementById('program-audio-player').scrollHeight + 10);
 });
 
 function update() {
