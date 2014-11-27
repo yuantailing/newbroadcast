@@ -384,13 +384,13 @@ def modify_program(req, arg):
 
 @power_required(['worker'])
 def del_pic(req):
-    prgid = req.GET.get('prgid', None)
+    prgid = req.REQUEST.get('prgid', None)
     pg = Program.objects.get(id=prgid)
     user = User.objects.get(id=req.session['uid'])
-    if (user.power == 'worker' and user.id != pg.uploader.id):
+    if user.power == 'worker' and (not pg.uploader or user.id != pg.uploader.id):
         return HttpResponse(json.dumps({'success':False, 'info':'您只能修改自己上传的文件！'}),
                         content_type='application/json')
-    picid = req.GET.get('picid', None)
+    picid = req.REQUEST.get('picid', None)
     pg = Program.objects.get(id=prgid)
     pic_arr = json.loads(pg.picture)
     try:
@@ -404,13 +404,13 @@ def del_pic(req):
 
 @power_required(['worker'])
 def del_doc(req):
-    prgid = req.GET.get('prgid', None)
+    prgid = req.REQUEST.get('prgid', None)
     pg = Program.objects.get(id=prgid)
     user = User.objects.get(id=req.session['uid'])
-    if (user.power == 'worker' and user.id != pg.uploader.id):
+    if user.power == 'worker' and (not pg.uploader or user.id != pg.uploader.id):
         return HttpResponse(json.dumps({'success':False, 'info':'您只能修改自己上传的文件！'}),
                         content_type='application/json')
-    docid = req.GET.get('docid', None)
+    docid = req.REQUEST.get('docid', None)
     pg = Program.objects.get(id=prgid)
     doc_arr = json.loads(pg.document)
     try:

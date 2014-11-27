@@ -459,15 +459,36 @@ class ProgramTest(unittest.TestCase):
         pro2.save()
         res = pc.post('/program/modify_program/' + str(pro2.id) + '/')
         self.assertEqual(False, json.loads(res.content)['success'])
+    def test_del_pic(self):
+        old_pro = Program.objects.filter(audio__gt=0, series_id__gt=0)[0]
+        pro = Program()
+        pro.group = old_pro.group
+        pro.series = old_pro.series
+        pro.title = old_pro.title
+        pro.picture = old_pro.picture
+        pro.document = old_pro.document
+        pro.save()
+        pic_id = json.loads(pro.picture)[0]
+        doc_id = json.loads(pro.picture)[0]
+        pc = PoweredClient('worker')
+        res = pc.post('/program/modify/delpic/', {'prgid': pro.id, 'picid': pic_id})
+        self.assertEqual(False, json.loads(res.content)['success'])
+        pc = PoweredClient('admin')
+        res = pc.post('/program/modify/delpic/', {'prgid': pro.id, })
+        self.assertEqual(False, json.loads(res.content)['success'])
+        res = pc.post('/program/modify/delpic/', {'prgid': pro.id, 'picid': 99999})
+        self.assertEqual(False, json.loads(res.content)['success'])
+        res = pc.post('/program/modify/delpic/', {'prgid': pro.id, 'picid': pic_id})
+        self.assertEqual(True, json.loads(res.content)['success'])
+        
     def test_del_program(self):
-        pro = Program(title="comment_program")
+        pro = Program(title="del_program")
         pro.save()
         pc = PoweredClient('admin')
         res = pc.post('/program/delete/', {'pid': pro.id, })
         self.assertEqual(True, json.loads(res.content)['success'])
         res = pc.post('/program/delete/', {'pid': 99999, })
         self.assertEqual(False, json.loads(res.content)['success'])
-
     def test_recommand_program(self):
         pro = Program(title='recommanded')
         pro.save()
