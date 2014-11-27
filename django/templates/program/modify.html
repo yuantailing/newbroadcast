@@ -15,7 +15,7 @@
 	<form class="form-horizontal" id="modify-form" action="modify_program/{{pgid}}/" method="post" role="form" enctype="multipart/form-data">
 	    {% csrf_token %}
 	    <div class="form-group">
-	        <label for="group" class="col-sm-offset-1 col-sm-2 control-label">节目组别</label>
+	        <label for="group" class="col-sm-offset-1 col-sm-2 control-label">节目组别<big style="color:red">*</big></label>
 	        <div class="col-sm-6">
 	            <select id="program-group" name="group" class="form-control">
 	                <option value="0" {% if group == 0 %}selected="selected"{%endif%}>---------</option>
@@ -37,7 +37,7 @@
 	        </div>
 	    </div>
 	    <div class="form-group">
-	        <label for="title" class="col-sm-offset-1 col-sm-2 control-label">节目标题</label>
+	        <label for="title" class="col-sm-offset-1 col-sm-2 control-label">节目标题<big style="color:red">*</big></label>
 	        <div class="col-sm-6">
 	            <input type="text" class="form-control" name="title" id="title" value={{ title }}>
 	        </div>

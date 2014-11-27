@@ -18,7 +18,7 @@
 		<form class="form-horizontal" id="upload-form" action="dealupload/" method="post" role="form" enctype="multipart/form-data">
 		    {% csrf_token %}
 		    <div class="form-group">
-		        <label for="group" class="col-sm-offset-1 col-sm-2 control-label">节目组别</label>
+		        <label for="group" class="col-sm-offset-1 col-sm-2 control-label">节目组别<big style="color:red">*</big></label>
 		        <div class="col-sm-6">
 		            <select id="program-group" name="group" class="form-control">
 		                <option value="0" selected="selected">---------</option>
@@ -40,7 +40,7 @@
 		        </div>
 		    </div>
 		    <div class="form-group">
-		        <label for="title" class="col-sm-offset-1 col-sm-2 control-label">节目标题</label>
+                <label for="title" class="col-sm-offset-1 col-sm-2 control-label">节目标题<big style="color:red">*</big></label>
 		        <div class="col-sm-6">
 		            <input type="text" class="form-control" name="title" id="title" placeholder="请输入节目标题">
 		        </div>
@@ -113,6 +113,7 @@
 {% block script %}
 <script type="text/javascript" src="/static/js/jquery-migrate.js"></script>
 <script type="text/javascript" src="/static/js/jquery.form.min.js"></script>
+<script type="text/javascript" src="/static/js/uploadtype.js"></script>
 <script>
 $('#upload-ajax-button').click(function saveReport() {
 	var options = {
