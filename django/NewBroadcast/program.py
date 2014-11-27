@@ -320,7 +320,7 @@ def modify_program(req, arg):
     try:
         res = { }
         user = User.objects.get(id=req.session['uid'])
-        if (user.power == 'worker' and user.id != pg.uploader.id):
+        if (user.power == 'worker') and (not pg.uploader or not user.id == pg.uploader.id):
             return HttpResponse(json.dumps({'success':False, 'info':'您只能修改自己上传的文件！'}),
                         content_type='application/json')
         tgroup = req.POST.get('group', None)
@@ -387,13 +387,13 @@ def modify_program(req, arg):
 
 @power_required(['worker'])
 def del_pic(req):
-    prgid = req.GET.get('prgid', None)
+    prgid = req.REQUEST.get('prgid', None)
     pg = Program.objects.get(id=prgid)
     user = User.objects.get(id=req.session['uid'])
-    if (user.power == 'worker' and user.id != pg.uploader.id):
+    if user.power == 'worker' and (not pg.uploader or user.id != pg.uploader.id):
         return HttpResponse(json.dumps({'success':False, 'info':'您只能修改自己上传的文件！'}),
                         content_type='application/json')
-    picid = req.GET.get('picid', None)
+    picid = req.REQUEST.get('picid', None)
     pg = Program.objects.get(id=prgid)
     pic_arr = json.loads(pg.picture)
     try:
@@ -407,13 +407,13 @@ def del_pic(req):
 
 @power_required(['worker'])
 def del_doc(req):
-    prgid = req.GET.get('prgid', None)
+    prgid = req.REQUEST.get('prgid', None)
     pg = Program.objects.get(id=prgid)
     user = User.objects.get(id=req.session['uid'])
-    if (user.power == 'worker' and user.id != pg.uploader.id):
+    if user.power == 'worker' and (not pg.uploader or user.id != pg.uploader.id):
         return HttpResponse(json.dumps({'success':False, 'info':'您只能修改自己上传的文件！'}),
                         content_type='application/json')
-    docid = req.GET.get('docid', None)
+    docid = req.REQUEST.get('docid', None)
     pg = Program.objects.get(id=prgid)
     doc_arr = json.loads(pg.document)
     try:
@@ -443,4 +443,41 @@ def recommand_program(req):
     p_weight = req.POST.get('weight');
     obj = Program.objects.get(id = p_id);
     obj.weight = p_weight;
-    return HttpResponse(json.dumps([{"success":1}]), content_type = "application/json");
+    return HttpResponse(json.dumps({"success": True}),
+                        content_type = "application/json");
+
+@power_required(['user'])
+def get_all_favorites(req):
+    uid = req.session['uid'];
+    fav = Favorite.objects.filter(user__id=uid);
+    print fav;
+    pgs = Program.objects.filter(favorite__in=fav).exclude(audio=None).order_by('favorite');
+    res = [];
+    for pg in pgs:
+        tmp = {}
+        tmp['id'] = pg.id;
+        tmp['title'] = pg.title;
+        tmp['url'] = Source.objects.get(id=pg.audio).document.url;
+        tmp['description'] = None;
+        tmp['have_praised'] = False;
+        tmp['have_favorited'] = False;
+        tmp['praise_count'] = pg.praise.count();
+        tmp['favorite_count'] = pg.favorite.count();
+        if pg.picture:
+            pic_arr = json.loads(pg.picture)
+            for i in pic_arr:
+                s = Source.objects.get(id=i)
+                if s.thumb:
+                    tmp['thumbnail'] = s.thumb.url;
+                else:
+                    tmp['thumbnail'] = s.document.url;
+                break;
+        else:
+            tmp['thumbnail'] = None;
+        tmp['have_praised'] = Praise.objects.filter(user__id=uid, program=pg).count() > 0
+        tmp['have_favorited'] = Favorite.objects.filter(user__id=uid, program=pg).count() > 0
+        if (pg.description):
+            tmp['description'] = pg.description
+        res.append(tmp);
+    print res;
+    return HttpResponse(json.dumps(res), content_type = "application/json");

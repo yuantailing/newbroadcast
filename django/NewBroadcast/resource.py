@@ -58,14 +58,16 @@ def get_arr(req):
         tmp['description'] = None;
         tmp['group'] = None;
         tmp['series'] = None;
+        tmp['group_id'] = None;
+        tmp['series_id'] = None;
         tmp['recorder'] = None;
         tmp['contributor'] = None;
         tmp['workers'] = None;
         tmp['keyword'] = None;
         tmp['have_praised'] = False;
         tmp['have_favorited'] = False;
-        tmp['praise_count'] = pg.praise.count(),
-        tmp['favorite_count'] = pg.favorite.count(),
+        tmp['praise_count'] = pg.praise.count();
+        tmp['favorite_count'] = pg.favorite.count();
         tmp['logined'] = not (user == None);
         tmp['create_time'] = pg.create_time.strftime("%Y-%m-%d %H:%I:%S");
         if not (user == None):
@@ -75,6 +77,10 @@ def get_arr(req):
             tmp['group'] = pg.group.title
         if (pg.series):
             tmp['series'] = pg.series.title
+        if (pg.group):
+            tmp['group_id'] = pg.group.id
+        if (pg.series):
+            tmp['series_id'] = pg.series.id
         if (pg.description):
             tmp['description'] = pg.description
         if (pg.recorder):

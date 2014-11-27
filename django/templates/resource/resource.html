@@ -208,13 +208,13 @@
 					tr.appendChild(td_group);
 					var a_group=document.createElement("a");
 					a_group.innerHTML=msg.program[i].group;
-					a_group.href="#";
+					a_group.href="/resource/?gid="+msg.program[i].group_id;
 					td_group.appendChild(a_group);
 					var td_series=document.createElement("td");
 					tr.appendChild(td_series);
 					var a_series=document.createElement("a");
 					a_series.innerHTML=msg.program[i].series;
-					a_series.href="#";
+					a_series.href="/resource/?sid="+msg.program[i].series_id;
 					td_series.appendChild(a_series);
 					var td_recorder=document.createElement("td");
 					td_recorder.innerHTML=msg.program[i].recorder;

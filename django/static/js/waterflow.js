@@ -5,7 +5,7 @@
     $.ajax({
         url:'/index/waterflow',
         type:"GET",
-        data:{s_w:num, e_w:num+10},
+        data:{s_w:num, e_w:num+30},
     }).done(function(result){
         data = result;
         console.log(data);
@@ -57,13 +57,13 @@
                 loadbox = 1;
             }
         }
+        num += 30;
     }).fail(function(jqXHR,textStatus){
         console.log('request failed '+textStatus);
     });
 
 	window.onscroll = function(){
 		if(getCheck()){
-            num += 10;
             $.ajax({
                 url:'/index/waterflow',
                 type:"GET",
@@ -105,6 +105,7 @@
 		                }
 	            	}
                 }
+                num += 10;
             }).fail(function(jqXHR,textStatus){
                 console.log('request failed '+ textStatus);
             });

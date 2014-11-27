@@ -53,9 +53,7 @@ body {
 	box-shadow: 0 0 10px 2px #000;
 }
 #player-description {
-	overflow: auto;
-	position: fixed;
-	margin-top: 10px;
+	margin: 5%;
 }
 </style>
 {% endblock%}
@@ -93,13 +91,12 @@ body {
 		<div class="bs-docs-sidebar affix-top" role="complementary">
         	<ul class="nav bs-docs-sidenav">
             	<li>
-            		<a href="#player-music-list"><span class="glyphicon glyphicon-list"></span> 播放列表</a>
-
+            		<a onclick="onShowListChange('local');" href="javascript:;"><span class="glyphicon glyphicon-list"></span> 播放列表</a>
             		<ul class="nav">
             		</ul>
             	</li>
             	<li>
-            		<a href="#player-favorites-list"><span class="glyphicon glyphicon-heart" style="color:red;"></span> 我的收藏</a>
+            		<a onclick="updateFavoriteList();" href="javascript:;"><span class="glyphicon glyphicon-heart" style="color:red;"></span> 我的收藏</a>
             	</li>
             </ul>
         </div>
@@ -111,7 +108,7 @@ body {
 
 	<div class="col-md-3" id="player-program-info" style="position:relative;float:right;">
 		<div class="row" id="player-thumbnail-div">
-			<img id="player-thumbnail" class="img-responsive center-block" style="width:100%"></img>
+			<img id="player-thumbnail" class="img-responsive center-block"></img>
 		</div>
 		<div class="row" id="player-description"></div>
 	</div>
@@ -131,6 +128,7 @@ var player_forward;
 var player_repeat;
 var player_random;
 var player_volume;
+var player_id;
 
 var audio_slider;
 var volume_slider;
@@ -139,9 +137,10 @@ var audio_slider_handle;
 var audio_slider_hold = false;
 var audio_random = false;
 
-var curList;
-var localList = new Array();
-var favoriteList = new Array();
+var curList, showList;
+var lists = new Object();
+lists.local = new Array();
+lists.favorite = new Array();
 var curProgramNum = 0;
 var play_mode = new Object();
 
@@ -158,8 +157,11 @@ $(window).load(function() {
 	audio_slider = $("#slider");
 	volume_slider = $("#volume-slider");
     
-    curList = localList;
-	localStorage.hasPlayer = 1;
+    curList = 'local';
+    showList = 'local';
+    var d = new Date();
+    player_id = d.getTime();
+	localStorage.hasPlayer = player_id;
     info = JSON.parse(localStorage.toPlayer);
     readLocalStorage(info);
 	
@@ -220,10 +222,10 @@ $(window).load(function() {
 		player_play.addClass("glyphicon-play");
 	});
 	player_backward.mousedown(function() { 
-		onCurProgramChange(((curProgramNum + curList.length) - 1) % curList.length);
+		onCurProgramChange(((curProgramNum + lists[curList].length) - 1) % lists[curList].length);
 	});
 	player_forward.mousedown(function() { 
-		onCurProgramChange((curProgramNum + 1) % curList.length);
+		onCurProgramChange((curProgramNum + 1) % lists[curList].length);
 	});
 	player_repeat.mousedown(function() {
 		if (player_repeat.css("color") == "rgb(255, 255, 255)") { 
@@ -273,6 +275,7 @@ $(document).ready(function() {
     }
     $('#player-viewport').click(function(e) {
         if(e.target.tagName == 'LI' || e.target.tagName == 'li') {
+            onCurListChange(showList);
             onCurProgramChange($(e.target).index());
         }
     });
@@ -283,8 +286,8 @@ $(window).resize(function() {
 	$('#player-viewport').css('bottom', document.getElementById('program-audio-player').scrollHeight + 10);
 	$('#player-viewport').css('left', document.getElementById('player-sidebar').scrollWidth + 10);
 	$('#player-viewport').css('right', document.getElementById('player-program-info').scrollWidth + 10);
-	$('#player-description').css('top', document.getElementById('program-audio-player').scrollHeight + document.getElementById('player-thumbnail-div').scrollHeight);
-	$('#player-description').css('bottom', document.getElementById('program-audio-player').scrollHeight + 10);
+	// $('#player-description').css('top', document.getElementById('program-audio-player').scrollHeight + document.getElementById('player-thumbnail-div').scrollHeight);
+	// $('#player-description').css('bottom', document.getElementById('program-audio-player').scrollHeight + 10);
 });
 
 function update() {
@@ -310,7 +313,7 @@ var handle_storage = function(e) {
     if(!e) {
         e = window.event;
     }
-    if(e.key == "toPlayer" && e.newValue != null) {
+    if(e.key == "toPlayer" && e.newValue != null && localStorage.hasPlayer == player_id) {
         info = JSON.parse(e.newValue);
         readLocalStorage(info);
     }
@@ -324,50 +327,95 @@ function readLocalStorage(info) {
     program.id = info.id;
     program.time = info.time;
     program.thumbnail = info.thumbnail;
-    onListChange(info.location, program, localList);
+    onListChange(info.location, program, info.list);
     if(info.play == 1) {
-		onCurListChange("local");
+		onCurListChange(info.list);
         onCurProgramChange(0);
 	}
 }
 
-function onCurListChange(str) {
-	if(str == "local" && curList != localList)
-		curList = localList;
-	else if(str == "favorite" && curList != favoriteList)
-		curList = favorateList;
-	else
-		return;
+function onShowListChange(str) {
+    console.log("showListIs:" + showList);
+    if(str == showList)
+        return;
+    console.log("showListChangeTo:" + str);
+    showList = str;
 	$("#player-viewport").empty();
-	for(i in curList)
-		appendNewItem(i);
-	onCurProgramChange(0);
+	for(var i in lists[showList])
+		appendNewItem(lists[showList][i]);
+    if(curList == showList) {
+        curItem = document.getElementById("list-group-item-" + lists[curList][curProgramNum].time);
+        curItem.className = "list-group-item active";
+    }
 }
 
-function onListChange(location, program, list) {
+function onCurListChange(str) {
+	if(str == curList)
+        return;
+    curList = str;
+}
+
+function onListChange(location, program, str) {
     if(location == "top") {
-        list.unshift(program);
-		if(curList == list)
+        lists[str].unshift(program);
+		if(showList == str)
 			prependNewItem(program);
+        curProgramNum ++;
     } else if(location == "bottom") {
-        list.push(program);
-		if(curList == list)
+        lists[str].push(program);
+		if(showList == str)
 			appendNewItem(program);
+    } else if(location == "delete-id") {
+        for(var i in lists[str]) {
+            if(lists[str][i].id == program.id) {
+                lists[str].splice(i, 1);
+                if(showList == str)
+                    deleteItem(i);
+                if(curList == str && i == curProgramNum)
+                    onCurProgramChange(parseInt(i));
+                else if(curList == str && i < curProgramNum)
+                    curProgramNum --;
+            }
+        } 
+    } else if(location == "delete-index") {
+        lists[str].splice(program, 1);
+		if(showList == str)
+			deleteItem(program);
+        if(curList == str && i == curProgramNum)
+            onCurProgramChange(i);
+        else if(curList == str && i < curProgramNum)
+            curProgramNum --;
+    } else if(location == "delete-time") {
+        for(var i in lists[str]) {
+            if(lists[str][i].time == program.time) {
+                lists[str].splice(i, 1);
+                if(showList == str)
+                    deleteItem(i);
+                if(curList == str && i == curProgramNum)
+                    onCurProgramChange(i);
+                else if(curList == str && i < curProgramNum)
+                    curProgramNum --;
+            }
+        }
     }
+}
+
+function deleteItem(program_index) {
+    $('#player-viewport li:eq(' + program_index + ')').remove();
 }
 
 function prependNewItem(program) {
 	newItem = document.createElement("li");
     newItem.className = "list-group-item";
-    newItem.innerHTML = program.title/*"<a style='width:100%' href='javascript:;'>" + program.title + "</a>"*/;
+    newItem.innerHTML = program.title;
     newItem.id = "list-group-item-" + program.time;
 	$("#player-viewport").prepend(newItem);
 }
 
 function appendNewItem(program) {
-	newItem = document.createElement("li");
+    newItem = document.createElement("li");
     newItem.className = "list-group-item";
-    newItem.innerHTML = program.title/*"<a style='width:100%' href='javascript:;'>" + program.title + "</a>"*/;
+    newItem.innerHTML = program.title;
     newItem.id = "list-group-item-" + program.time;
 	$("#player-viewport").append(newItem);
 }
@@ -375,11 +423,11 @@ function appendNewItem(program) {
 function onCurProgramChange(newProgramNum) {
 	$(".list-group-item.active").removeClass("active");
     curProgramNum = newProgramNum;
-    curItem = document.getElementById("list-group-item-" + curList[curProgramNum].time);
+    curItem = document.getElementById("list-group-item-" + lists[curList][curProgramNum].time);
     curItem.className = "list-group-item active";
-	$("#player-thumbnail").attr("src", curList[curProgramNum].thumbnail);
-	$("#player-description").html("<div>" + curList[curProgramNum].description + "</div>");
-    audio.src = curList[curProgramNum].url;
+	$("#player-thumbnail").attr("src", lists[curList][curProgramNum].thumbnail);
+	$("#player-description").html("<div>" + lists[curList][curProgramNum].description + "</div>");
+    audio.src = lists[curList][curProgramNum].url;
     audio.load();
     audio.play();
 }
@@ -389,10 +437,36 @@ function onProgramEnded() {
 	if(play_mode.repeat == 1) {
 		audio.play();
 	} else if(play_mode.random == 1) {
-		onCurProgramChange(Math.floor(Math.random() * curList.length));
+		onCurProgramChange(Math.floor(Math.random() * lists[curList].length));
 	} else {
-		onCurProgramChange((curProgramNum + 1) % curList.length);
+		onCurProgramChange((curProgramNum + 1) % lists[curList].length);
 	}
+}
+
+function updateFavoriteList() {
+    $.ajax({
+	    url:'/program/get_all_favorites',
+	    type:"GET",
+        data:{nothing:"nothing"},
+	    dataType:"json"
+	}).done(function(msg){
+	    lists['favorite'] = new Array();
+        $("#player-viewport").empty();
+        for(var i in msg) {
+            info = msg[i];
+            var d = new Date();
+            info.time = d.getTime();
+            info.location = "bottom";
+            info.list = "favorite";
+            info.play = 0;
+            readLocalStorage(info);
+            console.log("loop" + i + " : " + lists['favorite']);
+        }
+        onShowListChange('favorite');
+	}).fail(function(jqXHR,textStatus){
+	    $('#change-info-status').html('与服务器连接中断');
+        onShowListChange('favorite');
+	});
 }
 
 function showObject(obj) {
