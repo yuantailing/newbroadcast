@@ -163,16 +163,19 @@ def change_power(req):
         new_power = req.POST.get('new_power', None)
         if new_user.id == req.session['uid']:
             return HttpResponse(json.dumps(
-                {'success': False, 'info': '不能修改自己的权限'}), content_type='application/json')
+                {'success': False, 'info': '不能修改自己的权限'}),
+                content_type='application/json')
         else:
-            if not new_power in ['user', 'worker', 'admin', 'superadmin']:
+            if new_power not in ['user', 'worker', 'admin', 'superadmin']:
                 return HttpResponse(json.dumps(
-                    {'success': False, 'info': '权限的选择有误'}), content_type='application/json')
+                    {'success': False, 'info': '权限的选择有误'}),
+                    content_type='application/json')
             else:
                 new_user.power = new_power
                 new_user.save()
                 return HttpResponse(
-                    json.dumps({'success': True, 'info': '修改成功'}), content_type='application/json')
+                    json.dumps({'success': True, 'info': '修改成功'}),
+                    content_type='application/json')
     except Exception as e:
         return HttpResponse(json.dumps({'success': False, 'info': '未知错误'}),
                             content_type='application/json')
@@ -193,10 +196,12 @@ def group_series_post(model, req):
     if req.REQUEST.get('action', None) == 'modify':
         if not obj:
             return HttpResponse(
-                json.dumps({'success': False, 'info': '目标不存在'}), content_type='application/json')
+                json.dumps({'success': False, 'info': '目标不存在'}),
+                content_type='application/json')
         if not new_name:
             return HttpResponse(json.dumps(
-                {'success': False, 'info': '名称不能为空'}), content_type='application/json')
+                {'success': False, 'info': '名称不能为空'}),
+                content_type='application/json')
         obj.title = new_name
         obj.save()
         return HttpResponse(json.dumps({'success': True, 'info': '修改成功'}),
@@ -204,7 +209,8 @@ def group_series_post(model, req):
     if req.REQUEST.get('action', None) == 'delete':
         if not obj:
             return HttpResponse(
-                json.dumps({'success': False, 'info': '目标不存在'}), content_type='application/json')
+                json.dumps({'success': False, 'info': '目标不存在'}),
+                content_type='application/json')
         obj.order = -1
         obj.save()
         return HttpResponse(json.dumps({'success': True, 'info': '删除成功'}),
@@ -212,17 +218,20 @@ def group_series_post(model, req):
     if req.REQUEST.get('action', None) == 'destroy':
         if not obj:
             return HttpResponse(
-                json.dumps({'success': False, 'info': '目标不存在'}), content_type='application/json')
+                json.dumps({'success': False, 'info': '目标不存在'}),
+                content_type='application/json')
         if obj.program.count() > 0:
             return HttpResponse(json.dumps(
-                {'success': False, 'info': '只有节目数量为0才能删除'}), content_type='application/json')
+                {'success': False, 'info': '只有节目数量为0才能删除'}),
+                content_type='application/json')
         obj.delete()
         return HttpResponse(json.dumps({'success': True, 'info': '删除成功'}),
                             content_type='application/json')
     if req.REQUEST.get('action', None) == 'restore':
         if not obj:
             return HttpResponse(
-                json.dumps({'success': False, 'info': '目标不存在'}), content_type='application/json')
+                json.dumps({'success': False, 'info': '目标不存在'}),
+                content_type='application/json')
         obj.order = 0
         obj.save()
         return HttpResponse(json.dumps({'success': True, 'info': '恢复成功'}),
@@ -230,7 +239,8 @@ def group_series_post(model, req):
     if req.REQUEST.get('action', None) == 'add':
         if not new_name:
             return HttpResponse(json.dumps(
-                {'success': False, 'info': '名称不能为空'}), content_type='application/json')
+                {'success': False, 'info': '名称不能为空'}),
+                content_type='application/json')
         model(title=new_name).save()
         return HttpResponse(json.dumps({'success': True, 'info': '创建成功'}),
                             content_type='application/json')

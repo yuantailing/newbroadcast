@@ -15,7 +15,8 @@ class PictureInline(admin.StackedInline):
 
 
 class ProgramAdmin(admin.ModelAdmin):
-    fields = ['series', 'title', 'description', 'weight', 'page_format', 'recorder', 'workers']
+    fields = ['series', 'title', 'description', 'weight',
+              'page_format', 'recorder', 'workers']
     inlines = [SourceInline, PictureInline]
 
 
