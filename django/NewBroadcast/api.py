@@ -6,49 +6,65 @@ from NewBroadcast.models import *
 import json
 import os
 
+
 class ProgramLocalImporter:
+
     class SizeFile(file):
+
         def __init__(self, filename):
-            file_size = os.path.getsize(filename);
-            super(ProgramLocalImporter.SizeFile, self).__init__(filename, 'rb');
+            file_size = os.path.getsize(filename)
+            super(ProgramLocalImporter.SizeFile, self).__init__(filename, 'rb')
+
         def size(self):
             return self.file_size
+
     def __init__(self):
         self.pro = Program()
         self.picture_arr = []
         self.document_arr = []
+
     def set_title(self, title):
         self.pro.title = title
+
     def set_description(self, description):
         self.pro.description = description
+
     def set_group(self, group_id):
         self.pro.group = ProgramGroup.objects.get(id=group_id)
+
     def set_series(self, group_id):
         self.pro.series = ProgramSeries.objects.get(id=group_id)
+
     def set_recorder(self, recorder):
         self.pro.recorder = recorder
+
     def set_contributor(self, contributor):
         self.pro.contributor = contributor
+
     def set_worker(self, worker):
         self.pro.worker = worker
+
     def add_picture(self, name):
         src = Source()
         src.document.save(os.path.split(name)[1],
                           ProgramLocalImporter.SizeFile(name), save=False)
         src.save()
         self.picture_arr.append(src.id)
+
     def set_audio_filename(self, name):
         src = Source()
         src.document.save(os.path.split(name)[1],
                           ProgramLocalImporter.SizeFile(name), save=False)
         src.save()
         self.pro.audio = src.id
+
     def add_document(self, name):
         src = Source()
         src.document.save(os.path.split(name)[1],
                           ProgramLocalImporter.SizeFile(name), save=False)
         src.save()
         self.document_arr.append(src.id)
+
     def save(self):
         self.pro.picture = json.dumps(self.picture_arr)
         self.pro.document = json.dumps(self.document_arr)
@@ -78,6 +94,7 @@ for i in range(1,11):
 
 from django.contrib.sessions.models import Session
 from django.contrib.sessions.backends.db import SessionStore
+
 
 def find_session(key, value):
     for s in Session.objects.all():
