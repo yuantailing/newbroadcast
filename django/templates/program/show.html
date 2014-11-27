@@ -297,7 +297,7 @@ $('#program-praise').click(function() {
 	        dataType:"json"
 	    }).done(function(msg){
 	        if (msg.success) {
-	        	praise_button.css("color", "#fff");
+	        	praise_button.css("color", "#875f9a");
 	        	praise_button.attr("praised", "false");
 	        	$('#program-praise-count').html(msg.count);
 	        }
@@ -331,10 +331,10 @@ $('#program-favorite').click(function() {
 	        dataType:"json"
 	    }).done(function(msg){
 	        if (msg.success) {
-	        	favorite_button.css("color", "#fff");
+	        	favorite_button.css("color", "#875f9a");
 	        	favorite_button.attr("favorited", "false");
 	        	$('#program-favorite-count').html(msg.count);
-                changeLocalStorageToPlayer("top", "favorite", 0);
+                changeLocalStorageToPlayer("delete-id", "favorite", 0);
 	        }
 	    }).fail(function(jqXHR,textStatus){
 	        $('#change-info-status').html('与服务器连接中断');
@@ -350,7 +350,7 @@ $('#program-favorite').click(function() {
 	        	favorite_button.css("color", "#f00");
 	        	favorite_button.attr("favorited", "true");
 	        	$('#program-favorite-count').html(msg.count);
-                changeLocalStorageToPlayer("delete", "favorite", 0);
+                changeLocalStorageToPlayer("top", "favorite", 0);
 	        }
 	    }).fail(function(jqXHR,textStatus){
 	        $('#change-info-status').html('与服务器连接中断');
