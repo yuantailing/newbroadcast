@@ -117,20 +117,53 @@
 	</div>
 </div>
 </div>
+
+<div class="modal fade" id="myModal3" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+         <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <p>提示</p>
+         </div>
+         <div class="modal-body">
+			<form class="form-horizontal" role="form">
+				<div class="form-group">
+					<label id="upload-info" class="col-sm-offset-4 control-label"></label>
+				</div>
+			</form>
+         </div>
+         <div class="modal-footer">
+            <button type="button" class="btn btn-primary" data-dismiss="modal">我知道了</button>
+         </div>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div>
+
 {% endblock %}
 {% block script %}
 <script type="text/javascript" src="/static/js/jquery.form.min.js"></script>
 <script>
 $('#modify-button').click(function modifyReport() {
+    $('#myModal3').modal('show');
+    document.getElementById('upload-info').innerHTML = "正在上传，请稍等……";
+    if (document.getElementById("program-group").value == "0") {
+        document.getElementById('upload-info').innerHTML = "节目组别不能为空！";
+        return;
+    }
+    if (document.getElementById("title").value == "") {
+        document.getElementById('upload-info').innerHTML = "节目标题不能为空！";
+        return;
+    }
 	var options = {
 		url: '/program/modify_program/{{pgid}}/',
 		dataType: 'json',
 		success: function(data) {
             if (data.success){
-                alert("修改成功！");
+                document.getElementById('upload-info').innerHTML = "修改成功！";
 				location.reload();
-            }else
-				alert(data.info);
+            }else {
+                document.getElementById('upload-info').innerHTML = data.info;
+            }
 		}
 	};
 	$("#modify-form").ajaxSubmit(options);
