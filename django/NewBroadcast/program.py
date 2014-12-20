@@ -330,6 +330,7 @@ def modify_program(req, arg):
         trecorder = req.POST.get('recorder', None)
         tcontributor = req.POST.get('contributor', None)
         tworkers = req.POST.get('workers', None)
+        print "A"
         if (tgroup == "0"):
             return HttpResponse(json.dumps({'success':False, 'info':'组别不能为空！'}),
                         content_type='application/json')
@@ -339,11 +340,11 @@ def modify_program(req, arg):
         if (tseries != "0"):
             series = ProgramSeries.objects.get(id = int(tseries))
             pg.series = series
-        if (ttitle == None or ttitle == ''):
+        if not ttitle:
             return HttpResponse(json.dumps({'success':False, 'info':'标题不能为空!'}),
                         content_type='application/json')
         else:
-            prg.title = ttitle
+            pg.title = ttitle
         if (tdescription != None):
             pg.description = tdescription
         if (trecorder != None):
