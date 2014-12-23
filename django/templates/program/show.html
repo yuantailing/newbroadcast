@@ -16,6 +16,7 @@
 		        <div>
 			        {% if medialink %}
 			        <a class="btn btn-sm" title="播放" onclick="play()" role="button"><span class="glyphicon glyphicon-play"></span></a>
+			        <a class="btn btn-sm" title="添加到播放列表" onclick="add()" role="button"><span class="glyphicon glyphicon-plus"></span></a>
 					{% if logined %}
 			        <a class="btn btn-sm" title="下载" href="{{ medialink }}" target="_blank" role="button"><span class="glyphicon glyphicon-save"></span></a>
 					{% else %}
@@ -23,6 +24,7 @@
 					{% endif %}
 			        {% else %}
 			        <a class="btn btn-sm disabled" title="播放" role="button"><span class="glyphicon glyphicon-play"></span></a>
+			        <a class="btn btn-sm disabled" title="添加到播放列表" role="button"><span class="glyphicon glyphicon-plus"></span></a>
 			        <a class="btn btn-sm disabled"  title="下载" role="button"><span class="glyphicon glyphicon-save"></span></a>
 			        {% endif %}
 
@@ -245,6 +247,9 @@ $(document).ready(function() {
 });
 function play() {
     changeLocalStorageToPlayer("top", "local", 1);
+}
+function add() {
+    changeLocalStorageToPlayer("top", "local", 0);
 }
 function changeLocalStorageToPlayer(location, list, play) {
     var program = new Object();

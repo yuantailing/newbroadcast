@@ -82,7 +82,7 @@
 	<script>
 	var pids = new Array();
 	var index = 0;
-	var pictureIndex=1;
+	var pictureIndex = 1;
 	var perPage = 20;
 	var srs = new Array();
 		$(document).ready(function(){
@@ -227,13 +227,33 @@
 					var tddiv=document.createElement("div")
 					td.appendChild(tddiv);
 					var playbutton=document.createElement("a");
-					playbutton.setAttribute("class", "btn btn-xs");
-					playbutton.setAttribute("target", "_blank");
-					playbutton.setAttribute("href", "/program/play/"+pids[i+index]);
+					if (msg.program[i].medialink) {
+						playbutton.setAttribute("class", "btn btn-xs");
+						playbutton.setAttribute("onclick", "play(" + msg.program[i].id + ")");
+					} else {
+						playbutton.setAttribute("class", "btn btn-xs disabled");
+					}
+					playbutton.setAttribute("title", "播放");
+					playbutton.setAttribute("role", "button");
 					tddiv.appendChild(playbutton);
 					var playspan=document.createElement("span");
 					playspan.setAttribute("class", "glyphicon glyphicon-play");
 					playbutton.appendChild(playspan);
+					
+					var addbutton=document.createElement("a");
+					if (msg.program[i].medialink) {
+						addbutton.setAttribute("class", "btn btn-xs");
+						addbutton.setAttribute("onclick", "add(" + msg.program[i].id + ")");
+					} else {
+						addbutton.setAttribute("class", "btn btn-xs disabled");
+					}
+					addbutton.setAttribute("title", "添加到播放列表");
+					addbutton.setAttribute("role", "button");
+					tddiv.appendChild(addbutton);
+					var plusspan=document.createElement("span");
+					plusspan.setAttribute("class", "glyphicon glyphicon-plus");
+					addbutton.appendChild(plusspan);
+					
 					var zanbutton=document.createElement("a");
 					zanbutton.setAttribute("role", "button");
 					zanbutton.setAttribute("onclick", "zan(this)");
@@ -423,7 +443,7 @@
 					dataType:"json"
 				}).done(function(msg) {
 					if (msg.success) {
-						$(x).css("color", "#fff");
+						$(x).css("color", "#875f9a");
 						$(x).attr("praised", "false");
 						$(x).children().html(msg.count);
 					}
@@ -445,6 +465,55 @@
 				});
 			}
 		}
+		
+	function play(pgid) {
+		$.ajax({
+			url:'/program/get/',
+			type:'GET',
+			data:{'pid':pgid},
+			dataType:'json'
+		}).done(function(msg) {
+			changeLocalStorageToPlayer("top", "local", 1, msg.program);
+		}).fail(function(jqXHR, textStatus) {
+		});
+		if((localStorage.hasPlayer == 0 || localStorage.hasPlayer == null)) {
+			window.open("/program/play/", "_blank");
+		}
+	}
+	
+	function add(pgid) {
+		$.ajax({
+			url:'/program/get/',
+			type:'get',
+			data:{'pid':pgid},
+			dataType:'json'
+		}).done(function(msg) {
+			changeLocalStorageToPlayer("top", "local", 0, msg.program);
+		}).fail(function(jqXHR, textStatus) {
+		});
+		if((localStorage.hasPlayer == 0 || localStorage.hasPlayer == null)) {
+			window.open("/program/play/", "_blank");
+		}
+	}
+	
+	function changeLocalStorageToPlayer(location, list, play, info) {
+		var program = new Object();
+		var d = new Date();
+		program.time = d.getTime();
+		program.id = info.id;
+		program.url = info.medialink;
+		program.description = info.description;
+		program.title = info.title;
+		if(info.piclink)
+			program.thumbnail = info.piclink;
+		else
+			program.thumbnail = null;
+		program.play = play;
+		program.location = location;
+		program.list = list;
+		localStorage.toPlayer = JSON.stringify(program);
+	}
+
 	</script>
 
 {% endblock %}

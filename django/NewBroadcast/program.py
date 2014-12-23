@@ -485,3 +485,25 @@ def get_all_favorites(req):
         res.append(tmp);
     print res;
     return HttpResponse(json.dumps(res), content_type = "application/json");
+    
+@power_required([None])
+def get(req):
+    pg = Program.objects.get(id=req.GET.get('pid'))
+    res = {}
+    res['id'] = pg.id;
+    res['title'] = pg.title;
+    res['description'] = None;
+    res['piclink'] = None;
+    res['medialink'] = None;
+    if pg.description:
+        res['description'] = pg.description;
+    if pg.audio:
+        res['medialink'] = Source.objects.get(id=pg.audio).document.url
+    if not (pg.picture == '[]' or not pg.picture):
+        pic_arr = json.loads(pg.picture)
+        s = Source.objects.get(id=pic_arr[0])
+        if s.thumb:
+            res['piclink'] = s.thumb.url
+        else:
+            res['piclink'] = s.document.url
+    return HttpResponse(json.dumps({'program':res}), content_type='application/json')
