@@ -19,7 +19,7 @@ def login(req):
         p_password = req.POST.get('password', None)
         try:
             user = User.objects.get(email=p_email)
-            if (user.password == p_password):
+            if user.verify_password(p_password):
                 res['success'] = True
                 res['info'] = u'登录成功'
                 req.session['uid'] = user.id
@@ -98,7 +98,7 @@ def signin(req):
         else:
             user.email = p_email
             user.nickname = p_nickname
-            user.password = p_password
+            user.set_password(p_password)
             try:
                 user.save()
                 res['success'] = True

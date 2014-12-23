@@ -103,8 +103,8 @@ def change_password(req):
     psw1 = req.POST.get('check_password', None)
     if psw0 and psw0 == psw1:
         user = User.objects.get(id=req.session['uid'])
-        if user.password == psw_old:
-            user.password = psw0
+        if user.verify_password(psw_old):
+            user.set_password(psw0)
             user.save()
             res['success'] = True
             res['info'] = u'修改密码成功'

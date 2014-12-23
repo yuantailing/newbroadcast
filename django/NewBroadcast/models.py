@@ -42,6 +42,20 @@ class User(models.Model):
             self.phone_number = None
         super(User, self).save()
 
+    @staticmethod
+    def convert_sha(password):
+        return hashlib.sha256(u'#Server_salt_token="AkNN552B"&password=' +
+                            unicode(password)).hexdigest()
+
+    def set_password(self, password):
+        if password:
+            self.password = User.convert_sha(password)
+        else:
+            self.password = None
+
+    def verify_password(self, password):
+        return User.convert_sha(password) == self.password
+
 
 class ProgramGroup(models.Model):
     title = models.TextField(null=False, blank=False, default=None)
