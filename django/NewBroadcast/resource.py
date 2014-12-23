@@ -18,13 +18,12 @@ def show(req):
     series = []
     for gs in ProgramSeries.objects.filter(order__gte=0).order_by("-order"):
         series.append({'id':gs.id, 'title':gs.title})
-    liwidth = 99 / len(groups)
     try:
         user = User.objects.get(id=req.session['uid'])
     except Exception, e:
         user = None
     return render_to_response("resource/resource.html",
-                              {'groups':groups, 'series': series, 'liwidth': liwidth, 'logined':not (user == None)},
+                              {'groups':groups, 'series': series, 'logined':not (user == None)},
                               context_instance=RequestContext(req));
 
 @power_required([None])

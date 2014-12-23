@@ -1,19 +1,20 @@
 from django.db import models
-import thread
+from PIL import Image
+from .settings import MEDIA_ROOT
 import os
+import hashlib
+import pinyin
+import thread
 
 # Create your models here.
 
 
 class User(models.Model):
-    email = models.EmailField(blank=False, default=None, unique=True)
-    password = models.TextField(blank=False, default=None)
-    nickname = models.CharField(
-        blank=False,
-        default=None,
-        unique=True,
-        max_length=128)
-    power = models.CharField(blank=False, default='user', max_length=32,
+    email = models.EmailField(null=False, blank=False, default=None, unique=True)
+    password = models.TextField(null=False, blank=False, default=None)
+    nickname = models.CharField(null=False, blank=False, default=None,
+                                unique=True, max_length=128)
+    power = models.CharField(null=False, blank=False, default='user', max_length=32,
                              choices=(('user', 'user'), ('worker', 'worker'),
                                       ('admin', 'admin'),
                                       ('superadmin', 'superadmin'),))
@@ -33,6 +34,8 @@ class User(models.Model):
             self.password = None
         if not self.nickname:
             self.nickname = None
+        else:
+            self.nickname = self.nickname[:128]
         if not self.power:
             self.power = None
         if not self.phone_number:
@@ -41,8 +44,8 @@ class User(models.Model):
 
 
 class ProgramGroup(models.Model):
-    title = models.TextField(blank=False, default=None)
-    order = models.IntegerField(blank=False, default=0)
+    title = models.TextField(null=False, blank=False, default=None)
+    order = models.IntegerField(null=False, blank=False, default=0)
     update_time = models.DateTimeField(auto_now_add=True, auto_now=True)
     create_time = models.DateTimeField(auto_now_add=True)
 
@@ -56,8 +59,8 @@ class ProgramGroup(models.Model):
 
 
 class ProgramSeries(models.Model):
-    title = models.TextField(blank=False, default=None)
-    order = models.IntegerField(blank=False, default=0)
+    title = models.TextField(null=False, blank=False, default=None)
+    order = models.IntegerField(null=False, blank=False, default=0)
     update_time = models.DateTimeField(auto_now_add=True, auto_now=True)
     create_time = models.DateTimeField(auto_now_add=True)
 
@@ -68,35 +71,37 @@ class ProgramSeries(models.Model):
         if not self.title:
             self.title = None
         super(ProgramSeries, self).save()
-
+        
 
 class Program(models.Model):
+    pinyin_maxlen = 32
     group = models.ForeignKey(ProgramGroup, related_name="program",
                               null=True, blank=True, default=None,
                               on_delete=models.SET_NULL)
     series = models.ForeignKey(ProgramSeries, related_name="program",
                                null=True, blank=True, default=None,
                                on_delete=models.SET_NULL)
-    title = models.TextField(blank=False, default=None)
+    title = models.TextField(null=False, blank=False, default=None)
+    title_pinyin = models.TextField(null=False, blank=False, default=None,
+                                    max_length=pinyin_maxlen, db_index=True)
     description = models.TextField(null=True, blank=True, default=None)
-    weight = models.IntegerField(blank=False, default=0)
+    weight = models.IntegerField(null=False, blank=False, default=0)
     recorder = models.TextField(null=True, blank=True, default=None)
+    recorder_pinyin = models.TextField(null=False, blank=False, default=None,
+                                    max_length=pinyin_maxlen, db_index=True)
     contributor = models.TextField(null=True, blank=True, default=None)
     workers = models.TextField(null=True, blank=True, default=None)
-    keyword = models.TextField(null=True, blank=True, default=None)
-    picture = models.TextField(
-        null=True,
-        blank=True,
-        default='[]')  # json of list
+    keyword = models.TextField(null=True, blank=True, default=None,
+                               max_length=128, db_index=True)
+    # json of list
+    picture = models.TextField(null=True, blank=True, default='[]')
     audio = models.IntegerField(null=True, blank=True, default=None)
-    document = models.TextField(
-        null=True,
-        blank=True,
-        default='[]')  # json of list
+    # json of list
+    document = models.TextField(null=True, blank=True, default='[]')
     uploader = models.ForeignKey(User, related_name="program",
                                  null=True, blank=True, default=None,
                                  on_delete=models.SET_NULL)
-    update_time = models.DateTimeField(auto_now_add=True, auto_now=True)
+    update_time = models.DateTimeField(auto_now_add=True, auto_now=True, db_index=True)
     create_time = models.DateTimeField(auto_now_add=True)
 
     def __unicode__(self):
@@ -108,6 +113,16 @@ class Program(models.Model):
         return res
 
     def save(self):
+        try:
+            self.title_pinyin = pinyin.pinyin.get(unicode(self.title))
+            self.recorder_pinyin = pinyin.pinyin.get(unicode(self.recorder))
+            if not self.title_pinyin:
+                self.title_pinyin = None
+            if not self.recorder_pinyin:
+                self.recorder_pinyin = None
+        except Exception, e:
+            self.title_pinyin = None
+            self.recoder_pinyin = None
         if not self.title:
             self.title = None
         if not self.description:
@@ -123,8 +138,6 @@ class Program(models.Model):
         if not self.document:
             self.document = None
         self.keyword = self.title
-        if self.description:
-            self.keyword += '|' + self.description
         if self.recorder:
             self.keyword += '|' + self.recorder
         if self.contributor:
@@ -133,8 +146,6 @@ class Program(models.Model):
             self.keyword += '|' + self.workers
         super(Program, self).save()
 
-from .settings import MEDIA_ROOT
-from PIL import Image
 
 
 class Source(models.Model):
