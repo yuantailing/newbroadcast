@@ -52,6 +52,7 @@ urlpatterns = patterns(
     url(r'^program/modify/deldoc/$', program.del_doc),
     url(r'^program/delete/$', program.delete_program),
     url(r'^program/get_all_favorites$', program.get_all_favorites),
+    url(r'^program/get/$', program.get),
     url(r'^program/recommand/$', program.recommand_program),
 
     url(r'^login/do/$', login.login),

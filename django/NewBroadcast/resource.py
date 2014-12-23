@@ -55,14 +55,13 @@ def get_arr(req):
     for pg in pgs:
         tmp = {}
         tmp['title'] = pg.title;
-        tmp['description'] = None;
+        tmp['id'] = pg.id;
+        tmp['medialink'] = None;
         tmp['group'] = None;
         tmp['series'] = None;
         tmp['group_id'] = None;
         tmp['series_id'] = None;
         tmp['recorder'] = None;
-        tmp['contributor'] = None;
-        tmp['workers'] = None;
         tmp['keyword'] = None;
         tmp['have_praised'] = False;
         tmp['have_favorited'] = False;
@@ -73,6 +72,8 @@ def get_arr(req):
         if not (user == None):
             tmp['have_praised'] = Praise.objects.filter(user=user, program=pg).count() > 0
             tmp['have_favorited'] = Favorite.objects.filter(user=user, program=pg).count() > 0
+        if (pg.audio):
+            tmp['medialink'] = Source.objects.get(id=pg.audio).document.url
         if (pg.group):
             tmp['group'] = pg.group.title
         if (pg.series):
@@ -81,14 +82,8 @@ def get_arr(req):
             tmp['group_id'] = pg.group.id
         if (pg.series):
             tmp['series_id'] = pg.series.id
-        if (pg.description):
-            tmp['description'] = pg.description
         if (pg.recorder):
             tmp['recorder'] = pg.recorder
-        if (pg.contributor):
-            tmp['contributor'] = pg.contributor
-        if (pg.workers):
-            tmp['workers'] = pg.workers
         if (pg.keyword):
             tmp['keyword'] = pg.keyword
         res.append(tmp)
