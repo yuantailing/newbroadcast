@@ -101,7 +101,7 @@ class Program(models.Model):
     description = models.TextField(null=True, blank=True, default=None)
     weight = models.IntegerField(null=False, blank=False, default=0)
     recorder = models.TextField(null=True, blank=True, default=None)
-    recorder_pinyin = models.TextField(null=False, blank=False, default=None,
+    recorder_pinyin = models.TextField(null=True, blank=True, default=None,
                                     max_length=pinyin_maxlen, db_index=True)
     contributor = models.TextField(null=True, blank=True, default=None)
     workers = models.TextField(null=True, blank=True, default=None)
@@ -136,7 +136,7 @@ class Program(models.Model):
                 self.recorder_pinyin = None
         except Exception, e:
             self.title_pinyin = None
-            self.recoder_pinyin = None
+            self.recorder_pinyin = None
         if not self.title:
             self.title = None
         if not self.description:

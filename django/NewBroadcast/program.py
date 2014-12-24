@@ -315,7 +315,7 @@ def show_modify(req, arg):
 @power_required(['worker'])
 def modify_program(req, arg):
     pgid = int(arg)
-    pg = Program.objects.get(id = pgid)
+    pg = Program.objects.get(id=pgid)
 
     try:
         res = { }
@@ -330,7 +330,6 @@ def modify_program(req, arg):
         trecorder = req.POST.get('recorder', None)
         tcontributor = req.POST.get('contributor', None)
         tworkers = req.POST.get('workers', None)
-        print "A"
         if (tgroup == "0"):
             return HttpResponse(json.dumps({'success':False, 'info':'组别不能为空！'}),
                         content_type='application/json')
@@ -353,14 +352,12 @@ def modify_program(req, arg):
             pg.contributor = tcontributor
         if (tworkers != None):
             pg.workers = tworkers
-
         taudio = req.FILES.get('audio', None)
         if (taudio != None):
             ad = Source()
             ad.document = taudio
             ad.save()
             pg.audio = ad.id
-        
         pic_arr = json.loads(pg.picture)
         tpic = req.FILES.getlist('picture', None)
         if (len(tpic) > 0):
@@ -380,7 +377,6 @@ def modify_program(req, arg):
                 doc.save()
                 doc_arr.append(doc.id)
         pg.document = json.dumps(doc_arr)
-
         pg.save()
         success = True
     except Exception, e:
