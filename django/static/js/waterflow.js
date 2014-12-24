@@ -8,7 +8,7 @@
         data:{s_w:num, e_w:num+30},
     }).done(function(result){
         data = result;
-        console.log(data);
+        // console.log(data);
         var wrap = document.getElementById('wrap');
         var count_complete = 0;
         for(i in data) {
@@ -30,9 +30,31 @@
             pic.appendChild(img);
             var title = document.createElement('div');
             title.className = 'title';
-            pic.appendChild(title);
+            info.appendChild(title);
             var a = document.createElement('div');
             a.innerHTML = data[i].title;
+			
+			var favSpan = document.createElement('span');
+			var favBtn = document.createElement('a');
+			favBtn.setAttribute("class", "btn btn-xs glyphicon glyphicon-heart");
+            favBtn.setAttribute("onclick", "play(" + data[i].id + ")");
+			favSpan.appendChild(favBtn);
+            a.appendChild(favSpan);
+			
+			var addSpan = document.createElement('span');
+			var addBtn = document.createElement('a');
+			addBtn.setAttribute("class", "btn btn-xs glyphicon glyphicon-plus");
+            addBtn.setAttribute("onclick", "add(" + data[i].id + ")");
+			addSpan.appendChild(addBtn);
+            a.appendChild(addSpan);
+			
+			var playSpan = document.createElement('span');
+			var playBtn = document.createElement('a');
+			playBtn.setAttribute("class", "btn btn-xs glyphicon glyphicon-play");
+            playBtn.setAttribute("onclick", "play(" + data[i].id + ")");
+			playSpan.appendChild(playBtn);
+            a.appendChild(playSpan);
+			
             var p = document.createElement('p');
             if (data[i].content) {
                 if (data[i].content.length > 100) { 
@@ -69,7 +91,7 @@
                 type:"GET",
                 data:{s_w:num, e_w:num + 10},
             }).done(function(result){
-                console.log(result);
+                // console.log(result);
                 data = result;
                 var wrap = document.getElementById('wrap');
                 var count_complete = 0;

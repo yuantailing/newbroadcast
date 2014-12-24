@@ -257,7 +257,7 @@ function changeLocalStorageToPlayer(location, list, play) {
     program.time = d.getTime();
     program.id = {{ pgid }};
     program.url = "{{ medialink }}";
-    program.description = "{{ description }}";
+    program.description = "{{ strong }}" + "{{ description }}";
     program.title = "{{ title }}";
 	program.thumbnail = "{{ piclink.0 }}";
     program.play = play;
