@@ -35,21 +35,13 @@
 					<input type="hidden" id="navbarInput-01" name="keyword">
 					<input class="form-control" id="navbarInput-02" name="keyword_input" type="search" placeholder="Search">
 					<span class="input-group-btn">
-						<button type="submit" onclick="return jiexi(this)" class="btn" style="margin-left:0px;"><span class="fui-search"></span></button>
+						<button type="submit" onclick="return document.getElementById('navbarInput-01').value=escape(document.getElementById('navbarInput-02').value)" class="btn" style="margin-left:0px;"><span class="fui-search"></span></button>
 					</span>
 				</div>
 			</div>
 		</form>
 	</div><!-- /.navbar-collapse -->
 </nav>
-
-<script>
-	function jiexi(x) {
-		var t=document.getElementById("navbarInput-02").value;
-		document.getElementById("navbarInput-01").value=escape(t);
-//		self.location="/resource/?keyword=" + escape(t);
-	}
-</script>
 
 {% if not request.session.uid %}
 {% include "login/loginmodal.html" %}
