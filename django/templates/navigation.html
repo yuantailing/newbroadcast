@@ -32,7 +32,8 @@
 			{% endif %}
 			<div class="form-group">
 				<div class="input-group">
-					<input class="form-control" id="navbarInput-01" name="keyword" type="search" placeholder="Search">
+					<input type="hidden" id="navbarInput-01" name="keyword">
+					<input class="form-control" id="navbarInput-02" name="keyword_input" type="search" placeholder="Search">
 					<span class="input-group-btn">
 						<button type="submit" onclick="return jiexi(this)" class="btn" style="margin-left:0px;"><span class="fui-search"></span></button>
 					</span>
@@ -44,7 +45,7 @@
 
 <script>
 	function jiexi(x) {
-		var t=document.getElementById("navbarInput-01").value;
+		var t=document.getElementById("navbarInput-02").value;
 		document.getElementById("navbarInput-01").value=escape(t);
 //		self.location="/resource/?keyword=" + escape(t);
 	}
