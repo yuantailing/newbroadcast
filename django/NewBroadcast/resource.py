@@ -124,42 +124,30 @@ def filter(req):
     elif keyword == '':
         pgs = Program.objects.filter(group__id=gid, series__id=sid);
     elif sid == '-' and gid == '-':
-        pgs = Program.objects.filter(Q(title__contains=keyword) |
-                                     Q(description__contains=keyword) |
-                                     Q(group__title__contains=keyword) |
-                                     Q(series__title__contains=keyword));
+        pgs = Program.objects.filter(Q(keyword__contains=keyword));
     elif sid == '-':
         pgs = Program.objects.filter(Q(group__id=gid),
-                                     Q(title__contains=keyword) |
-                                     Q(description__contains=keyword) |
-                                     Q(group__title__contains=keyword) |
-                                     Q(series__title__contains=keyword));
+                                     Q(keyword__contains=keyword));
     elif gid == '-':
         pgs = Program.objects.filter(Q(series__id=sid),
-                                     Q(title__contains=keyword) |
-                                     Q(description__contains=keyword) |
-                                     Q(group__title__contains=keyword) |
-                                     Q(series__title__contains=keyword));
+                                     Q(keyword__contains=keyword));
     else:
         pgs = Program.objects.filter(Q(group__id=gid),
                                      Q(series__id=sid),
-                                     Q(title__contains=keyword) |
-                                     Q(description__contains=keyword) |
-                                     Q(group__title__contains=keyword) |
-                                     Q(series__title__contains=keyword));
+                                     Q(keyword__contains=keyword));
     pgids = []
-    for pg in pgs:
+    for pg in pgs.only('id'):
         pgids.append(pg.id);
     srres = []
     srs = []
     if gid == '-':
         tmp = ProgramSeries.objects.all()
         for i in tmp:
-            srs.append({'series':i.id})
+            srs.append(i.id)
     else:
-        srs = Program.objects.filter(group__id=gid).exclude(series=None).values('series').distinct();
-    for sr in srs:
-        srobj = ProgramSeries.objects.get(id=sr['series']);
+        for i in Program.objects.filter(group__id=gid).exclude(series=None).values('series').distinct():
+            srs.append(i['series'])
+    for srobj in ProgramSeries.objects.filter(id__in=srs).order_by('-order'):
         tmp = {};
         tmp['id'] = srobj.id;
         tmp['title'] = srobj.title;
