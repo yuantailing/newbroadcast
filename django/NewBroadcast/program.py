@@ -336,9 +336,11 @@ def modify_program(req, arg):
         else:
             group = ProgramGroup.objects.get(id = int(tgroup))
             pg.group = group
-        if (tseries != "0"):
+        if tseries != "0":
             series = ProgramSeries.objects.get(id = int(tseries))
             pg.series = series
+        else:
+            pg.series = None
         if not ttitle:
             return HttpResponse(json.dumps({'success':False, 'info':'标题不能为空!'}),
                         content_type='application/json')
