@@ -116,7 +116,7 @@ class Program(models.Model):
                                  null=True, blank=True, default=None,
                                  on_delete=models.SET_NULL)
     update_time = models.DateTimeField(auto_now_add=True, auto_now=True, db_index=True)
-    create_time = models.DateTimeField(auto_now_add=True)
+    create_time = models.DateTimeField(auto_now_add=True, db_index=True)
 
     def __unicode__(self):
         res = '[' + str(self.id) + '] ' + self.title

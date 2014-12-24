@@ -23,13 +23,13 @@ def show(req):
     except Exception, e:
         user = None
     return render_to_response("resource/resource.html",
-                              {'groups':groups, 'series': series, 'logined':not (user == None)},
+                              {'groups':groups, 'series': series, 'logined': not(user == None)},
                               context_instance=RequestContext(req));
 
 @power_required([None])
 def list_all(req):
     res = []
-    for pg in Program.objects.order_by('-weight'):
+    for pg in Program.objects.order_by('-weight', '-create_time'):
         res.append(pg.id)
     return HttpResponse(json.dumps({'pid':res}), content_type='application/json')
 
