@@ -1,6 +1,5 @@
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
-from NewBroadcast import ajaxtest
 from NewBroadcast import frontpage
 from NewBroadcast import resource
 from NewBroadcast import program
@@ -15,12 +14,6 @@ urlpatterns = patterns(
     url(r'^upload/(?P<path>.*)$', 'django.views.static.serve',
         {'document_root': 'upload/'}),
     url(r'^admin/', include(admin.site.urls)),
-
-    url(r'^ajaxtest/$', ajaxtest.index),
-    url(r'^ajaxtest/getresult/$', ajaxtest.getresult),
-    url(r'^ajaxtest/htmltest/$', ajaxtest.htmltest),
-    url(r'^ajaxtest/htmlresponse/$', ajaxtest.htmlresponse),
-    url(r'^ajaxtest/listprogram/$', ajaxtest.list_program),
 
     url(r'^index/$', frontpage.show_index),
     url(r'^index/waterflow$', frontpage.waterflow_data),

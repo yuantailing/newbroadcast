@@ -279,6 +279,13 @@ class Favorite(models.Model):
             favorite_lock.release()
             raise e
 
+from django.contrib import admin
+
+
+admin.site.register((User, ProgramGroup, ProgramSeries, Program,
+                     Source, Comment, Praise, Favorite))
+
+
 from django.http import HttpResponse
 from django.shortcuts import *
 
