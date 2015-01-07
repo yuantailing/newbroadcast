@@ -441,12 +441,18 @@ def delete_program(req):
     
 @power_required(['admin'])
 def recommand_program(req):
-    p_id = req.POST.get('id');
-    p_weight = req.POST.get('weight');
-    obj = Program.objects.get(id = p_id);
-    obj.weight = p_weight;
-    return HttpResponse(json.dumps({"success": True}),
-                        content_type = "application/json");
+    try:
+        p_id = req.REQUEST.get('id');
+        p_weight = req.REQUEST.get('weight');
+        obj = Program.objects.get(id=p_id);
+        obj.weight = p_weight;
+        obj.save()
+        return HttpResponse(json.dumps({"success": True}),
+                            content_type = "application/json");
+    except Exception, e:
+        return HttpResponse(json.dumps({"success": False}),
+                            content_type = "application/json");
+        
 
 @power_required(['user'])
 def get_all_favorites(req):

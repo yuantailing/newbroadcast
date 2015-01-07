@@ -9,11 +9,8 @@ from NewBroadcast import manage
 
 
 urlpatterns = patterns(
-    # Examples:
-    # url(r'^$', 'NewBroadcast.views.home', name='home'),
-    # url(r'^blog/', include('blog.urls')),
     '',
-
+    
     url(r'^$', frontpage.show_index),
     url(r'^upload/(?P<path>.*)$', 'django.views.static.serve',
         {'document_root': 'upload/'}),

@@ -20,7 +20,7 @@ def show_index(req):
 def waterflow_data(req):
     s_w = req.GET.get('s_w')
     e_w = req.GET.get('e_w')
-    obj = Program.objects.order_by("-weight")[s_w: e_w]
+    obj = Program.objects.order_by("-weight", "-create_time")[s_w: e_w]
     ret = []
     for o in obj:
         tmpret = {}
