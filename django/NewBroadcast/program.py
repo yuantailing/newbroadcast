@@ -450,7 +450,6 @@ def recommand_program(req):
 def get_all_favorites(req):
     uid = req.session['uid'];
     fav = Favorite.objects.filter(user__id=uid);
-    print fav;
     pgs = Program.objects.filter(favorite__in=fav).exclude(audio=None).order_by('favorite');
     res = [];
     for pg in pgs:
@@ -479,7 +478,6 @@ def get_all_favorites(req):
         if (pg.description):
             tmp['description'] = pg.description
         res.append(tmp);
-    print res;
     return HttpResponse(json.dumps(res), content_type = "application/json");
     
 @power_required([None])
