@@ -49,8 +49,9 @@ def get_arr(req):
         user = User.objects.get(id=req.session['uid'])
     except Exception, e:
         user = None
+    pgss = Program.objects.filter(id__in=pids)
     for pid in pids:
-        pgs.append(Program.objects.get(id=int(pid)))
+        pgs.append(pgss.get(id=int(pid)))
     for pg in pgs:
         tmp = {}
         tmp['title'] = pg.title;
@@ -103,8 +104,24 @@ def sort(req):
         pids_i.append(id)
     sort = req.GET.get('sort')
     res = []
-    for pg in Program.objects.filter(id__in=pids).order_by(sort):
-        res.append(pg.id);
+    if sort == 'recorder_pinyin' or sort == '-recorder_pinyin':
+        rs0 = Program.objects.filter(id__in=pids, recorder__isnull=True).order_by('-create_time').only('id')
+        rs1 = Program.objects.filter(id__in=pids, recorder__isnull=False).order_by(sort).only('id')
+        for pg in rs1:
+            res.append(pg.id)
+        for pg in rs0:
+            res.append(pg.id)
+    elif sort == 'series' or sort == '-series':
+        rs0 = Program.objects.filter(id__in=pids, series__isnull=True).order_by('-create_time').only('id')
+        rs1 = Program.objects.filter(id__in=pids, series__isnull=False).order_by(sort).only('id')
+        for pg in rs1:
+            res.append(pg.id)
+        for pg in rs0:
+            res.append(pg.id)
+    else:
+        rs = Program.objects.filter(id__in=pids).order_by(sort).only('id')
+        for pg in rs:
+            res.append(pg.id)
     return HttpResponse(json.dumps({'pid':res}),
                         content_type='application/json')
                         
