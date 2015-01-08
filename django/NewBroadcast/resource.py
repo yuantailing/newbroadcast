@@ -89,20 +89,15 @@ def get_arr(req):
         res.append(tmp)
     return HttpResponse(json.dumps({'program':res}),
                         content_type='application/json')
-
-@power_required([None])
-def getarr_test(req):
-    return render_to_response("resource/getarr_test.html",
-                              context_instance=RequestContext(req));
-                              
+  
 @power_required([None])
 def sort(req):
-    pids = req.GET.getlist(u'pid[]', [])
+    pids = req.POST.getlist(u'pid[]', [])
     pids_i = []
     for id in pids:
         id = int(id)
         pids_i.append(id)
-    sort = req.GET.get('sort')
+    sort = req.POST.get('sort')
     res = []
     if sort == 'recorder_pinyin' or sort == '-recorder_pinyin':
         rs0 = Program.objects.filter(id__in=pids, recorder__isnull=True).order_by('-create_time').only('id')
@@ -124,12 +119,12 @@ def sort(req):
             res.append(pg.id)
     return HttpResponse(json.dumps({'pid':res}),
                         content_type='application/json')
-                        
+
 @power_required([None])
 def filter(req):
-    gid = req.GET.get('groupid')
-    sid = req.GET.get('seriesid')
-    keyword = req.GET.get('keyword')
+    gid = req.REQUEST.get('groupid')
+    sid = req.REQUEST.get('seriesid')
+    keyword = req.REQUEST.get('keyword')
     if keyword == None:
         keyword = '';
     if sid == '-' and gid == '-' and keyword == '':
