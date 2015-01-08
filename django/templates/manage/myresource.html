@@ -20,6 +20,8 @@
 		<th>人员名单</th>
 		<th>稿件来源</th>
 		<th>机务人员</th>
+		<th>上传日期</th>
+		<th>&nbsp;</th>
 		<th>&nbsp;</th>
 		<th>&nbsp;</th>
 		</tr>
@@ -32,8 +34,17 @@
 		<td>{{ pg.recorder|default:"" }}</td>
 		<td>{{ pg.contributor|default:"" }}</td>
 		<td>{{ pg.workers|default:"" }}</td>
+		<td>{{ pg.create_time|date:"Y-m-d" }}</td>
 		<td>{% if request.session.user_power in "admin superadmin" %}
 			<a href="/program/modify/{{ pg.id }}" target="_parent"><span class="glyphicon glyphicon-pencil"></span> 修改</a>
+			{% endif %}
+		</td>
+		<td>{% if request.session.user_power in "admin superadmin" %}
+			  {% if pg.weight == 0 %}
+			<a href="javascript:void(0)" onclick="recommand({{ pg.id }}, 1)"><span class="glyphicon glyphicon glyphicon-signal"></span> 推荐</a>
+			  {% else %}
+			<a href="javascript:void(0)" onclick="recommand({{ pg.id }}, 0)" style="color:#f0f"><span class="glyphicon glyphicon glyphicon-signal"></span> 取消</a>
+			  {% endif %}
 			{% endif %}
 		</td>
 		<td>{% if request.session.user_power in "admin superadmin" %}
@@ -107,6 +118,18 @@ $('#modal-delete-button').click(function() {
 		$('#modal-delete-status').html('与服务器连接中断');
 	});
 });
+function recommand(pid, weight) {
+	$.ajax({
+		url:'/program/recommand/',
+		type:"POST",
+		data:{id:pid, weight:weight, },
+		dataType:"json"
+	}).done(function(msg){
+		location.reload();
+	}).fail(function(jqXHR,textStatus){
+		alert();
+	});
+}
 </script>
 {% endblock %}
 
