@@ -43,14 +43,20 @@
 			*/
 			var addSpan = document.createElement('span');
 			var addBtn = document.createElement('a');
-			addBtn.setAttribute("class", "btn btn-xs glyphicon glyphicon-plus");
+            if (data[i].canplay)
+                addBtn.setAttribute("class", "btn btn-xs glyphicon glyphicon-plus");
+            else
+                addBtn.setAttribute("class", "btn btn-xs glyphicon glyphicon-plus disabled");
             addBtn.setAttribute("onclick", "add(" + data[i].id + ")");
 			addSpan.appendChild(addBtn);
             a.appendChild(addSpan);
 			
 			var playSpan = document.createElement('span');
 			var playBtn = document.createElement('a');
-			playBtn.setAttribute("class", "btn btn-xs glyphicon glyphicon-play");
+            if (data[i].canplay)
+                playBtn.setAttribute("class", "btn btn-xs glyphicon glyphicon-play");
+            else
+                playBtn.setAttribute("class", "btn btn-xs glyphicon glyphicon-play disabled");
             playBtn.setAttribute("onclick", "play(" + data[i].id + ")");
 			playSpan.appendChild(playBtn);
             a.appendChild(playSpan);

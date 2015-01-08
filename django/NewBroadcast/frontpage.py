@@ -38,5 +38,6 @@ def waterflow_data(req):
             tmpret['src'] = "/static/images/default.jpg"
         tmpret['title'] = o.title
         tmpret['content'] = o.description
+        tmpret['canplay'] = not o.audio == None
         ret.append(tmpret)
     return HttpResponse(json.dumps(ret), content_type="application/json")
