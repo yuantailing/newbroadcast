@@ -34,13 +34,13 @@
             var a = document.createElement('div');
             a.innerHTML = data[i].title;
 			
-			var favSpan = document.createElement('span');
+			/*var favSpan = document.createElement('span');
 			var favBtn = document.createElement('a');
 			favBtn.setAttribute("class", "btn btn-xs glyphicon glyphicon-heart");
             favBtn.setAttribute("onclick", "play(" + data[i].id + ")");
 			favSpan.appendChild(favBtn);
             a.appendChild(favSpan);
-			
+			*/
 			var addSpan = document.createElement('span');
 			var addBtn = document.createElement('a');
 			addBtn.setAttribute("class", "btn btn-xs glyphicon glyphicon-plus");
