@@ -37,7 +37,7 @@
 			{% endif %}
 		</td>
 		<td>{% if request.session.user_power in "admin superadmin" %}
-			<a href="/program/delete/?pid={{ pg.id }}" target="_parent"><span class="glyphicon glyphicon-remove"></span> 删除</a>
+			<a href="javascript:void(0)" data-toggle="modal" data-target="#delete-info" onclick="$('#modal-delete-id').attr('value', '{{ pg.id }}'); $('#modal-delete-origin-name').html('{{ pg.title|addslashes }}');"><span class="glyphicon glyphicon-remove"></span> 删除</a>
 			{% endif %}
 		</td>
 		</tr>
@@ -48,6 +48,66 @@
 	{# paginate #}
 	</div>
 </div>
+
+<div class="modal fade" id="delete-info" tabindex="-1" role="dialog" aria-labelledby="change-password-label" aria-hidden="true">
+   <div class="modal-dialog">
+      <div class="modal-content">
+         <div class="modal-header">
+            <button type="button" class="close" 
+               data-dismiss="modal" aria-hidden="true">
+                  &times;
+            </button>
+            <h4 class="modal-title">
+               删除节目
+            </h4>
+            <div id="change-password-status"></div>
+         </div>
+         <div class="modal-body">
+            <form class="form-horizontal" role="form">
+				<span id="modal-delete-status"></span>
+				<input type="hidden" class="form-control" id="modal-delete-id"/>
+				<div class="form-group">
+					<label for="old-password" class="col-sm-offset-1 col-sm-2 control-label">名称</label>
+					<div class="col-sm-6">
+						<span id="modal-delete-origin-name">名称</span>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="old-password" class="col-sm-offset-1 col-sm-2 control-label">说明</label>
+					<div class="col-sm-6">
+						<span id="modal-restore-origin-name">将彻底删除节目，该操作不可恢复</span>
+					</div>
+				</div>
+			</form>
+         </div>
+         <div class="modal-footer">
+            <button type="button" class="btn btn-primary" id="modal-delete-button">
+              	确认删除
+            </button>
+            <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+         </div>
+      </div><!-- /.modal-content -->
+    </div>
+</div><!-- /.modal -->
+{% endblock %}
+
+{% block script %}
+<script>
+$('#modal-delete-button').click(function() {
+	$.ajax({
+		url:'/program/delete/',
+		type:"GET",
+		data:{pid:$('#modal-delete-id').val(), },
+		dataType:"json"
+	}).done(function(msg){
+		$('#modal-delete-status').html(msg.info);
+		if (msg.success)
+			location.reload();
+	}).fail(function(jqXHR,textStatus){
+		$('#modal-delete-status').html('与服务器连接中断');
+	});
+});
+</script>
 {% endblock %}
 
 {% block footer %}{% endblock %}
