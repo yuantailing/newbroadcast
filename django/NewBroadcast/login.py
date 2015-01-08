@@ -8,17 +8,18 @@ from django.core import serializers
 import json
 
 
-from models import *
+from .models import *
+
 
 @power_required([None])
 def login(req):
-    res = { }
+    res = {}
     try:
         p_email = req.POST.get('email', None)
         p_password = req.POST.get('password', None)
         try:
             user = User.objects.get(email=p_email)
-            if (user.password == p_password):
+            if user.verify_password(p_password):
                 res['success'] = True
                 res['info'] = u'登录成功'
                 req.session['uid'] = user.id
@@ -26,49 +27,53 @@ def login(req):
             else:
                 res['success'] = False
                 res['info'] = u'密码错误'
-        except Exception, e:
+        except Exception as e:
             res['success'] = False
             res['info'] = u'用户不存在'
-    except Exception, e:
+    except Exception as e:
         res['success'] = False
         res['info'] = u'未知错误'
     return HttpResponse(json.dumps(res), content_type='application/json')
 
+
 @power_required([None])
 def test(req):
-    res = { }
+    res = {}
     try:
         uid = req.session['uid']
         user = User.objects.get(id=uid)
         res['login'] = True
         res['uid'] = user.id
-    except Exception, e:
+    except Exception as e:
         res['login'] = False
     return HttpResponse(json.dumps(res), content_type='application/json')
+
 
 @power_required([None])
 def logout(req):
     req.session.clear()
     return HttpResponseRedirect('/')
 
+
 @power_required([None])
 def exist_judge(req):
-    res = { }
+    res = {}
     try:
         t_key = req.POST.get('key', None)
         t_type = req.POST.get('ptype', None)
         if (t_type == 'nickname'):
-            user = User.objects.get(nickname = t_key)
+            user = User.objects.get(nickname=t_key)
         else:
-            user = User.objects.get(email = t_key)
+            user = User.objects.get(email=t_key)
         res['exist'] = 'true'
-    except Exception, e:
+    except Exception as e:
         res['exist'] = 'false'
     return HttpResponse(json.dumps(res), content_type='application/json')
 
+
 @power_required([None])
 def signin(req):
-    res = { }
+    res = {}
     try:
         user = User()
         p_email = req.POST.get('email', None)
@@ -93,7 +98,7 @@ def signin(req):
         else:
             user.email = p_email
             user.nickname = p_nickname
-            user.password = p_password
+            user.set_password(p_password)
             try:
                 user.save()
                 res['success'] = True
@@ -101,10 +106,10 @@ def signin(req):
                 req.session['uid'] = user.id
                 req.session['user_nickname'] = user.nickname
                 req.session['user_power'] = user.power
-            except Exception, e:
+            except Exception as e:
                 res['success'] = False
                 res['info'] = u'邮箱名/昵称错误'
-    except Exception, e:
+    except Exception as e:
         res['success'] = False
         res['info'] = u'未知错误'
     return HttpResponse(json.dumps(res), content_type='application/json')

@@ -36,7 +36,11 @@ def show_program(req, arg):
     if pg.picture:
         pic_arr = json.loads(pg.picture)
         for i in pic_arr:
-            piclink.append(Source.objects.get(id=i).document.url)
+            s = Source.objects.get(id=i)
+            if s.thumb:
+                piclink.append(s.thumb.url)
+            else:
+                piclink.append(s.document.url)
     
     medialink = ""
     if pg.audio:
@@ -48,11 +52,11 @@ def show_program(req, arg):
         for i in range(0, len(doc_arr)):
             src = Source.objects.get(id=doc_arr[i])
             if i == 0:
-                doc_links.append((u"资料下载", src.document.url, u"资料" + str(i + 1) + u": " +
-                                  os.path.split(src.document.file.name)[1]))
+                doc_links.append((u"稿件下载", src.document.url, u"稿件" + str(i + 1)
+                                  + u" 下载链接"))
             else:
-                doc_links.append((u"", src.document.url, u"资料" + str(i + 1) + u": " +
-                                  os.path.split(src.document.file.name)[1]))
+                doc_links.append((u"", src.document.url, u"稿件" + str(i + 1)
+                                  + u" 下载链接"))
 
     have_praised = False
     have_favorited = False
@@ -169,9 +173,6 @@ def ajax_upload(req):
     try:
         prg = Program()
         
-
-        print Program.objects.get(id = 1000)
-
         tgroup = req.POST.get('group', None)
         tseries = req.POST.get('series', None)
         ttitle = req.POST.get('title', None)
@@ -193,7 +194,10 @@ def ajax_upload(req):
         if (tseries != "0"):
             pseries = ProgramSeries.objects.get(id = int(tseries))
             prg.series = pseries
-        if (ttitle != None):
+        if (ttitle == None or ttitle == ''):
+            return HttpResponse(json.dumps({'success':False, 'info':'标题不能为空!'}),
+                        content_type='application/json')
+        else:
             prg.title = ttitle
         if (tdescription != None):
             prg.description = tdescription
@@ -311,10 +315,14 @@ def show_modify(req, arg):
 @power_required(['worker'])
 def modify_program(req, arg):
     pgid = int(arg)
-    pg = Program.objects.get(id = pgid)
+    pg = Program.objects.get(id=pgid)
 
     try:
         res = { }
+        user = User.objects.get(id=req.session['uid'])
+        if (user.power == 'worker') and (not pg.uploader or not user.id == pg.uploader.id):
+            return HttpResponse(json.dumps({'success':False, 'info':'您只能修改自己上传的文件！'}),
+                        content_type='application/json')
         tgroup = req.POST.get('group', None)
         tseries = req.POST.get('series', None)
         ttitle = req.POST.get('title', None)
@@ -328,10 +336,15 @@ def modify_program(req, arg):
         else:
             group = ProgramGroup.objects.get(id = int(tgroup))
             pg.group = group
-        if (tseries != "0"):
+        if tseries != "0":
             series = ProgramSeries.objects.get(id = int(tseries))
             pg.series = series
-        if (ttitle != None):
+        else:
+            pg.series = None
+        if not ttitle:
+            return HttpResponse(json.dumps({'success':False, 'info':'标题不能为空!'}),
+                        content_type='application/json')
+        else:
             pg.title = ttitle
         if (tdescription != None):
             pg.description = tdescription
@@ -341,14 +354,12 @@ def modify_program(req, arg):
             pg.contributor = tcontributor
         if (tworkers != None):
             pg.workers = tworkers
-
         taudio = req.FILES.get('audio', None)
         if (taudio != None):
             ad = Source()
             ad.document = taudio
             ad.save()
             pg.audio = ad.id
-        
         pic_arr = json.loads(pg.picture)
         tpic = req.FILES.getlist('picture', None)
         if (len(tpic) > 0):
@@ -368,7 +379,6 @@ def modify_program(req, arg):
                 doc.save()
                 doc_arr.append(doc.id)
         pg.document = json.dumps(doc_arr)
-
         pg.save()
         success = True
     except Exception, e:
@@ -379,8 +389,13 @@ def modify_program(req, arg):
 
 @power_required(['worker'])
 def del_pic(req):
-    prgid = req.GET.get('prgid', None)
-    picid = req.GET.get('picid', None)
+    prgid = req.REQUEST.get('prgid', None)
+    pg = Program.objects.get(id=prgid)
+    user = User.objects.get(id=req.session['uid'])
+    if user.power == 'worker' and (not pg.uploader or user.id != pg.uploader.id):
+        return HttpResponse(json.dumps({'success':False, 'info':'您只能修改自己上传的文件！'}),
+                        content_type='application/json')
+    picid = req.REQUEST.get('picid', None)
     pg = Program.objects.get(id=prgid)
     pic_arr = json.loads(pg.picture)
     try:
@@ -390,12 +405,17 @@ def del_pic(req):
         success = True
     except Exception, e:
         success = False
-    return HttpResponse(json.dumps({'success':success}), content_type='application/json')
+    return HttpResponse(json.dumps({'success':success, 'info':'删除失败，请重新尝试！'}), content_type='application/json')
 
 @power_required(['worker'])
 def del_doc(req):
-    prgid = req.GET.get('prgid', None)
-    docid = req.GET.get('docid', None)
+    prgid = req.REQUEST.get('prgid', None)
+    pg = Program.objects.get(id=prgid)
+    user = User.objects.get(id=req.session['uid'])
+    if user.power == 'worker' and (not pg.uploader or user.id != pg.uploader.id):
+        return HttpResponse(json.dumps({'success':False, 'info':'您只能修改自己上传的文件！'}),
+                        content_type='application/json')
+    docid = req.REQUEST.get('docid', None)
     pg = Program.objects.get(id=prgid)
     doc_arr = json.loads(pg.document)
     try:
@@ -405,7 +425,7 @@ def del_doc(req):
         success = True
     except Exception, e:
         success = False
-    return HttpResponse(json.dumps({'success':success}), content_type='application/json')
+    return HttpResponse(json.dumps({'success':success, 'info':'删除失败，请重新尝试！'}), content_type='application/json')
 
 @power_required(['worker'])
 def delete_program(req):
@@ -421,8 +441,71 @@ def delete_program(req):
     
 @power_required(['admin'])
 def recommand_program(req):
-    p_id = req.POST.get('id');
-    p_weight = req.POST.get('weight');
-    obj = Program.objects.get(id = p_id);
-    obj.weight = p_weight;
-    return HttpResponse(json.dumps([{"success":1}]), content_type = "application/json");
+    try:
+        p_id = req.REQUEST.get('id');
+        p_weight = req.REQUEST.get('weight');
+        obj = Program.objects.get(id=p_id);
+        obj.weight = p_weight;
+        obj.save()
+        return HttpResponse(json.dumps({"success": True}),
+                            content_type = "application/json");
+    except Exception, e:
+        return HttpResponse(json.dumps({"success": False}),
+                            content_type = "application/json");
+        
+
+@power_required(['user'])
+def get_all_favorites(req):
+    uid = req.session['uid'];
+    fav = Favorite.objects.filter(user__id=uid);
+    pgs = Program.objects.filter(favorite__in=fav).exclude(audio=None).order_by('favorite');
+    res = [];
+    for pg in pgs:
+        tmp = {}
+        tmp['id'] = pg.id;
+        tmp['title'] = pg.title;
+        tmp['url'] = Source.objects.get(id=pg.audio).document.url;
+        tmp['description'] = None;
+        tmp['have_praised'] = False;
+        tmp['have_favorited'] = False;
+        tmp['praise_count'] = pg.praise.count();
+        tmp['favorite_count'] = pg.favorite.count();
+        if pg.picture:
+            pic_arr = json.loads(pg.picture)
+            for i in pic_arr:
+                s = Source.objects.get(id=i)
+                if s.thumb:
+                    tmp['thumbnail'] = s.thumb.url;
+                else:
+                    tmp['thumbnail'] = s.document.url;
+                break;
+        else:
+            tmp['thumbnail'] = None;
+        tmp['have_praised'] = Praise.objects.filter(user__id=uid, program=pg).count() > 0
+        tmp['have_favorited'] = Favorite.objects.filter(user__id=uid, program=pg).count() > 0
+        if (pg.description):
+            tmp['description'] = pg.description
+        res.append(tmp);
+    return HttpResponse(json.dumps(res), content_type = "application/json");
+    
+@power_required([None])
+def get(req):
+    pg = Program.objects.get(id=req.GET.get('pid'))
+    res = {}
+    res['id'] = pg.id;
+    res['title'] = pg.title;
+    res['description'] = None;
+    res['piclink'] = None;
+    res['medialink'] = None;
+    if pg.description:
+        res['description'] = pg.description;
+    if pg.audio:
+        res['medialink'] = Source.objects.get(id=pg.audio).document.url
+    if not (pg.picture == '[]' or not pg.picture):
+        pic_arr = json.loads(pg.picture)
+        s = Source.objects.get(id=pic_arr[0])
+        if s.thumb:
+            res['piclink'] = s.thumb.url
+        else:
+            res['piclink'] = s.document.url
+    return HttpResponse(json.dumps({'program':res}), content_type='application/json')

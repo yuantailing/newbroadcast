@@ -13,7 +13,9 @@ body {
 	background:#eeecf4;
 }
 #player-viewport li{
-	border:0px;
+	cursor: pointer;
+    border: 0px;
+    border-radius: 0px;
 	width: 100%;
 }
 #player-viewport .active{
@@ -43,6 +45,21 @@ body {
 }
 .progress { 
 	background: #fff;
+}
+#player-thumbnail-div { 
+	margin: 5%;
+}
+#player-thumbnail-div img { 
+	border-radius: 3px;
+	box-shadow: 0 0 2px 2px #000;
+}
+#player-description {
+	margin: 5%;
+}
+#player-description div {
+	margin: 5%;
+	color: #999;
+	font-size: 14px;
 }
 </style>
 {% endblock%}
@@ -80,13 +97,12 @@ body {
 		<div class="bs-docs-sidebar affix-top" role="complementary">
         	<ul class="nav bs-docs-sidenav">
             	<li>
-            		<a href="#player-music-list"><span class="glyphicon glyphicon-list"></span> 播放列表</a>
-
+            		<a onclick="onShowListChange('local');" href="javascript:;"><span class="glyphicon glyphicon-list"></span> 播放列表</a>
             		<ul class="nav">
             		</ul>
             	</li>
             	<li>
-            		<a href="#player-favorites-list"><span class="glyphicon glyphicon-heart" style="color:red;"></span> 我的收藏</a>
+            		<a onclick="updateFavoriteList();" href="javascript:;"><span class="glyphicon glyphicon-heart" style="color:red;"></span> 我的收藏</a>
             	</li>
             </ul>
         </div>
@@ -96,10 +112,11 @@ body {
 		</ul>
 	</div>
 
-	<div class="col-md-3" id="player-description" style="position:relative;float:right;">
-		<div>
-        	description
-        </div>
+	<div class="col-md-3" id="player-program-info" style="position:relative;float:right;">
+		<div class="row" id="player-thumbnail-div">
+			<img id="player-thumbnail" class="img-responsive center-block"></img>
+		</div>
+		<div class="row" id="player-description"></div>
 	</div>
 	
 	
@@ -112,9 +129,12 @@ body {
 var audio;
 var player_play;
 var player_stop;
+var player_backward;
+var player_forward;
 var player_repeat;
 var player_random;
 var player_volume;
+var player_id;
 
 var audio_slider;
 var volume_slider;
@@ -123,14 +143,19 @@ var audio_slider_handle;
 var audio_slider_hold = false;
 var audio_random = false;
 
-var localList = new Array();
-var favoriteList = new Array();
+var curList, showList;
+var lists = new Object();
+lists.local = new Array();
+lists.favorite = new Array();
 var curProgramNum = 0;
+var play_mode = new Object();
 
 $(window).load(function() { 
     audio = document.getElementById('audio');
 	player_play = $('#player-play');
 	player_stop = $('#player-stop');
+	player_backward = $('#player-backward');
+	player_forward = $('#player-forward');
 	player_repeat = $('#player-repeat');
 	player_random = $('#player-random');
 	player_volume = $('#player-volume');
@@ -138,18 +163,16 @@ $(window).load(function() {
 	audio_slider = $("#slider");
 	volume_slider = $("#volume-slider");
     
-    localStorage.hasPlayer = 1;
-    
+    curList = 'local';
+    showList = 'local';
+    var d = new Date();
+    player_id = d.getTime();
+	localStorage.hasPlayer = player_id;
     info = JSON.parse(localStorage.toPlayer);
-    program = new Object();
-    program.title = info.title;
-    program.description = info.description;
-    program.url = info.url;
-    program.id = info.id;
-    program.time = info.time;
-    onLocalListChange(info.location, program);
-    if(info.play == 1)
-        onCurProgramChange(0);
+    readLocalStorage(info);
+	
+	play_mode.repeat = 0;
+	play_mode.random = 0;
 
 	if (audio_slider.length > 0) {
 	  audio_slider.slider({
@@ -201,27 +224,32 @@ $(window).load(function() {
 	});
 	player_stop.mousedown(function() { 
 		audio.load();
-
 		player_play.removeClass("glyphicon-pause");
 		player_play.addClass("glyphicon-play");
+	});
+	player_backward.mousedown(function() { 
+		onCurProgramChange(((curProgramNum + lists[curList].length) - 1) % lists[curList].length);
+	});
+	player_forward.mousedown(function() { 
+		onCurProgramChange((curProgramNum + 1) % lists[curList].length);
 	});
 	player_repeat.mousedown(function() {
 		if (player_repeat.css("color") == "rgb(255, 255, 255)") { 
 			player_repeat.css("color", "#5c307d");
-			audio.loop = true;
-
+			play_mode.repeat = 1;
 		} else { 
 			player_repeat.css("color", "#fff");
-			audio.loop = false;
+			play_mode.repeat = 0;
 		}
 		
 	});
 	player_random.mousedown(function() {
 		if (player_random.css("color") == "rgb(255, 255, 255)") { 
 			player_random.css("color", "#5c307d");
-
+			play_mode.random = 1;
 		} else { 
 			player_random.css("color", "#fff");
+			play_mode.random = 0;
 		}
 		
 	});
@@ -245,19 +273,27 @@ $(document).ready(function() {
 	$('#player-viewport').css('top', document.getElementById('navigation-navbar').scrollHeight + 10);
 	$('#player-viewport').css('bottom', document.getElementById('program-audio-player').scrollHeight + 10);
 	$('#player-viewport').css('left', document.getElementById('player-sidebar').scrollWidth + 10);
-	$('#player-viewport').css('right', document.getElementById('player-description').scrollWidth + 10);
+	$('#player-viewport').css('right', document.getElementById('player-program-info').scrollWidth + 10);
     if(window.addEventListener){
         window.addEventListener("storage", handle_storage, false);
     }else if(window.attachEvent){
         window.attachEvent("onstorage", handle_storage);
     }
+    $('#player-viewport').click(function(e) {
+        if(e.target.tagName == 'LI' || e.target.tagName == 'li') {
+            onCurListChange(showList);
+            onCurProgramChange($(e.target).index());
+        }
+    });
 });
 
 $(window).resize(function() { 
 	$('#player-viewport').css('top', document.getElementById('navigation-navbar').scrollHeight + 10);
 	$('#player-viewport').css('bottom', document.getElementById('program-audio-player').scrollHeight + 10);
 	$('#player-viewport').css('left', document.getElementById('player-sidebar').scrollWidth + 10);
-	$('#player-viewport').css('right', document.getElementById('player-description').scrollWidth + 10);
+	$('#player-viewport').css('right', document.getElementById('player-program-info').scrollWidth + 10);
+	// $('#player-description').css('top', document.getElementById('program-audio-player').scrollHeight + document.getElementById('player-thumbnail-div').scrollHeight);
+	// $('#player-description').css('bottom', document.getElementById('program-audio-player').scrollHeight + 10);
 });
 
 function update() {
@@ -266,9 +302,7 @@ function update() {
 		audio_slider.slider({max:audio.duration,value:audio.currentTime}); 
 	}
 	if (audio.ended) {
-		audio.currentTime = 0;
-		player_play.removeClass("glyphicon-pause");
-		player_play.addClass("glyphicon-play");
+		onProgramEnded();
 	}
 	// update time label
 	label = $('#player-time-label');
@@ -285,47 +319,160 @@ var handle_storage = function(e) {
     if(!e) {
         e = window.event;
     }
-    if(e.key == "toPlayer" && e.newValue != null) {
+    if(e.key == "toPlayer" && e.newValue != null && localStorage.hasPlayer == player_id) {
         info = JSON.parse(e.newValue);
-        program = new Object();
-        program.title = info.title;
-        program.description = info.description;
-        program.url = info.url;
-        program.id = info.id;
-        program.time = info.time;
-        onLocalListChange(info.location, program);
-        if(info.play == 1)
-            onCurProgramChange(0);
+        readLocalStorage(info);
     }
 }
 
-function onLocalListChange(location, program) {
-    if(location == "top") {
-        localList.unshift(program);
-        newItem = document.createElement("li");
-        newItem.className = "list-group-item";
-        newItem.innerHTML = program.title;
-        newItem.id = "list-group-item-" + program.time;
-        $("#player-viewport").prepend(newItem);
-    } else if(info.location == "bottom") {
-        localList.push(program);
-        newItem = document.createElement("li");
-        newItem.className = "list-group-item";
-        newItem.innerHTML = program.title;
-        newItem.id = "list-group-item-" + program.time;
-        $("#player-viewport").append(newItem);
+function readLocalStorage(info) {
+    program = new Object();
+    program.title = info.title;
+    program.description = info.description;
+    program.url = info.url;
+    program.id = info.id;
+    program.time = info.time;
+    program.thumbnail = info.thumbnail;
+    onListChange(info.location, program, info.list);
+    if(info.play == 1) {
+		onCurListChange(info.list);
+        onCurProgramChange(0);
+	}
+}
+
+function onShowListChange(str) {
+    console.log("showListIs:" + showList);
+    if(str == showList)
+        return;
+    console.log("showListChangeTo:" + str);
+    showList = str;
+	$("#player-viewport").empty();
+	for(var i in lists[showList])
+		appendNewItem(lists[showList][i]);
+    if(curList == showList) {
+        curItem = document.getElementById("list-group-item-" + lists[curList][curProgramNum].time);
+        curItem.className = "list-group-item active";
     }
+}
+
+function onCurListChange(str) {
+	if(str == curList)
+        return;
+    curList = str;
+}
+
+function onListChange(location, program, str) {
+    if(location == "top") {
+        lists[str].unshift(program);
+		if(showList == str)
+			prependNewItem(program);
+        curProgramNum ++;
+    } else if(location == "bottom") {
+        lists[str].push(program);
+		if(showList == str)
+			appendNewItem(program);
+    } else if(location == "delete-id") {
+        for(var i in lists[str]) {
+            if(lists[str][i].id == program.id) {
+                lists[str].splice(i, 1);
+                if(showList == str)
+                    deleteItem(i);
+                if(curList == str && i == curProgramNum)
+                    onCurProgramChange(parseInt(i));
+                else if(curList == str && i < curProgramNum)
+                    curProgramNum --;
+            }
+        } 
+    } else if(location == "delete-index") {
+        lists[str].splice(program, 1);
+		if(showList == str)
+			deleteItem(program);
+        if(curList == str && i == curProgramNum)
+            onCurProgramChange(i);
+        else if(curList == str && i < curProgramNum)
+            curProgramNum --;
+    } else if(location == "delete-time") {
+        for(var i in lists[str]) {
+            if(lists[str][i].time == program.time) {
+                lists[str].splice(i, 1);
+                if(showList == str)
+                    deleteItem(i);
+                if(curList == str && i == curProgramNum)
+                    onCurProgramChange(i);
+                else if(curList == str && i < curProgramNum)
+                    curProgramNum --;
+            }
+        }
+    }
+}
+
+function deleteItem(program_index) {
+    $('#player-viewport li:eq(' + program_index + ')').remove();
+}
+
+function prependNewItem(program) {
+	newItem = document.createElement("li");
+    newItem.className = "list-group-item";
+    newItem.innerHTML = program.title;
+    newItem.id = "list-group-item-" + program.time;
+	$("#player-viewport").prepend(newItem);
+}
+
+function appendNewItem(program) {
+    newItem = document.createElement("li");
+    newItem.className = "list-group-item";
+    newItem.innerHTML = program.title;
+    newItem.id = "list-group-item-" + program.time;
+	$("#player-viewport").append(newItem);
 }
 
 function onCurProgramChange(newProgramNum) {
-    oldItem = document.getElementById("list-group-item-" + localList[curProgramNum].time);
-    oldItem.className = "list-group-item";
+	$(".list-group-item.active").removeClass("active");
     curProgramNum = newProgramNum;
-    curItem = document.getElementById("list-group-item-" + localList[curProgramNum].time);
+    curItem = document.getElementById("list-group-item-" + lists[curList][curProgramNum].time);
     curItem.className = "list-group-item active";
-    audio.src = localList[curProgramNum].url;
+	$("#player-thumbnail").attr("src", lists[curList][curProgramNum].thumbnail);
+	$("#player-description").html("<div>" + lists[curList][curProgramNum].description + "</div>");
+    audio.src = lists[curList][curProgramNum].url;
     audio.load();
     audio.play();
+}
+
+function onProgramEnded() {
+	audio.currentTime = 0;
+	if(play_mode.repeat == 1) {
+		audio.play();
+	} else if(play_mode.random == 1) {
+		onCurProgramChange(Math.floor(Math.random() * lists[curList].length));
+	} else {
+		onCurProgramChange((curProgramNum + 1) % lists[curList].length);
+	}
+}
+
+function updateFavoriteList() {
+    $.ajax({
+	    url:'/program/get_all_favorites',
+	    type:"GET",
+        data:{nothing:"nothing"},
+	    dataType:"json"
+	}).done(function(msg){
+	    lists['favorite'] = new Array();
+        $("#player-viewport").empty();
+        for(var i in msg) {
+            info = msg[i];
+            var d = new Date();
+            info.time = d.getTime();
+            info.location = "bottom";
+            info.list = "favorite";
+            info.play = 0;
+            readLocalStorage(info);
+            console.log("loop" + i + " : " + lists['favorite']);
+        }
+        onShowListChange('favorite');
+	}).fail(function(jqXHR,textStatus){
+	    $('#change-info-status').html('与服务器连接中断');
+        onShowListChange('favorite');
+	});
 }
 
 function showObject(obj) {
@@ -338,6 +485,5 @@ function showObject(obj) {
         }
     }
 }
-
 </script>
 {% endblock %}

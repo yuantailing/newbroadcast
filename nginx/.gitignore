@@ -1,0 +1,7 @@
+*
+!.gitignore
+!conf
+!conf/nginx.conf
+!conf/fastcgi.conf
+!conf/ssl
+!conf/ssl/*

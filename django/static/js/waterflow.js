@@ -5,10 +5,10 @@
     $.ajax({
         url:'/index/waterflow',
         type:"GET",
-        data:{s_w:num, e_w:num+10},
+        data:{s_w:num, e_w:num+30},
     }).done(function(result){
         data = result;
-        console.log(data);
+        // console.log(data);
         var wrap = document.getElementById('wrap');
         var count_complete = 0;
         for(i in data) {
@@ -30,26 +30,46 @@
             pic.appendChild(img);
             var title = document.createElement('div');
             title.className = 'title';
-            pic.appendChild(title);
+            info.appendChild(title);
             var a = document.createElement('div');
             a.innerHTML = data[i].title;
+			
+			/*var favSpan = document.createElement('span');
+			var favBtn = document.createElement('a');
+			favBtn.setAttribute("class", "btn btn-xs glyphicon glyphicon-heart");
+            favBtn.setAttribute("onclick", "play(" + data[i].id + ")");
+			favSpan.appendChild(favBtn);
+            a.appendChild(favSpan);
+			*/
+			var addSpan = document.createElement('span');
+			var addBtn = document.createElement('a');
+            if (data[i].canplay)
+                addBtn.setAttribute("class", "btn btn-xs glyphicon glyphicon-plus");
+            else
+                addBtn.setAttribute("class", "btn btn-xs glyphicon glyphicon-plus disabled");
+            addBtn.setAttribute("onclick", "add(" + data[i].id + ")");
+			addSpan.appendChild(addBtn);
+            a.appendChild(addSpan);
+			
+			var playSpan = document.createElement('span');
+			var playBtn = document.createElement('a');
+            if (data[i].canplay)
+                playBtn.setAttribute("class", "btn btn-xs glyphicon glyphicon-play");
+            else
+                playBtn.setAttribute("class", "btn btn-xs glyphicon glyphicon-play disabled");
+            playBtn.setAttribute("onclick", "play(" + data[i].id + ")");
+			playSpan.appendChild(playBtn);
+            a.appendChild(playSpan);
+			
             var p = document.createElement('p');
-            if (data[i].content.length > 100) { 
-            	p.innerHTML = data[i].content.substring(0, 100) + "...";
-            } else { 
-            	p.innerHTML = data[i].content;
+            if (data[i].content) {
+                if (data[i].content.length > 100) { 
+                    p.innerHTML = data[i].content.substring(0, 100) + "...";
+                } else { 
+                    p.innerHTML = data[i].content;
+                }
             }
-            
-            p.style.display = 'none';
             a.appendChild(p);
-            info.onmouseover = function () {
-                p = this.getElementsByTagName('p');
-                p[0].style.display = 'block';
-            }
-            info.onmouseout = function () {
-                p = this.getElementsByTagName('p');
-                p[0].style.display = 'none';
-            }
             title.appendChild(a);
             img.onload = function() {
                 count_complete ++;
@@ -65,19 +85,19 @@
                 loadbox = 1;
             }
         }
+        num += 30;
     }).fail(function(jqXHR,textStatus){
         console.log('request failed '+textStatus);
     });
 
 	window.onscroll = function(){
 		if(getCheck()){
-            num += 10;
             $.ajax({
                 url:'/index/waterflow',
                 type:"GET",
                 data:{s_w:num, e_w:num + 10},
             }).done(function(result){
-                console.log(result);
+                // console.log(result);
                 data = result;
                 var wrap = document.getElementById('wrap');
                 var count_complete = 0;
@@ -104,16 +124,7 @@
                     a.innerHTML = data[i].title;
                     var p = document.createElement('p');
                     p.innerHTML = data[i].content;
-                    p.style.display = 'none';
                     a.appendChild(p);
-                    info.onmouseover = function () {
-                        p = this.getElementsByTagName('p');
-                        p[0].style.display = 'block';
-                    }
-                    info.onmouseout = function () {
-                        p = this.getElementsByTagName('p');
-                        p[0].style.display = 'none';
-                    }
                     title.appendChild(a);
                     img.onload = function() {
 		                count_complete ++;
@@ -122,6 +133,7 @@
 		                }
 	            	}
                 }
+                num += 10;
             }).fail(function(jqXHR,textStatus){
                 console.log('request failed '+ textStatus);
             });

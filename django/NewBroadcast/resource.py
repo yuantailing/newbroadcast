@@ -18,19 +18,18 @@ def show(req):
     series = []
     for gs in ProgramSeries.objects.filter(order__gte=0).order_by("-order"):
         series.append({'id':gs.id, 'title':gs.title})
-    liwidth = 99 / len(groups)
     try:
         user = User.objects.get(id=req.session['uid'])
     except Exception, e:
         user = None
     return render_to_response("resource/resource.html",
-                              {'groups':groups, 'series': series, 'liwidth': liwidth, 'logined':not (user == None)},
+                              {'groups':groups, 'series': series, 'logined': not(user == None)},
                               context_instance=RequestContext(req));
 
 @power_required([None])
 def list_all(req):
     res = []
-    for pg in Program.objects.order_by('-weight'):
+    for pg in Program.objects.order_by('-weight', '-create_time'):
         res.append(pg.id)
     return HttpResponse(json.dumps({'pid':res}), content_type='application/json')
 
@@ -50,69 +49,82 @@ def get_arr(req):
         user = User.objects.get(id=req.session['uid'])
     except Exception, e:
         user = None
+    pgss = Program.objects.filter(id__in=pids)
     for pid in pids:
-        pgs.append(Program.objects.get(id=int(pid)))
+        pgs.append(pgss.get(id=int(pid)))
     for pg in pgs:
         tmp = {}
         tmp['title'] = pg.title;
-        tmp['description'] = None;
+        tmp['id'] = pg.id;
+        tmp['medialink'] = None;
         tmp['group'] = None;
         tmp['series'] = None;
+        tmp['group_id'] = None;
+        tmp['series_id'] = None;
         tmp['recorder'] = None;
-        tmp['contributor'] = None;
-        tmp['workers'] = None;
         tmp['keyword'] = None;
         tmp['have_praised'] = False;
         tmp['have_favorited'] = False;
-        tmp['praise_count'] = pg.praise.count(),
-        tmp['favorite_count'] = pg.favorite.count(),
+        tmp['praise_count'] = pg.praise.count();
+        tmp['favorite_count'] = pg.favorite.count();
         tmp['logined'] = not (user == None);
         tmp['create_time'] = pg.create_time.strftime("%Y-%m-%d %H:%I:%S");
         if not (user == None):
             tmp['have_praised'] = Praise.objects.filter(user=user, program=pg).count() > 0
             tmp['have_favorited'] = Favorite.objects.filter(user=user, program=pg).count() > 0
+        if (pg.audio):
+            tmp['medialink'] = Source.objects.get(id=pg.audio).document.url
         if (pg.group):
             tmp['group'] = pg.group.title
         if (pg.series):
             tmp['series'] = pg.series.title
-        if (pg.description):
-            tmp['description'] = pg.description
+        if (pg.group):
+            tmp['group_id'] = pg.group.id
+        if (pg.series):
+            tmp['series_id'] = pg.series.id
         if (pg.recorder):
             tmp['recorder'] = pg.recorder
-        if (pg.contributor):
-            tmp['contributor'] = pg.contributor
-        if (pg.workers):
-            tmp['workers'] = pg.workers
         if (pg.keyword):
             tmp['keyword'] = pg.keyword
         res.append(tmp)
     return HttpResponse(json.dumps({'program':res}),
                         content_type='application/json')
-
-@power_required([None])
-def getarr_test(req):
-    return render_to_response("resource/getarr_test.html",
-                              context_instance=RequestContext(req));
-                              
+  
 @power_required([None])
 def sort(req):
-    pids = req.GET.getlist(u'pid[]', [])
+    pids = req.POST.getlist(u'pid[]', [])
     pids_i = []
     for id in pids:
         id = int(id)
         pids_i.append(id)
-    sort = req.GET.get('sort')
+    sort = req.POST.get('sort')
     res = []
-    for pg in Program.objects.filter(id__in=pids).order_by(sort):
-        res.append(pg.id);
+    if sort == 'recorder_pinyin' or sort == '-recorder_pinyin':
+        rs0 = Program.objects.filter(id__in=pids, recorder__isnull=True).order_by('-create_time').only('id')
+        rs1 = Program.objects.filter(id__in=pids, recorder__isnull=False).order_by(sort).only('id')
+        for pg in rs1:
+            res.append(pg.id)
+        for pg in rs0:
+            res.append(pg.id)
+    elif sort == 'series' or sort == '-series':
+        rs0 = Program.objects.filter(id__in=pids, series__isnull=True).order_by('-create_time').only('id')
+        rs1 = Program.objects.filter(id__in=pids, series__isnull=False).order_by(sort).only('id')
+        for pg in rs1:
+            res.append(pg.id)
+        for pg in rs0:
+            res.append(pg.id)
+    else:
+        rs = Program.objects.filter(id__in=pids).order_by(sort).only('id')
+        for pg in rs:
+            res.append(pg.id)
     return HttpResponse(json.dumps({'pid':res}),
                         content_type='application/json')
-                        
+
 @power_required([None])
 def filter(req):
-    gid = req.GET.get('groupid')
-    sid = req.GET.get('seriesid')
-    keyword = req.GET.get('keyword')
+    gid = req.REQUEST.get('groupid')
+    sid = req.REQUEST.get('seriesid')
+    keyword = req.REQUEST.get('keyword')
     if keyword == None:
         keyword = '';
     if sid == '-' and gid == '-' and keyword == '':
@@ -124,42 +136,31 @@ def filter(req):
     elif keyword == '':
         pgs = Program.objects.filter(group__id=gid, series__id=sid);
     elif sid == '-' and gid == '-':
-        pgs = Program.objects.filter(Q(title__contains=keyword) |
-                                     Q(description__contains=keyword) |
-                                     Q(group__title__contains=keyword) |
-                                     Q(series__title__contains=keyword));
+        pgs = Program.objects.filter(Q(keyword__contains=keyword));
     elif sid == '-':
         pgs = Program.objects.filter(Q(group__id=gid),
-                                     Q(title__contains=keyword) |
-                                     Q(description__contains=keyword) |
-                                     Q(group__title__contains=keyword) |
-                                     Q(series__title__contains=keyword));
+                                     Q(keyword__contains=keyword));
     elif gid == '-':
         pgs = Program.objects.filter(Q(series__id=sid),
-                                     Q(title__contains=keyword) |
-                                     Q(description__contains=keyword) |
-                                     Q(group__title__contains=keyword) |
-                                     Q(series__title__contains=keyword));
+                                     Q(keyword__contains=keyword));
     else:
         pgs = Program.objects.filter(Q(group__id=gid),
                                      Q(series__id=sid),
-                                     Q(title__contains=keyword) |
-                                     Q(description__contains=keyword) |
-                                     Q(group__title__contains=keyword) |
-                                     Q(series__title__contains=keyword));
+                                     Q(keyword__contains=keyword));
+    pgs = pgs.order_by('-create_time')
     pgids = []
-    for pg in pgs:
+    for pg in pgs.only('id'):
         pgids.append(pg.id);
     srres = []
     srs = []
     if gid == '-':
         tmp = ProgramSeries.objects.all()
         for i in tmp:
-            srs.append({'series':i.id})
+            srs.append(i.id)
     else:
-        srs = Program.objects.filter(group__id=gid).exclude(series=None).values('series').distinct();
-    for sr in srs:
-        srobj = ProgramSeries.objects.get(id=sr['series']);
+        for i in Program.objects.filter(group__id=gid).exclude(series=None).values('series').distinct():
+            srs.append(i['series'])
+    for srobj in ProgramSeries.objects.filter(id__in=srs).order_by('-order'):
         tmp = {};
         tmp['id'] = srobj.id;
         tmp['title'] = srobj.title;

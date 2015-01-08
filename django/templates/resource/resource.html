@@ -1,11 +1,15 @@
 {% extends "base.html" %}
+{% block header %}
+<link href="/static/css/resource.css" rel="stylesheet" />
+{% endblock%}
 {% block body %}
     <!-- /.container -->
-	<div style="height:100%; width:100%" class="container">
+	<div class="container">
+		
 		<input type="hidden" name="logined" id="logined" value="{{ logined }}" />
 
 		<div style="height:10px"></div>
-		<div class="row" style="height:80%; width:80%; margin:auto">
+		<div class="row">
 			<!-- 系列 -->
 			<div style="height:100%; width:100%">
 				<div class="btn-group">
@@ -43,43 +47,44 @@
 					</ul>
 				</div>
 			</div>
-			<br/>
 			<!-- 节目 -->
-			<div class="panel panel-default" style="height:100%; width:100%">
-				<ul id="res-list" class="list-group" style="height:100%; width:100%">
-				</ul>
-				<div class="panel panel-head">
+			<div id="resource-content">
+				<div class="p" style="height:100%; width:100%">
+					<ul id="res-list" class="list-group" style="height:100%; width:100%">
+					</ul>
+					<table id="res-table" class="table table-striped table-hover">
+						<thead id="res-thead">
+							<tr>
+								<th><a id="thtitle_pinyin" onclick="sort(this)" href="javascript:void(0)">名称（点击排序）</a></th>
+								<th><a id="thgroup" onclick="sort(this)" href="javascript:void(0)">组别</a></th>
+								<th><a id="thseries" onclick="sort(this)" href="javascript:void(0)">系列</a></th>
+								<th><a id="threcorder_pinyin" onclick="sort(this)" href="javascript:void(0)">播音人</a></th>
+								<th><a id="th-create_time" onclick="sort(this)" href="javascript:void(0)">上传时间</a></th>
+								<th></th>
+							</tr>
+						</thead>
+						<tbody id="res-tbody">
+						</tbody>
+					</table>
 				</div>
-				<table id="res-table" class="panel-body table table-striped table-bordered table-hover">
-					<thead id="res-thead">
-						<tr>
-							<th id="th-title" onclick="sort(this)"><u>名称（点击可排序）</u></th>
-							<th id="th-group" onclick="sort(this)"><u>组别</u></th>
-							<th id="th-series" onclick="sort(this)"><u>系列</u></th>
-							<th id="th-recorder" onclick="sort(this)"><u>播音人</u></th>
-							<th id="th-create_time" onclick="sort(this)"><u>上传时间</u></th>
-							<th></th>
-						</tr>
-					</thead>
-					<tbody id="res-tbody">
-					</tbody>
-				</table>
 			</div>
-		</div>
-		
-		<!-- 翻页 -->
-		<div style="height:100%; width:80%">
-			<ul id="page-list" class="pagination-plain" style="float:right">
-			</ul>
+			
+			<!-- 翻页 -->
+			<div class="pagination pagination-primary" style="height:100%; width:100%">
+				<ul id="page-list" style="float:right">
+				</ul>
+			</div>
 		</div>
 	</div>
 
 {% endblock %}
 {% block script %}
+	<script type="text/javascript" src="/static/js/connectToPlayer.js"></script>
 	<script>
 	var pids = new Array();
 	var index = 0;
-	var pictureIndex=1;
+	var pictureIndex = 1;
+	var perPage = 20;
 	var srs = new Array();
 		$(document).ready(function(){
 			var keyword="";
@@ -138,12 +143,13 @@
 					input.setAttribute("value", srs[i].id);
 					li.appendChild(input);
 				}
-				var count=parseInt(pids.length/10+1);
+				var count=parseInt((pids.length-1)/perPage+1);
 				document.getElementById("page-list").innerHTML="";
 				if (count>1) {
 					var linode=document.createElement("li");
 					linode.setAttribute("class", "previous");
 					var anode=document.createElement("a");
+					anode.setAttribute("href", "#");
 					anode.setAttribute("class", "fui-arrow-left");
 					anode.setAttribute("onclick", "prePage(this)");
 					linode.appendChild(anode);
@@ -152,6 +158,7 @@
 						var linode=document.createElement("li");
 						var anode=document.createElement("a");
 						anode.innerHTML=i;
+						anode.setAttribute("href", "#");
 						anode.setAttribute("onclick", "selectPage(this)");
 						linode.appendChild(anode);
 						document.getElementById("page-list").appendChild(linode);
@@ -159,6 +166,7 @@
 					var linode=document.createElement("li");
 					linode.setAttribute("class", "previous");
 					var anode=document.createElement("a");
+					anode.setAttribute("href", "#");
 					anode.setAttribute("class", "fui-arrow-right");
 					anode.setAttribute("onclick", "nextPage(this)");
 					linode.appendChild(anode);
@@ -171,8 +179,8 @@
 		function showResource() {
 			var subpids = new Array();
 			var len;
-			if (pids.length-index > 10) {
-				len = 10;
+			if (pids.length-index > perPage) {
+				len = perPage;
 			} else {
 				len = pids.length-index;
 			}
@@ -198,11 +206,17 @@
 					a.href="/program/"+pids[i+index];
 					td_title.appendChild(a);
 					var td_group=document.createElement("td");
-					td_group.innerHTML=msg.program[i].group;
 					tr.appendChild(td_group);
+					var a_group=document.createElement("a");
+					a_group.innerHTML=msg.program[i].group;
+					a_group.href="/resource/?gid="+msg.program[i].group_id;
+					td_group.appendChild(a_group);
 					var td_series=document.createElement("td");
-					td_series.innerHTML=msg.program[i].series;
 					tr.appendChild(td_series);
+					var a_series=document.createElement("a");
+					a_series.innerHTML=msg.program[i].series;
+					a_series.href="/resource/?sid="+msg.program[i].series_id;
+					td_series.appendChild(a_series);
 					var td_recorder=document.createElement("td");
 					td_recorder.innerHTML=msg.program[i].recorder;
 					tr.appendChild(td_recorder);
@@ -214,18 +228,38 @@
 					var tddiv=document.createElement("div")
 					td.appendChild(tddiv);
 					var playbutton=document.createElement("a");
-					playbutton.setAttribute("class", "btn btn-primary");
-					playbutton.setAttribute("target", "_blank");
-					playbutton.setAttribute("href", "/program/play/"+pids[i+index]);
+					if (msg.program[i].medialink) {
+						playbutton.setAttribute("class", "btn btn-xs");
+						playbutton.setAttribute("onclick", "play(" + msg.program[i].id + ")");
+					} else {
+						playbutton.setAttribute("class", "btn btn-xs disabled");
+					}
+					playbutton.setAttribute("title", "播放");
+					playbutton.setAttribute("role", "button");
 					tddiv.appendChild(playbutton);
 					var playspan=document.createElement("span");
 					playspan.setAttribute("class", "glyphicon glyphicon-play");
 					playbutton.appendChild(playspan);
+					
+					var addbutton=document.createElement("a");
+					if (msg.program[i].medialink) {
+						addbutton.setAttribute("class", "btn btn-xs");
+						addbutton.setAttribute("onclick", "add(" + msg.program[i].id + ")");
+					} else {
+						addbutton.setAttribute("class", "btn btn-xs disabled");
+					}
+					addbutton.setAttribute("title", "添加到播放列表");
+					addbutton.setAttribute("role", "button");
+					tddiv.appendChild(addbutton);
+					var plusspan=document.createElement("span");
+					plusspan.setAttribute("class", "glyphicon glyphicon-plus");
+					addbutton.appendChild(plusspan);
+					
 					var zanbutton=document.createElement("a");
 					zanbutton.setAttribute("role", "button");
 					zanbutton.setAttribute("onclick", "zan(this)");
 					if ($("#logined").val()=="True") {
-						zanbutton.setAttribute("class", "btn btn-primary");
+						zanbutton.setAttribute("class", "btn btn-xs");
 						zanbutton.setAttribute("title", "点赞")
 						if (msg.program[i].have_praised) {
 							zanbutton.setAttribute("style", "color:red");
@@ -234,7 +268,7 @@
 							zanbutton.setAttribute("praised", "false");
 						}
 					} else {
-						zanbutton.setAttribute("class", "btn btn-primary disabled");
+						zanbutton.setAttribute("class", "btn btn-xs disabled");
 						zanbutton.setAttribute("title", "登陆后可以点赞")
 					}
 					tddiv.appendChild(zanbutton);
@@ -271,16 +305,6 @@
 				x.className = xClassName.replace((new RegExp("(^|\\s)" + "active" + "(\\s|$)")),""); 
 		}
 		function selectActiveIt(x) {
-/*			var y=x.parentNode;
-			if (!y) return;
-			var yClassName = y.className;
-			if (!yClassName.match(new RegExp("(^|\\s)" + "active" + "(\\s|$)")))
-				y.className = yClassName + " " + "active";
-			var lists = $(x).parent().siblings();
-			for (var i=0; i<lists.length; i++) {
-				deactiveIt(lists[i]);
-			}
-*/
 			var groupid;
 			var seriesid;
 			if (x.id=="groupstitle") {
@@ -340,12 +364,13 @@
 					input.setAttribute("value", srs[i].id);
 					li.appendChild(input);
 				}
-				var count=parseInt(pids.length/10+1);
+				var count=parseInt((pids.length-1)/perPage+1);
 				document.getElementById("page-list").innerHTML="";
 				if (count>1) {
 					var linode=document.createElement("li");
 					linode.setAttribute("class", "previous");
 					var anode=document.createElement("a");
+					anode.setAttribute("href", "#");
 					anode.setAttribute("class", "fui-arrow-left");
 					anode.setAttribute("onclick", "prePage(this)");
 					linode.appendChild(anode);
@@ -354,6 +379,7 @@
 						var linode=document.createElement("li");
 						var anode=document.createElement("a");
 						anode.innerHTML=i;
+						anode.setAttribute("href", "#");
 						anode.setAttribute("onclick", "selectPage(this)");
 						linode.appendChild(anode);
 						document.getElementById("page-list").appendChild(linode);
@@ -361,6 +387,7 @@
 					var linode=document.createElement("li");
 					linode.setAttribute("class", "previous");
 					var anode=document.createElement("a");
+					anode.setAttribute("href", "#");
 					anode.setAttribute("class", "fui-arrow-right");
 					anode.setAttribute("onclick", "nextPage(this)");
 					linode.appendChild(anode);
@@ -372,48 +399,20 @@
 			});
 		}
 		function nextPage(x) {
-			if (index+10<pids.length) {
-				index=index+10;
+			if (index+perPage<pids.length) {
+				index=index+perPage;
 				showResource();
 			}
 		}
 		function prePage(x) {
-			if (index-10>=0) {
-				index=index-10;
+			if (index-perPage>=0) {
+				index=index-perPage;
 				showResource();
 			}
 		}
 		function selectPage(x) {
-			index=(x.innerHTML-1)*10;
+			index=(x.innerHTML-1)*perPage;
 			showResource();
-		}
-		function addPicture(x) {
-			var fdiv=document.createElement("div");
-			fdiv.setAttribute("class", "form-group");
-			fdiv.setAttribute("id", "adddiv"+pictureIndex);
-			document.getElementById("modify-form").appendChild(fdiv);
-			var plabel=document.createElement("label");
-			plabel.setAttribute("for", "modify-picture"+pictureIndex);
-			plabel.setAttribute("class", "col-sm-offset-1 col-sm-2 control-label");
-			plabel.innerHTML="图片";
-			fdiv.appendChild(plabel);
-			var pdiv=document.createElement("div");
-			pdiv.setAttribute("class", "col-sm-6");
-			fdiv.appendChild(pdiv);
-			var pinput=document.createElement("input");
-			pinput.setAttribute("type", "file");
-			pinput.setAttribute("class", "form-control");
-			pinput.setAttribute("id", "modify-picture"+pictureIndex);
-			pdiv.appendChild(pinput);
-			pictureIndex=pictureIndex+1;
-		}
-		function delPicture(x) {
-			if (pictureIndex>1) {
-				pictureIndex=pictureIndex-1;
-				var parent=document.getElementById("modify-form");
-				var node=document.getElementById("adddiv"+pictureIndex);
-				parent.removeChild(node);
-			}
 		}
 		function sort(x) {
 			var xid=$(x).attr("id");
@@ -427,7 +426,7 @@
 			x.setAttribute("id", newid);
 			$.ajax({
 				url:'/resource/sort/',
-				type:"GET",
+				type:"POST",
 				data:{'pid':pids, 'sort':sortarg},
 				dataType:"json"
 			}).done(function(msg) {
@@ -445,7 +444,7 @@
 					dataType:"json"
 				}).done(function(msg) {
 					if (msg.success) {
-						$(x).css("color", "#fff");
+						$(x).css("color", "#875f9a");
 						$(x).attr("praised", "false");
 						$(x).children().html(msg.count);
 					}

@@ -40,3 +40,8 @@ nosetests.xml
 
 # upload
 upload/*
+
+# test result
+.coverage
+htmlcov/*
+coverage.xml

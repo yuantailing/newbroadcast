@@ -1,0 +1,17 @@
+#upload-content { 
+	background-color: #fff;
+	padding: 2% 0% 2% 0%;
+}
+
+#modify-content { 
+	background-color: #fff;
+	padding: 2% 0% 2% 0%;
+}
+
+
+form { 
+	color:#666;
+}
+
+input[type=file] {
+}

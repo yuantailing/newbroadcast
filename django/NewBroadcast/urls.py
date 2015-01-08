@@ -1,31 +1,19 @@
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
-from NewBroadcast import ajaxtest
 from NewBroadcast import frontpage
 from NewBroadcast import resource
 from NewBroadcast import program
 from NewBroadcast import login
-from NewBroadcast import api
 from NewBroadcast import manage
-from NewBroadcast import mgrdebug
 
 
-urlpatterns = patterns('',
-    # Examples:
-    # url(r'^$', 'NewBroadcast.views.home', name='home'),
-    # url(r'^blog/', include('blog.urls')),
-
+urlpatterns = patterns(
+    '',
+    
     url(r'^$', frontpage.show_index),
     url(r'^upload/(?P<path>.*)$', 'django.views.static.serve',
         {'document_root': 'upload/'}),
     url(r'^admin/', include(admin.site.urls)),
-
-    url(r'^ajaxtest/$', ajaxtest.index),
-    url(r'^ajaxtest/getresult/$', ajaxtest.getresult),
-    url(r'^ajaxtest/htmltest/$', ajaxtest.htmltest),
-    url(r'^ajaxtest/htmlresponse/$', ajaxtest.htmlresponse),
-    url(r'^ajaxtest/listprogram/$', ajaxtest.list_program),
-                       
 
     url(r'^index/$', frontpage.show_index),
     url(r'^index/waterflow$', frontpage.waterflow_data),
@@ -36,7 +24,6 @@ urlpatterns = patterns('',
     url(r'^resource/listall/$', resource.list_all),
     url(r'^resource/groupfilter/([0-9]+)$', resource.group_filter),
     url(r'^resource/getarr/$', resource.get_arr),
-    url(r'^resource/getarr_test/$', resource.getarr_test),
 
     url(r'^program/([0-9]+)$', program.show_program),
     url(r'^program/play/(.*)$', program.play_program),
@@ -53,19 +40,15 @@ urlpatterns = patterns('',
     url(r'^program/modify/delpic/$', program.del_pic),
     url(r'^program/modify/deldoc/$', program.del_doc),
     url(r'^program/delete/$', program.delete_program),
+    url(r'^program/get_all_favorites$', program.get_all_favorites),
+    url(r'^program/get/$', program.get),
+    url(r'^program/recommand/$', program.recommand_program),
 
     url(r'^login/do/$', login.login),
     url(r'^login/test/$', login.test),
     url(r'^login/logout/$', login.logout),
     url(r'^signin/judge/$', login.exist_judge),
     url(r'^signin/do/$', login.signin),
-
-    url(r'^user/$', api.api_user),
-    url(r'^program_group/$', api.api_program_group),
-    url(r'^program_series/$', api.api_program_series),
-    url(r'^program/$', api.api_program),
-    url(r'^api_source/$', api.api_source),
-    url(r'^api_comment/$', api.api_comment),
 
     url(r'^space/$', manage.show_space),
     url(r'^manage/favorites/$', manage.show_favorites),
@@ -81,12 +64,10 @@ urlpatterns = patterns('',
     url(r'^manage/groupseries/group/$', manage.program_group),
     url(r'^manage/groupseries/series/$', manage.program_series),
 
-    url(r'^mgrdebug/changepower/(.*)$', mgrdebug.change_power),
-
 )
 
 from django.conf import settings
-if settings.DEBUG is False: #if DEBUG is True it will be served automatically
+if settings.DEBUG is False:  # if DEBUG is True it will be served automatically
     urlpatterns += patterns('',
                             url(r'^static/(?P<path>.*)$',
                                 'django.views.static.serve',

@@ -1,5 +1,5 @@
 <!-- navbar -->
-<nav class="navbar navbar-default" role="navigation">
+<nav class="navbar navbar-inverse" role="navigation">
 	<div class="navbar-header">
 		<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-collapse-01">
 			<span class="sr-only">Toggle navigation</span>
@@ -9,13 +9,20 @@
 	<div class="collapse navbar-collapse" id="navbar-collapse-01">
 		<ul class="nav navbar-nav">
 			<li><a href="/index/">首页</a></li>
-			<li><a href="/resource/">资源</a></li>
+			<li><a href="/resource/">节目单</a></li>
 		</ul>
 		<form class="navbar-form navbar-right" action="/resource/" method="get" role="search">
 			{% if request.session.uid %}
 			<div class="form-group" id="user-info">
-				<a href="/space/"><button type="button" class="btn btn-primary">个人中心</button></a>
-				<a href="/login/logout/"><button type="button" class="btn btn-primary">注销</button></a>
+				<div class="btn-group">
+				  <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+				    管理 <span class="caret"></span>
+				  </button>
+				  <ul class="dropdown-menu" role="menu">
+				    <li><a href="/space/">个人中心</a></li>
+				    <li><a href="/login/logout/">注销</a></li>
+				  </ul>
+				</div>
 			</div>
 			{% else %}
 			<div class="form-group" id="user-info">
@@ -25,23 +32,16 @@
 			{% endif %}
 			<div class="form-group">
 				<div class="input-group">
-					<input class="form-control" id="navbarInput-01" name="keyword" type="search" placeholder="Search">
+					<input type="hidden" id="navbarInput-01" name="keyword">
+					<input class="form-control" id="navbarInput-02" type="search" placeholder="Search">
 					<span class="input-group-btn">
-						<button type="submit" onclick="return jiexi(this)" class="btn" style="margin-left:0px;"><span class="fui-search"></span></button>
+						<button type="submit" onclick="return document.getElementById('navbarInput-01').value=escape(document.getElementById('navbarInput-02').value)" class="btn" style="margin-left:0px;"><span class="fui-search"></span></button>
 					</span>
 				</div>
 			</div>
 		</form>
 	</div><!-- /.navbar-collapse -->
 </nav>
-
-<script>
-	function jiexi(x) {
-		var t=document.getElementById("navbarInput-01").value;
-		document.getElementById("navbarInput-01").value=escape(t);
-//		self.location="/resource/?keyword=" + escape(t);
-	}
-</script>
 
 {% if not request.session.uid %}
 {% include "login/loginmodal.html" %}

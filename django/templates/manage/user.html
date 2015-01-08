@@ -4,6 +4,7 @@
 {% endblock %}
 
 {% block header%}
+<link href="/static/css/myresource.css" rel="stylesheet" />
 <script>
 function change_modal_id(id) {
 	$('#mgr-change-power-userid').val(id);
@@ -16,10 +17,10 @@ function change_modal_id(id) {
 <div class="container">
 	<div class="row">
 		<hr />
-		<div class="panel panel-default">
-			<div class="panel-heading">
+		<div id="user-content">
+			<div>
 				<h4>用户管理
-					<form style="float:right" method="get" class="navbar-form navbar-right" >
+					<!--form style="float:right" method="get" class="navbar-form navbar-right" >
 						<div class="form-group">
 							<div class="input-group input-group-rounded">
 								<span class="input-group-btn">
@@ -28,19 +29,15 @@ function change_modal_id(id) {
 								<input class="form-control" id="navbarInput-01" name="wd" type="search" placeholder="Search">
 							</div>
 						</div>
-					</form>
+					</form-->
 				</h4>
-
-				
 			</div>
 			{% load pagination_tags %}
-			{% autopaginate obj_list 10 %}
-			<table class="panel-body table table-bordered table-striped table-hover">
+			{#{% autopaginate obj_list 50 %}#}
+			<table class="table table-hover">
 				<div>
-			{% paginate %}
+			{#{% paginate %}#}
 				</div>
-
-
 				<tr>
 					<th>ID</th>
 					<th>Email</th>
@@ -60,7 +57,7 @@ function change_modal_id(id) {
 					<td>{% if obj.phone_number %}{{ obj.phone_number }}{% else %}&nbsp;{% endif %}</td>
 					<td>{{ obj.power }}</td>
 					<td>{{ obj.create_time|date:"Y-m-d" }}</td>
-					<td><button type="button" id="mgr-change-power-button" class="btn btn-primary" data-toggle="modal" data-target="#mgr-change-power-modal" onclick="change_modal_id({{ obj.id }})">修改权限</button></td>
+					<td><a id="mgr-change-power-button" data-toggle="modal" data-target="#mgr-change-power-modal" href="javascript:void(0)" onclick="change_modal_id({{ obj.id }})">修改权限</a></td>
 				</tr>
 			{% endfor %}
 			</table>

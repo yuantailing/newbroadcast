@@ -1,0 +1,29 @@
+.table thead tr th { 
+	border:0px;
+	font-size: 16px;
+}
+
+.table tbody tr th { 
+	border:0px;
+	font-size: 16px;
+}
+.table tbody tr td { 
+	border:0px;
+
+	color: #999;
+	font-size: 16px;
+}
+
+.table tbody tr td { 
+	font-size:14px;
+}
+
+.space-section { 
+	background-color: #fff;
+	padding: 2%;
+}
+
+.space-section .btn-default {
+	color: #5c307d;
+	background-color: #fff;
+}

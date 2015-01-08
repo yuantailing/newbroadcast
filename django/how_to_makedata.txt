@@ -1,4 +1,4 @@
-# del db.sqlite3
+﻿# del db.sqlite3
 # manage.py syncdb
 # manage.py shell
 
@@ -30,12 +30,16 @@ ProgramGroup(title=u'体育').save()
 ProgramGroup(title=u'广播剧').save()
 ProgramSeries(title=u'校庆纪实').save()
 ProgramSeries(title=u'清韵烛光').save()
-User(email='admin', password='admin', nickname=u'广播站站长', power='superadmin').save()
+u = User(email='admin', nickname=u'广播站站长', power='superadmin')
+u.set_password('admin')
+u.save()
 
 for i in range(0, 50):
     s = make_group(name_char_set, random.randint(3, 8))
     try:
-        User(email=s+rlg(mail_set,1,1), password=s, nickname=rlg(name_set,2,3)).save()
+        u = User(email=s+rlg(mail_set,1,1), nickname=rlg(name_set,2,3))
+        u.set_password(s)
+        u.save()
     except Exception, e:
         pass
 
