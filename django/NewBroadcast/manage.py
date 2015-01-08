@@ -72,8 +72,6 @@ def show_mgrmyres(req):
 
 @power_required(['admin'])
 def show_mgrallres(req):
-    print 1
-    print 3
     obj_list = Program.objects.all()
     return render_to_response("manage/myresource.html",
                               {'title': u'所有上传',
