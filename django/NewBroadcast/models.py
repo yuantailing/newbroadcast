@@ -99,7 +99,7 @@ class Program(models.Model):
     title_pinyin = models.TextField(null=False, blank=False, default=None,
                                     max_length=pinyin_maxlen, db_index=True)
     description = models.TextField(null=True, blank=True, default=None)
-    weight = models.IntegerField(null=False, blank=False, default=0)
+    weight = models.IntegerField(null=False, blank=False, default=0, db_index=True)
     recorder = models.TextField(null=True, blank=True, default=None)
     recorder_pinyin = models.TextField(null=True, blank=True, default=None,
                                     max_length=pinyin_maxlen, db_index=True)
