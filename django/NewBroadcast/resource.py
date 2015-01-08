@@ -152,6 +152,7 @@ def filter(req):
         pgs = Program.objects.filter(Q(group__id=gid),
                                      Q(series__id=sid),
                                      Q(keyword__contains=keyword));
+    pgs = pgs.order_by('-create_time')
     pgids = []
     for pg in pgs.only('id'):
         pgids.append(pg.id);
