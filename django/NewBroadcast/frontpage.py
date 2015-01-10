@@ -36,8 +36,11 @@ def waterflow_data(req):
                 s.document.file
                 tmpret['src'] = s.document.url
         except Exception as e:
-            tmpret['src'] = "/static/images/default/%d.jpg" \
-                            % (int(hashlib.md5(o.title).hexdigest(), 16) % 10 + 1)
+            try:
+                tmpret['src'] = "/static/images/default/%d.jpg" \
+                            % (int(hashlib.md5(o.title.encode('utf8')).hexdigest(), 16) % 10 + 1)
+            except Exception as e:
+                tmpret['src'] = "/static/images/default/1.jpg"
         tmpret['title'] = o.title
         tmpret['content'] = o.description
         tmpret['canplay'] = not o.audio == None
