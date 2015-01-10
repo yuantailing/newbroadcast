@@ -127,7 +127,10 @@
 					{% endfor %}
 					</table>
 					<div id="space-upload">
-						<a href="/manage/resource/"><button class="btn btn-default"><span class="glyphicon glyphicon-chevron-right"></span> 更多 </button></a>
+						<a href="/manage/myresource/"><button class="btn btn-default"><span class="glyphicon glyphicon-chevron-right"></span> 更多 </button></a>
+		{% if request.session.user_power == "superadmin" %}
+						<a href="/manage/allresources/"><button class="btn btn-default"><span class="glyphicon glyphicon-folder-open"></span> 所有节目 </button></a>
+		{% endif %}
 						<a href="/program/upload/"><button class="btn btn-default"><span class="glyphicon glyphicon-plus"></span> 上传节目</button></a>
 					</div>
 				</div>

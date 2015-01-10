@@ -5,6 +5,7 @@ from django import template
 from django.template.loader import get_template
 from django.db import models
 from django.core import serializers
+import hashlib
 import json
 
 from .models import *
@@ -35,7 +36,8 @@ def waterflow_data(req):
                 s.document.file
                 tmpret['src'] = s.document.url
         except Exception as e:
-            tmpret['src'] = "/static/images/default.jpg"
+            tmpret['src'] = "/static/images/default/%d.jpg" \
+                            % (int(hashlib.md5(o.title).hexdigest(), 16) % 10 + 1)
         tmpret['title'] = o.title
         tmpret['content'] = o.description
         tmpret['canplay'] = not o.audio == None

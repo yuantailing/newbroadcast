@@ -2,7 +2,7 @@
 {% block header %}
 <link href="/static/css/myresource.css" rel="stylesheet" />
 {% endblock %}
-{% block navigation %}{% endblock %}
+{# block navigation %}{% endblock #}
 {% block body %}
 <div id="myresource-content">
 	<div class="">
@@ -35,7 +35,7 @@
 		<td>{{ pg.contributor|default:"" }}</td>
 		<td>{{ pg.workers|default:"" }}</td>
 		<td>{{ pg.create_time|date:"Y-m-d" }}</td>
-		<td>{% if request.session.user_power in "admin superadmin" %}
+		<td>{% if request.session.user_power in "admin superadmin" or title == "我的上传"%}
 			<a href="/program/modify/{{ pg.id }}" target="_parent"><span class="glyphicon glyphicon-pencil"></span> 修改</a>
 			{% endif %}
 		</td>
@@ -47,7 +47,7 @@
 			  {% endif %}
 			{% endif %}
 		</td>
-		<td>{% if request.session.user_power in "admin superadmin" %}
+		<td>{% if request.session.user_power in "admin superadmin" or title == "我的上传" %}
 			<a href="javascript:void(0)" data-toggle="modal" data-target="#delete-info" onclick="$('#modal-delete-id').attr('value', '{{ pg.id }}'); $('#modal-delete-origin-name').html('{{ pg.title|addslashes }}');"><span class="glyphicon glyphicon-remove"></span> 删除</a>
 			{% endif %}
 		</td>
@@ -133,4 +133,4 @@ function recommand(pid, weight) {
 </script>
 {% endblock %}
 
-{% block footer %}{% endblock %}
+{# block footer %}{% endblock #}
