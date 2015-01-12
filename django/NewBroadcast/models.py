@@ -5,6 +5,7 @@ import os
 import hashlib
 import pinyin
 import thread
+import json
 
 # Create your models here.
 
@@ -160,6 +161,29 @@ class Program(models.Model):
             self.keyword += '|' + self.workers
         super(Program, self).save()
 
+    def get_piclink(self, n):
+        piclink = []
+        try:
+            pic_arr = json.loads(self.picture)
+            for i in pic_arr:
+                s = Source.objects.get(id=i)
+                if s.thumb:
+                    s.thumb.file
+                    piclink.append(s.thumb.url)
+                else:
+                    s.document.file
+                    piclink.append(s.document.url)
+                if n > 0 and len(piclink >= n):
+                    break
+        except Exception as e:
+            pass
+        if len(piclink) == 0:
+            try:
+                piclink.append("/static/images/default/%d.jpg" \
+                            % (int(hashlib.md5(self.title.encode('utf8')).hexdigest(), 16) % 10 + 1))
+            except Exception as e:
+                piclink.append("/static/images/default/1.jpg")
+        return piclink
 
 
 class Source(models.Model):

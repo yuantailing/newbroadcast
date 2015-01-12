@@ -26,21 +26,7 @@ def waterflow_data(req):
     for o in obj:
         tmpret = {}
         tmpret['id'] = o.id
-        pic_arr = json.loads(o.picture)
-        try:
-            s = Source.objects.get(id=pic_arr[0])
-            if s.thumb:
-                s.thumb.file
-                tmpret['src'] = s.thumb.url
-            else:
-                s.document.file
-                tmpret['src'] = s.document.url
-        except Exception as e:
-            try:
-                tmpret['src'] = "/static/images/default/%d.jpg" \
-                            % (int(hashlib.md5(o.title.encode('utf8')).hexdigest(), 16) % 10 + 1)
-            except Exception as e:
-                tmpret['src'] = "/static/images/default/1.jpg"
+        tmpret['src'] = o.get_piclink(1)[0]
         tmpret['title'] = o.title
         tmpret['content'] = o.description
         tmpret['canplay'] = not o.audio == None

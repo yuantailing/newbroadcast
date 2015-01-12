@@ -52,7 +52,6 @@ urlpatterns = patterns(
 
     url(r'^space/$', manage.show_space),
     url(r'^manage/favorites/$', manage.show_favorites),
-    url(r'^manage/favorites/table/$', manage.show_favorites_table),
     url(r'^manage/resource/$', manage.show_mgrres),
     url(r'^manage/myresource/$', manage.show_mgrmyres),
     url(r'^manage/allresources/$', manage.show_mgrallres),
