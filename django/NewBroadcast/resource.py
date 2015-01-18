@@ -68,7 +68,7 @@ def get_arr(req):
         tmp['praise_count'] = pg.praise.count();
         tmp['favorite_count'] = pg.favorite.count();
         tmp['logined'] = not (user == None);
-        tmp['create_time'] = pg.create_time.strftime("%Y-%m-%d %H:%I:%S");
+        tmp['create_time'] = pg.create_time.strftime("%Y-%m-%d %H:%M:%S");
         if not (user == None):
             tmp['have_praised'] = Praise.objects.filter(user=user, program=pg).count() > 0
             tmp['have_favorited'] = Favorite.objects.filter(user=user, program=pg).count() > 0

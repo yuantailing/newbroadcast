@@ -32,15 +32,7 @@ def show_program(req, arg):
     if pg.workers:
         table.append((u"机务人员", pg.workers))
 
-    piclink = []
-    if pg.picture:
-        pic_arr = json.loads(pg.picture)
-        for i in pic_arr:
-            s = Source.objects.get(id=i)
-            if s.thumb:
-                piclink.append(s.thumb.url)
-            else:
-                piclink.append(s.document.url)
+    piclink = pg.get_piclink(0)
     
     medialink = ""
     if pg.audio:
@@ -465,25 +457,15 @@ def get_all_favorites(req):
         tmp['id'] = pg.id;
         tmp['title'] = pg.title;
         tmp['url'] = Source.objects.get(id=pg.audio).document.url;
-        tmp['description'] = None;
+        tmp['description'] = ' ';
         tmp['have_praised'] = False;
         tmp['have_favorited'] = False;
         tmp['praise_count'] = pg.praise.count();
         tmp['favorite_count'] = pg.favorite.count();
-        if pg.picture:
-            pic_arr = json.loads(pg.picture)
-            for i in pic_arr:
-                s = Source.objects.get(id=i)
-                if s.thumb:
-                    tmp['thumbnail'] = s.thumb.url;
-                else:
-                    tmp['thumbnail'] = s.document.url;
-                break;
-        else:
-            tmp['thumbnail'] = None;
+        tmp['thumbnail'] = pg.get_piclink(1)[0]
         tmp['have_praised'] = Praise.objects.filter(user__id=uid, program=pg).count() > 0
         tmp['have_favorited'] = Favorite.objects.filter(user__id=uid, program=pg).count() > 0
-        if (pg.description):
+        if pg.description:
             tmp['description'] = pg.description
         res.append(tmp);
     return HttpResponse(json.dumps(res), content_type = "application/json");
@@ -494,18 +476,12 @@ def get(req):
     res = {}
     res['id'] = pg.id;
     res['title'] = pg.title;
-    res['description'] = None;
+    res['description'] = ' ';
     res['piclink'] = None;
     res['medialink'] = None;
     if pg.description:
-        res['description'] = pg.description;
+        res['description'] = pg.description
     if pg.audio:
         res['medialink'] = Source.objects.get(id=pg.audio).document.url
-    if not (pg.picture == '[]' or not pg.picture):
-        pic_arr = json.loads(pg.picture)
-        s = Source.objects.get(id=pic_arr[0])
-        if s.thumb:
-            res['piclink'] = s.thumb.url
-        else:
-            res['piclink'] = s.document.url
+    res['piclink'] = pg.get_piclink(1)[0]
     return HttpResponse(json.dumps({'program':res}), content_type='application/json')

@@ -331,11 +331,11 @@ function readLocalStorage(info) {
     program.description = info.description;
     program.url = info.url;
     program.id = info.id;
-    program.time = info.time;
+    program.time = info.time + Math.random();
     program.thumbnail = info.thumbnail;
     onListChange(info.location, program, info.list);
     if(info.play == 1) {
-		onCurListChange(info.list);
+        onCurListChange(info.list);
         onCurProgramChange(0);
 	}
 }
