@@ -22,7 +22,7 @@ class User(models.Model):
     birthday = models.DateTimeField(null=True, blank=True, default=None)
     phone_number = models.CharField(null=True, blank=True, default=None,
                                     max_length=32)
-    update_time = models.DateTimeField(auto_now_add=True, auto_now=True)
+    update_time = models.DateTimeField(auto_now=True)
     create_time = models.DateTimeField(auto_now_add=True)
 
     def __unicode__(self):
@@ -61,7 +61,7 @@ class User(models.Model):
 class ProgramGroup(models.Model):
     title = models.TextField(null=False, blank=False, default=None)
     order = models.IntegerField(null=False, blank=False, default=0)
-    update_time = models.DateTimeField(auto_now_add=True, auto_now=True)
+    update_time = models.DateTimeField(auto_now=True)
     create_time = models.DateTimeField(auto_now_add=True)
 
     def __unicode__(self):
@@ -76,7 +76,7 @@ class ProgramGroup(models.Model):
 class ProgramSeries(models.Model):
     title = models.TextField(null=False, blank=False, default=None)
     order = models.IntegerField(null=False, blank=False, default=0)
-    update_time = models.DateTimeField(auto_now_add=True, auto_now=True)
+    update_time = models.DateTimeField(auto_now=True)
     create_time = models.DateTimeField(auto_now_add=True)
 
     def __unicode__(self):
@@ -116,7 +116,7 @@ class Program(models.Model):
     uploader = models.ForeignKey(User, related_name="program",
                                  null=True, blank=True, default=None,
                                  on_delete=models.SET_NULL)
-    update_time = models.DateTimeField(auto_now_add=True, auto_now=True, db_index=True)
+    update_time = models.DateTimeField(auto_now=True, db_index=True)
     create_time = models.DateTimeField(auto_now_add=True, db_index=True)
 
     def __unicode__(self):
@@ -229,7 +229,7 @@ class Comment(models.Model):
                                 null=False, blank=False, default=None,
                                 on_delete=models.CASCADE)
     content = models.TextField(blank=False, default=None)
-    update_time = models.DateTimeField(auto_now_add=True, auto_now=True)
+    update_time = models.DateTimeField(auto_now=True)
     create_time = models.DateTimeField(auto_now_add=True)
 
     def __unicode__(self):
@@ -253,7 +253,7 @@ class Praise(models.Model):
                                 null=False, blank=False, default=None,
                                 on_delete=models.CASCADE)
     # in Program filter: annotate(num_praise=Count('praise'))
-    update_time = models.DateTimeField(auto_now_add=True, auto_now=True)
+    update_time = models.DateTimeField(auto_now=True)
     create_time = models.DateTimeField(auto_now_add=True)
 
     def __unicode__(self):
@@ -284,7 +284,7 @@ class Favorite(models.Model):
                                 null=False, blank=False, default=None,
                                 on_delete=models.CASCADE)
     # in Program filter: annotate(num_favorite=Count('favorite'))
-    update_time = models.DateTimeField(auto_now_add=True, auto_now=True)
+    update_time = models.DateTimeField(auto_now=True)
     create_time = models.DateTimeField(auto_now_add=True)
 
     def __unicode__(self):

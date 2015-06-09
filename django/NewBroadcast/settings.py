@@ -92,7 +92,7 @@ MEDIA_URL = '/upload/'
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'GMT+8'
+TIME_ZONE = 'Etc/GMT-8'
 
 USE_I18N = True
 
